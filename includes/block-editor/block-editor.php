@@ -12,12 +12,8 @@ function bogo_register_language_switcher_block() {
 	);
 }
 
-
-add_action(
-	'enqueue_block_editor_assets',
-	'bogo_init_block_editor_assets',
-	10, 0
-);
+// @changed - disabled this because it adds noticable lag when opening any Gutenberg editor
+// add_action( 'enqueue_block_editor_assets', 'bogo_init_block_editor_assets', 10, 0);
 
 function bogo_init_block_editor_assets() {
 	$assets = array();

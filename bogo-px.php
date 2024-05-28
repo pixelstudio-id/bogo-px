@@ -1,20 +1,20 @@
 <?php
 /*
- * Plugin Name: Bogo
+ * Plugin Name: Bogo PX
  * Description: A straight-forward multilingual plugin. No more double-digit custom DB tables or hidden HTML comments that could cause you headaches later on.
- * Plugin URI: https://ideasilo.wordpress.com/bogo/
- * Author: Takayuki Miyoshi
- * Author URI: https://ideasilo.wordpress.com/
+ * Plugin URI: https://github.com/pixelstudio-id/bogo-px
+ * Author: Pixel Studio ID & Takayuki Miyoshi
+ * Author URI: https://pixelstudio.id/
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: bogo
  * Domain Path: /languages/
- * Version: 3.8
+ * Version: 4.0
  * Requires at least: 6.4
  * Requires PHP: 7.4
  */
 
-define( 'BOGO_VERSION', '3.8' );
+define( 'BOGO_VERSION', '4.0' );
 
 define( 'BOGO_PLUGIN', __FILE__ );
 
@@ -23,6 +23,8 @@ define( 'BOGO_PLUGIN_BASENAME', plugin_basename( BOGO_PLUGIN ) );
 define( 'BOGO_PLUGIN_NAME', trim( dirname( BOGO_PLUGIN_BASENAME ), '/' ) );
 
 define( 'BOGO_PLUGIN_DIR', untrailingslashit( dirname( BOGO_PLUGIN ) ) );
+
+define( 'BOGO_DIST', plugins_url('', __FILE__) . '/_dist');
 
 require_once BOGO_PLUGIN_DIR . '/includes/functions.php';
 require_once BOGO_PLUGIN_DIR . '/includes/language-functions.php';
@@ -41,6 +43,11 @@ require_once BOGO_PLUGIN_DIR . '/includes/flags.php';
 require_once BOGO_PLUGIN_DIR . '/includes/rest-api.php';
 require_once BOGO_PLUGIN_DIR . '/includes/shortcodes.php';
 require_once BOGO_PLUGIN_DIR . '/includes/block-editor/block-editor.php';
+
+define('BOGO_CUSTOM_DIR', BOGO_PLUGIN_DIR . '/custom');
+require_once BOGO_CUSTOM_DIR . '/enqueue.php';
+require_once BOGO_CUSTOM_DIR . '/list-table.php';
+require_once BOGO_CUSTOM_DIR . '/nav-menu.php';
 
 if ( is_admin() ) {
 	require_once BOGO_PLUGIN_DIR . '/admin/admin.php';

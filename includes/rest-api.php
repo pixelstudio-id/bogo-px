@@ -194,6 +194,14 @@ function bogo_rest_create_post_translation( WP_REST_Request $request ) {
 
 	$new_post_id = bogo_duplicate_post( $post, $locale );
 
+	// @changed - fix the escaped HTML attribute
+	global $wpdb;
+	$wpdb->update(
+		'wp_posts',
+		['post_content' => $post->post_content],
+		['ID' => $new_post_id]
+	);
+
 	if ( ! $new_post_id ) {
 		return new WP_Error( 'bogo_post_duplication_failed',
 			__( "Failed to duplicate a post.", 'bogo' ),
