@@ -48,8 +48,6 @@ function bogo_manage_posts_custom_column( $column_name, $post_id ) {
   }
 
   $locale = get_post_meta( $post_id, '_locale', true );
-  $original_guid = get_post_meta( $post_id, '_original_post', true );
-
   $is_parent_post = !$locale || $locale === get_locale();
   
   // Create list of flags with Edit/Create link

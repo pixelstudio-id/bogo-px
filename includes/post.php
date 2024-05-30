@@ -359,9 +359,7 @@ function bogo_duplicate_post( $original_post, $locale ) {
 
     update_post_meta( $new_post_id, '_locale', $locale );
 
-    $meta_original_post = get_post_meta( $original_post->ID,
-      '_original_post', true
-    );
+    $meta_original_post = get_post_meta( $original_post->ID, '_original_post', true );
 
     if ( $meta_original_post ) {
       update_post_meta( $new_post_id,
@@ -369,29 +367,18 @@ function bogo_duplicate_post( $original_post, $locale ) {
       );
     } else {
       // @changed - original_post is now storing ID instead of GUID
-      $original_post_guid = get_the_guid( $original_post );
-
-      if ( empty( $original_post_guid ) ) {
-        $original_post_guid = $original_post->ID;
-      }
-
+      $original_post_id = $original_post->ID;
       $translations = bogo_get_post_translations( $original_post );
 
-      update_post_meta( $original_post->ID,
-        '_original_post', $original_post_guid
-      );
+      update_post_meta( $original_post_id, '_original_post', $original_post_id );
 
       if ( $translations ) {
         foreach ( $translations as $tr_locale => $tr_post ) {
-          update_post_meta( $tr_post->ID,
-            '_original_post', $original_post_guid
-          );
+          update_post_meta( $tr_post->ID, '_original_post', $original_post_id );
         }
       }
 
-      update_post_meta( $new_post_id,
-        '_original_post', $original_post_guid
-      );
+      update_post_meta( $new_post_id, '_original_post', $original_post_id );
     }
   }
 
@@ -472,22 +459,17 @@ function bogo_save_post( $post_id, $post ) {
     add_post_meta( $post_id, '_locale', $locale, true );
   }
 
+  // @changed - original_post meta now storing ID instead of GUID
   $original_post = get_post_meta( $post_id, '_original_post', true );
 
   if ( empty( $original_post ) ) {
-    $post_guid = get_the_guid( $post_id );
-
-    if ( empty( $post_guid ) ) {
-      $post_guid = $post_id;
-    }
-
     $translations = bogo_get_post_translations( $post_id );
 
-    update_post_meta( $post_id, '_original_post', $post_guid );
+    update_post_meta( $post_id, '_original_post', $post_id );
 
     if ( $translations ) {
       foreach ( $translations as $tr_locale => $tr_post ) {
-        update_post_meta( $tr_post->ID, '_original_post', $post_guid );
+        update_post_meta( $tr_post->ID, '_original_post', $post_id );
       }
     }
   }

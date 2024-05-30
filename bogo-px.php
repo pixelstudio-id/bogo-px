@@ -48,6 +48,8 @@ define('BOGO_CUSTOM_DIR', BOGO_PLUGIN_DIR . '/custom');
 require_once BOGO_CUSTOM_DIR . '/enqueue.php';
 require_once BOGO_CUSTOM_DIR . '/list-table.php';
 require_once BOGO_CUSTOM_DIR . '/nav-menu.php';
+require_once BOGO_CUSTOM_DIR . '/acf.php';
+require_once BOGO_CUSTOM_DIR . '/shortcode.php';
 
 if ( is_admin() ) {
 	require_once BOGO_PLUGIN_DIR . '/admin/admin.php';

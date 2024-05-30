@@ -11,6 +11,7 @@ function bogo_hide_translated_post_in_list_table($query) {
   if ($pagenow !== 'edit.php' || !$query->is_main_query()) { return $query; }
 
   // if has no 'lang' query, show only parent post
+  $lang = get_query_var('lang');
   if (!$lang) {
     $query->set('meta_query', [
       'relation' => 'OR',
@@ -83,8 +84,8 @@ function bogo_create_admin_flag_buttons($post) {
 
   $flags = '';
   foreach ($available_locales as $locale) {
-    preg_match('/_(\w+)/', $locale, $matches);
-    $country_id = isset($matches[1]) ? strtolower($matches[1]) : 'us';
+    preg_match('/[a-zA-Z]+$/', $locale, $matches);
+    $country_id = isset($matches[0]) ? strtolower($matches[0]) : 'us';
     $language = bogo_get_language($locale) ?: $locale;
 
     $locale_post = isset($available_translations[$locale])

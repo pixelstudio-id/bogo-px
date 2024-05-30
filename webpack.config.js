@@ -7,6 +7,7 @@ const outputPath = '_dist';
 
 const localDomain = 'http://flexiclasses.test/';
 const entryPoints = {
+  public: './custom/assets/public.js',
   admin: './custom/assets/admin.js',
   flags: './custom/assets/flags.scss',
 };
