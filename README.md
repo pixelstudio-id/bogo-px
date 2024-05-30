@@ -20,8 +20,12 @@ This does not pollute your database with tons of extra tables like other multili
 
 ### Other Features
 
-- Automatically copy the post/page when creating draft for new translation.
-- ACF Post Object field automatically converted to the translated version if exist.
+1. **Automatic Link Conversion** - Links in content and menu automatically converted to the locale version.
+
+1. **ACF Integration** - PostObject and Link field automatically converted to the locale version.
+
+1. **Language Selector in Gutenberg** - Added language switcher in the editor's header.
+
 
 ## Technical Changes
 

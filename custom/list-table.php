@@ -3,6 +3,8 @@
 add_filter('pre_get_posts', 'bogo_hide_translated_post_in_list_table');
 add_filter('pre_get_posts', 'bogo_hide_translated_post_in_menu_editor');
 
+add_filter('wp_link_query_args', 'bogo_hide_translated_post_in_link_modal');
+
 /**
  * @filter pre_get_posts
  */
@@ -31,7 +33,7 @@ function bogo_hide_translated_post_in_list_table($query) {
 }
 
 /**
- *
+ * @filter pre_get_posts
  */
 function bogo_hide_translated_post_in_menu_editor($query) {
   global $pagenow;
@@ -69,6 +71,26 @@ function bogo_hide_translated_post_in_menu_editor($query) {
       'compare' => '=',
     ],
   ]);
+
+  return $query;
+}
+
+/**
+ * @filter wp_link_query_args
+ */
+function bogo_hide_translated_post_in_link_modal($query) {
+  $query['meta_query'] = [
+    'relation' => 'OR',
+    [
+      'key' => '_locale',
+      'compare' => 'NOT EXISTS',
+    ],
+    [
+      'key' => '_locale',
+      'value' => get_locale(),
+      'compare' => '=',
+    ],
+  ];
 
   return $query;
 }

@@ -3,6 +3,9 @@
 if (class_exists('ACF')) {
   add_filter('acf/fields/post_object/query', 'bogo_acf_fields_hide_localized_posts', 10, 3);
   add_filter('acf/fields/page_link/query', 'bogo_acf_fields_hide_localized_posts', 10, 3);
+
+  add_filter('acf/format_value/type=post_object', 'bogo_acf_format_post_to_locale_post', 10, 3);
+  add_filter('acf/format_value/type=link', 'bogo_acf_format_link_to_locale_link', 10);
 }
 
 /**
@@ -22,4 +25,31 @@ function bogo_acf_fields_hide_localized_posts($args, $field, $post_id) {
     ],
   ];
   return $args;
+}
+
+/**
+ * @filter acf/format_value/type=post_object
+ */
+function bogo_acf_format_post_to_locale_post($value, $post_id, $field) {
+  $locale_post = bogo_get_locale_post_by_id($value);
+
+  if ($locale_post) {
+    $value = $locale_post;
+  }
+
+  return $value;
+}
+
+/**
+ * @filter acf/format_value/type=link
+ */
+function bogo_acf_format_link_to_locale_link($value) {
+  $locale_link = bogo_get_locale_link_by_url($value['url']);
+
+  if ($locale_link) {
+    $value['title'] = $locale_link['post']->post_title;
+    $value['url'] = $locale_link['url'];
+  }
+
+  return $value;
 }

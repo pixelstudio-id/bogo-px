@@ -9,6 +9,7 @@ const localDomain = 'http://flexiclasses.test/';
 const entryPoints = {
   public: './custom/assets/public.js',
   admin: './custom/assets/admin.js',
+  editor: './custom/assets/editor.js',
   flags: './custom/assets/flags.scss',
 };
 

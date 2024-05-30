@@ -25,28 +25,30 @@
     margin-right: -0.5rem
     margin-left: -0.5rem
 
-  &::before
-    content: ""
-    display: inline-block
-    width: 1.25rem
-    height: 1.25rem
-    background: url('./svg/globe.svg') no-repeat center center
-    background-size: contain
-
+  &::before,
   &::after
     content: ""
     display: inline-block
+    background-size: contain
+    background: no-repeat center center
+    filter: var(--_bogoIconFilter, none)
+
+  &::before
+    width: 1.25rem
+    height: 1.25rem
+    background-image: url('./svg/globe.svg')
+
+  &::after
     width: 0.75rem
     height: 0.75rem
-    background: url('./svg/chevron-down.svg') no-repeat center center
-    background-size: contain
+    background-image: url('./svg/chevron-down.svg')
 
     .is-style-toggle.is-toggled &
       background-image: url('./svg/chevron-up.svg')
 
 .bogo-dropdown__links
   list-style-type: none
-  color: inherit
+  color: var(--text, #222)
 
   .is-style-popup &
     visibility: hidden
@@ -56,7 +58,7 @@
     top: 100%
     left: 50%
     transform: translateX(-50%) translateY(0.5rem)
-    background: white
+    background: var(--textInvert, white)
     border-radius: 0.5rem
     box-shadow: 0 1.5px 4px rgba(0,0,0, .24), 0 1.5px 6px rgba(0,0,0, .12)
     padding: 0.5rem 0

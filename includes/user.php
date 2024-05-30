@@ -32,13 +32,14 @@ function bogo_admin_bar_menu( $wp_admin_bar ) {
 		$current_language = $current_locale;
 	}
 
-	$wp_admin_bar->add_menu( array(
-		'parent' => 'top-secondary',
-		'id' => 'bogo-user-locale',
-		'title' => sprintf(
-			'<span class="ab-icon"></span><span class="ab-label">%s</span>',
-			esc_html( $current_language ) ),
-	) );
+	// @changed - disabling this since changing base language cause many bugs
+	// $wp_admin_bar->add_menu( array(
+	// 	'parent' => 'top-secondary',
+	// 	'id' => 'bogo-user-locale',
+	// 	'title' => sprintf(
+	// 		'<span class="ab-icon"></span><span class="ab-label">%s</span>',
+	// 		esc_html( $current_language ) ),
+	// ) );
 
 	foreach ( $available_languages as $locale => $lang ) {
 		$url = add_query_arg(

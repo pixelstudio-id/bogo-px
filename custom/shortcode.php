@@ -14,6 +14,8 @@ function bogo_dropdown_shortcode($atts, $content) {
   $current_lang_name = '';
   $links_html = '';
 
+  $locale_count = 0;
+
   foreach ($links as $link) {
     // $classes = bogo_language_tag($link['locale']) . ' ' . bogo_lang_slug($link['locale']);
     $label = $link['native_name'] ?: $link['title']; 
@@ -39,6 +41,7 @@ function bogo_dropdown_shortcode($atts, $content) {
       </li>";
     }
     else {
+      $locale_count += 1;
       $links_html .= "<li>
         <a
           hreflang='{$link['lang']}'
@@ -49,6 +52,11 @@ function bogo_dropdown_shortcode($atts, $content) {
         </a>
       </li>";
     }
+  }
+
+  // if no translation, return nothing
+  if ($locale_count <= 0) {
+    return '';
   }
 
   return "<div class='bogo-dropdown is-style-{$atts['style']}'>
