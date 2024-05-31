@@ -981,11 +981,12 @@
   background-image: url(./flags-4x3/vg.svg);
 }
 
-.fi-vi {
-  background-image: url(./flags-4x3/vi.svg);
-}
+// .fi-vi {
+//   background-image: url(./flags-4x3/vi.svg);
+// }
 
-.fi-vn {
+.fi-vn,
+.fi-vi {
   background-image: url(./flags-4x3/vn.svg);
 }
 

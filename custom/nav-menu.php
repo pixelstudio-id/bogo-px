@@ -1,5 +1,6 @@
 <?php
 
+add_filter('pre_get_posts', 'bogo_hide_translated_post_in_menu_editor');
 add_filter('wp_get_nav_menu_items', 'bogo_localize_nav_menu_items', 15, 3);
 
 /**
@@ -16,4 +17,47 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
   }
 
   return $items;
+}
+
+/**
+ * @filter pre_get_posts
+ */
+function bogo_hide_translated_post_in_menu_editor($query) {
+  global $pagenow;
+  if ($pagenow !== 'nav-menus.php') { return $query; }
+
+  // TODO: can cause bug when installing extra plugins that add extra query before
+  $junk_query_types = [
+    'acf-taxonomy',
+    'acf-post-type',
+    'acf-ui-options-page',
+    'acf-field-group',
+    'acf-field',
+    'wpcf7_contact_form',
+    'wp_block',
+    'wp_template',
+    'wp_template_part',
+    'wp_global_styles',
+    'wp_navigation',
+    'nav_menu_item',
+    'nav_menu_item',
+    'wp_global_styles',
+  ];
+
+  if (in_array($query->query['post_type'], $junk_query_types)) { return $query; }
+
+  $query->set('meta_query', [
+    'relation' => 'OR',
+    [
+      'key' => '_locale',
+      'compare' => 'NOT EXISTS',
+    ],
+    [
+      'key' => '_locale',
+      'value' => get_locale(),
+      'compare' => '=',
+    ],
+  ]);
+
+  return $query;
 }

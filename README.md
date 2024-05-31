@@ -26,6 +26,31 @@ This does not pollute your database with tons of extra tables like other multili
 
 1. **Language Selector in Gutenberg** - Added language switcher in the editor's header.
 
+## How to Use
+
+1. If your base language is not `en_US`, you need to add filter to change it:
+
+    ```php
+    add_filter('bogo_base_language', function() { return 'id_ID'; })
+    ```
+
+1. After activating the plugin, go to Languages and select the available language.
+
+1. You will now see a new column called "Locale" in Posts and Pages table with transparent flags in it.
+
+    - Black & White flag means no translation of that language. Click it to copy existing content and add that translation.
+    - Colored flag with "D" means it's on Draft. Click it to edit.
+    - Colored flag means it's published. Click it to edit.
+
+1. Add `[bogo-dropdown]` shortcode somewhere in your theme to allow user to switch language.
+
+    ```php
+    <?= do_shortcode('[bogo-dropdown]'); ?>
+    ```
+
+1. (Optional) If you want to hide/add Menu Item depending on the language, each Menu Item now has checkboxes on it's visibility.
+
+1. Done!
 
 ## Technical Changes
 
@@ -36,3 +61,4 @@ This does not pollute your database with tons of extra tables like other multili
 
 - If you switched the base language mid-way, the Post List table won't show the proper parent post.
 - Language with "formal" or "informal" version can't work.
+- You might encounter wrong or empty flag as the SVG files we use doesn't follow international naming.

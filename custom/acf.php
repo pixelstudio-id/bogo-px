@@ -8,6 +8,8 @@ if (class_exists('ACF')) {
   add_filter('acf/format_value/type=link', 'bogo_acf_format_link_to_locale_link', 10);
 }
 
+add_filter('wp_link_query_args', 'bogo_hide_translated_post_in_link_modal');
+
 /**
  * @filter acf/fields/post_object/query
  */
@@ -52,4 +54,26 @@ function bogo_acf_format_link_to_locale_link($value) {
   }
 
   return $value;
+}
+
+/**
+ * Hide the locale posts in the native Link modal, mostly used by ACF
+ * 
+ * @filter wp_link_query_args
+ */
+function bogo_hide_translated_post_in_link_modal($query) {
+  $query['meta_query'] = [
+    'relation' => 'OR',
+    [
+      'key' => '_locale',
+      'compare' => 'NOT EXISTS',
+    ],
+    [
+      'key' => '_locale',
+      'value' => get_locale(),
+      'compare' => '=',
+    ],
+  ];
+
+  return $query;
 }
