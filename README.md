@@ -18,13 +18,15 @@ This does not pollute your database with tons of extra tables like other multili
 
     ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-menu-toggle.png)
 
-### Other Features
+1. Added language switcher in the editor's header.
+
+    ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-editor-switcher.png)
+
+**OTHER FEATURES**
 
 1. **Automatic Link Conversion** - Links in content and menu automatically converted to the locale version.
 
 1. **ACF Integration** - PostObject and Link field automatically converted to the locale version.
-
-1. **Language Selector in Gutenberg** - Added language switcher in the editor's header.
 
 ## How to Use
 
