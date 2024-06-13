@@ -46,6 +46,10 @@ function bogo_acf_format_post_to_locale_post($value, $post_id, $field) {
  * @filter acf/format_value/type=link
  */
 function bogo_acf_format_link_to_locale_link($value) {
+  if (!isset($value['url'])) {
+    return $value;
+  }
+
   $locale_link = bogo_get_locale_link_by_url($value['url']);
 
   if ($locale_link) {

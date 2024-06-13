@@ -3,6 +3,8 @@
 add_filter('pre_get_posts', 'bogo_hide_translated_post_in_menu_editor');
 add_filter('wp_get_nav_menu_items', 'bogo_localize_nav_menu_items', 15, 3);
 
+add_action('wp_nav_menu_item_custom_fields', 'bogo_add_locale_label_in_custom_link', 1, 4);
+
 /**
  * @filter wp_get_nav_menu_items
  */
@@ -60,4 +62,25 @@ function bogo_hide_translated_post_in_menu_editor($query) {
   ]);
 
   return $query;
+}
+
+/**
+ * @action wp_nav_menu_item_custom_fields
+ */
+function bogo_add_locale_label_in_custom_link($id, $menu_item, $depth, $args) {
+  if ($menu_item->object !== 'custom') { return; }
+
+  $langs = bogo_available_languages();
+  unset($langs[BOGO_BASE_LOCALE]);
+
+  ?>
+    <fieldset class="bogo-locale-labels">
+    <?php foreach ($langs as $key => $label): ?>
+      <label>
+        <i class="fi fi-<?= $key ?>">
+        <input type="text" placeholder="<?= $label ?>" name="bogo-locale-<?= $key ?>">
+      </label>
+    <?php endforeach; ?>
+    </fieldset>
+  <?php
 }

@@ -59,6 +59,25 @@ This does not pollute your database with tons of extra tables like other multili
 - Added code to escape HTML tag in Gutenberg's attribute after duplicated a post.
 - Changed the `_original_post` meta to store ID instead of GUID for easier querying.
 
+## Translatable Custom Post Type
+
+By default this plugin only add locale option on Pages and Posts. To add it on a custom post type, add this code:
+
+```php
+// replace 'yourcpt' with the post type name
+
+add_filter('bogo_localizable_post_types', function($post_types) {
+  $post_types[] = 'yourcpt';
+  return $post_types;
+});
+
+add_filter('manage_yourcpt_posts_columns', function($columns) {
+  return bogo_posts_columns($columns, 'yourcpt');
+});
+```
+
+For custom taxonomy translation, the original plugin already allow this. From the admin sidebar select Language > Terms Translation. It will create a `.po` file in `wp-content/languages/bogo`.
+
 ## Known Bugs
 
 - If you switched the base language mid-way, the Post List table won't show the proper parent post.
