@@ -28,6 +28,8 @@ This does not pollute your database with tons of extra tables like other multili
 
 1. **ACF Integration** - PostObject and Link field automatically converted to the locale version.
 
+1. **Menu Nav Integration** - Custom Link will have extra fields to enter the translated label.
+
 ## How to Use
 
 1. If your base language is not `en_US`, you need to add filter to change it:
@@ -64,15 +66,15 @@ This does not pollute your database with tons of extra tables like other multili
 By default this plugin only add locale option on Pages and Posts. To add it on a custom post type, add this code:
 
 ```php
-// replace 'yourcpt' with the post type name
+// replace 'YOURCPT' with the post type name
 
 add_filter('bogo_localizable_post_types', function($post_types) {
-  $post_types[] = 'yourcpt';
+  $post_types[] = 'YOURCPT';
   return $post_types;
 });
 
-add_filter('manage_yourcpt_posts_columns', function($columns) {
-  return bogo_posts_columns($columns, 'yourcpt');
+add_filter('manage_YOURCPT_posts_columns', function($columns) {
+  return bogo_posts_columns($columns, 'YOURCPT');
 });
 ```
 
@@ -81,5 +83,9 @@ For custom taxonomy translation, the original plugin already allow this. From th
 ## Known Bugs
 
 - If you switched the base language mid-way, the Post List table won't show the proper parent post.
-- Language with "formal" or "informal" version can't work.
-- You might encounter wrong or empty flag as the SVG files we use doesn't follow international naming.
+- Some languages are spoken in multiple countries, therefore the flags might be wrong.
+
+## Future Plan
+
+- Add interface to add translation within Gutenberg.
+- Change the Terms Translation interface to be within each Category page.

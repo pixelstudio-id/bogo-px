@@ -42,8 +42,53 @@ const localeColumn = {
   },
 };
 
+const navLocale = {
+  init() {
+    const $checkboxes = document.querySelectorAll('.menu-item-custom .bogo-locale-options input[type="checkbox"]');
+    $checkboxes.forEach(($cb) => {
+      $cb.addEventListener('change', this.onCheckboxChange);
+    });
+
+    const $titles = document.querySelectorAll('.menu-item-custom [name*="_bogo_title"]');
+    $titles.forEach(($t) => {
+      $t.addEventListener('change', this.onTitleChange);
+    });
+  },
+
+  /**
+   * Hide or show the translation field
+   */
+  onCheckboxChange(e) {
+    const { checked } = e.currentTarget;
+    const value = e.currentTarget.getAttribute('value');
+    const $input = e.currentTarget.closest('.menu-item-settings').querySelector(`label [name*="[${value}]"]`);
+
+    // abort if no input
+    if (!$input) { return; }
+
+    const $inputWrapper = $input.closest('label');
+
+    if (checked) {
+      $inputWrapper.style.display = '';
+    } else {
+      $inputWrapper.style.display = 'none';
+    }
+  },
+
+  /**
+   * Add or remove the 'is-empty' class
+   */
+  onTitleChange(e) {
+    const { value } = e.currentTarget;
+    const $wrapper = e.currentTarget.closest('label');
+
+    $wrapper.classList.toggle('is-empty', !value);
+  },
+};
+
 function onReady() {
   localeColumn.init();
+  navLocale.init();
 }
 
 document.addEventListener('DOMContentLoaded', onReady);

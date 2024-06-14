@@ -10,7 +10,7 @@ const entryPoints = {
   public: './custom/assets/public.js',
   admin: './custom/assets/admin.js',
   editor: './custom/assets/editor.js',
-  flags: './custom/assets/flags.scss',
+  flags: './custom/assets/flags.sass',
 };
 
 module.exports = {

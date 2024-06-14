@@ -6,7 +6,7 @@ function onReady() {
   const { current_option, options } = window.bogoLanguageDropdown;
 
   const currentHTML = `<div class="bogo-dropdown__button" tabindex="0">
-    <i class="fi fi-${current_option.flag_id}"></i>
+    <i class="flag flag-${current_option.locale}"></i>
     <span>${current_option.label}</span>
   </div>`;
 
@@ -18,7 +18,7 @@ function onReady() {
 
     optionsHTML += `<li>
       <a href="${option.url}">
-        <i class="fi fi-${option.flag_id}"></i>
+        <i class="flag flag-${option.locale}"></i>
         <span>
           ${option.label}
           ${statusHTML}

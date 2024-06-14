@@ -3,160 +3,198 @@
 add_filter( 'bloginfo', 'bogo_bloginfo_filter', 10, 2 );
 
 function bogo_bloginfo_filter( $output, $show ) {
-	if ( ! Bogo_POMO::is_ready() ) {
-		return $output;
-	}
+  if ( ! Bogo_POMO::is_ready() ) {
+    return $output;
+  }
 
-	if ( 'name' == $show ) {
-		$output = bogo_translate( 'blogname', 'blogname', $output );
-	} elseif ( 'description' == $show ) {
-		$output = bogo_translate( 'blogdescription', 'blogdescription', $output );
-	}
+  if ( 'name' == $show ) {
+    $output = bogo_translate( 'blogname', 'blogname', $output );
+  } elseif ( 'description' == $show ) {
+    $output = bogo_translate( 'blogdescription', 'blogdescription', $output );
+  }
 
-	return $output;
+  return $output;
 }
 
 add_filter( 'get_term', 'bogo_get_term_filter', 10, 2 );
 
 function bogo_get_term_filter( $term, $taxonomy ) {
-	if ( ! Bogo_POMO::is_ready() ) {
-		return $term;
-	}
+  if ( ! Bogo_POMO::is_ready() ) {
+    return $term;
+  }
 
-	if ( $term instanceof WP_Term ) {
-		$term = bogo_translate_term( $term );
-	}
+  if ( $term instanceof WP_Term ) {
+    $term = bogo_translate_term( $term );
+  }
 
-	return $term;
+  return $term;
 }
 
 add_action( 'load-edit-tags.php', 'bogo_remove_get_term_filter', 10, 0 );
 
 function bogo_remove_get_term_filter() {
-	remove_filter( 'get_term', 'bogo_get_term_filter' );
+  remove_filter( 'get_term', 'bogo_get_term_filter' );
 }
 
 function bogo_translate_term( WP_Term $term ) {
-	$term->name = bogo_translate(
-		sprintf( '%s:%d', $term->taxonomy, $term->term_id ),
-		$term->taxonomy,
-		$term->name
-	);
+  $term->name = bogo_translate(
+    sprintf( '%s:%d', $term->taxonomy, $term->term_id ),
+    $term->taxonomy,
+    $term->name
+  );
 
-	return $term;
+  return $term;
 }
 
 function bogo_translate( $singular, $context = '', $default = '' ) {
-	return Bogo_POMO::translate( $singular, $context, $default );
+  return Bogo_POMO::translate( $singular, $context, $default );
 }
 
 class Bogo_POMO {
 
-	private static $mo;
+  private static $mo;
 
-	public static function translate( $singular, $context = '', $default = '' ) {
-		if ( ! self::$mo ) {
-			return '' !== $default ? $default : $singular;
-		}
+  public static function translate( $singular, $context = '', $default = '' ) {
+    if ( ! self::$mo ) {
+      return '' !== $default ? $default : $singular;
+    }
 
-		$translated = self::$mo->translate( $singular, $context );
+    $translated = self::$mo->translate( $singular, $context );
 
-		if ( $translated == $singular
-		and '' !== $default ) {
-			return $default;
-		} else {
-			return $translated;
-		}
-	}
+    if ( $translated == $singular
+    and '' !== $default ) {
+      return $default;
+    } else {
+      return $translated;
+    }
+  }
 
-	public static function export( $locale, $entries = array() ) {
-		if ( ! bogo_is_available_locale( $locale ) ) {
-			return false;
-		}
+  public static function export( $locale, $entries = array() ) {
+    if ( ! bogo_is_available_locale( $locale ) ) {
+      return false;
+    }
 
-		$dir = self::dir();
+    $dir = self::dir();
 
-		$revision_date = new DateTimeImmutable();
+    $revision_date = new DateTimeImmutable();
 
-		$headers = array(
-			'PO-Revision-Date' => $revision_date->format( 'Y-m-d H:i:s' ) . '+0000',
-			'MIME-Version' => '1.0',
-			'Content-Type' => 'text/plain; charset=UTF-8',
-			'Content-Transfer-Encoding' => '8bit',
-			'X-Generator' => sprintf( 'Bogo %s', BOGO_VERSION ),
-			'Language' => $locale,
-			'Project-Id-Version' =>
-				sprintf( 'WordPress %s', get_bloginfo( 'version' ) ),
-		);
+    $headers = array(
+      'PO-Revision-Date' => $revision_date->format( 'Y-m-d H:i:s' ) . '+0000',
+      'MIME-Version' => '1.0',
+      'Content-Type' => 'text/plain; charset=UTF-8',
+      'Content-Transfer-Encoding' => '8bit',
+      'X-Generator' => sprintf( 'Bogo %s', BOGO_VERSION ),
+      'Language' => $locale,
+      'Project-Id-Version' =>
+        sprintf( 'WordPress %s', get_bloginfo( 'version' ) ),
+    );
 
-		require_once ABSPATH . WPINC . '/pomo/po.php';
-		$po = new PO();
-		$po->set_headers( $headers );
+    require_once ABSPATH . WPINC . '/pomo/po.php';
+    $po = new PO();
+    $po->set_headers( $headers );
 
-		foreach ( (array) $entries as $entry ) {
-			$entry = new Translation_Entry( $entry );
-			$po->add_entry( $entry );
-		}
+    foreach ( (array) $entries as $entry ) {
+      $entry = new Translation_Entry( $entry );
+      $po->add_entry( $entry );
+    }
 
-		$po_file = is_multisite()
-			? sprintf( '%d-%s.po', get_current_blog_id(), $locale )
-			: sprintf( '%s.po', $locale );
-		$po_file = path_join( $dir, $po_file );
-		$po->export_to_file( $po_file );
+    $po_file = is_multisite()
+      ? sprintf( '%d-%s.po', get_current_blog_id(), $locale )
+      : sprintf( '%s.po', $locale );
+    $po_file = path_join( $dir, $po_file );
+    $po->export_to_file( $po_file );
 
-		$mo = new MO();
-		$mo->set_headers( $headers );
+    $mo = new MO();
+    $mo->set_headers( $headers );
 
-		foreach ( (array) $entries as $entry ) {
-			$entry = new Translation_Entry( $entry );
-			$mo->add_entry( $entry );
-		}
+    foreach ( (array) $entries as $entry ) {
+      $entry = new Translation_Entry( $entry );
+      $mo->add_entry( $entry );
+    }
 
-		$mo_file = is_multisite()
-			? sprintf( '%d-%s.mo', get_current_blog_id(), $locale )
-			: sprintf( '%s.mo', $locale );
-		$mo_file = path_join( $dir, $mo_file );
-		return $mo->export_to_file( $mo_file );
-	}
+    $mo_file = is_multisite()
+      ? sprintf( '%d-%s.mo', get_current_blog_id(), $locale )
+      : sprintf( '%s.mo', $locale );
+    $mo_file = path_join( $dir, $mo_file );
+    return $mo->export_to_file( $mo_file );
+  }
 
-	public static function import( $locale ) {
-		if ( ! bogo_is_available_locale( $locale ) ) {
-			return false;
-		}
+  public static function import( $locale ) {
+    if ( ! bogo_is_available_locale( $locale ) ) {
+      return false;
+    }
 
-		$dir = self::dir();
+    $dir = self::dir();
 
-		$mo_file = is_multisite()
-			? sprintf( '%d-%s.mo', get_current_blog_id(), $locale )
-			: sprintf( '%s.mo', $locale );
-		$mo_file = path_join( $dir, $mo_file );
+    $mo_file = is_multisite()
+      ? sprintf( '%d-%s.mo', get_current_blog_id(), $locale )
+      : sprintf( '%s.mo', $locale );
+    $mo_file = path_join( $dir, $mo_file );
 
-		if ( ! is_readable( $mo_file ) ) {
-			return false;
-		}
+    if ( ! is_readable( $mo_file ) ) {
+      return false;
+    }
 
-		$mo = new MO();
+    $mo = new MO();
 
-		if ( ! $mo->import_from_file( $mo_file ) ) {
-			return false;
-		}
+    if ( ! $mo->import_from_file( $mo_file ) ) {
+      return false;
+    }
 
-		self::$mo = $mo;
-		return true;
-	}
+    self::$mo = $mo;
+    return true;
+  }
 
-	public static function reset() {
-		self::$mo = null;
-	}
+  /**
+   * Add new entries or update old one
+   * 
+   * @param array[] $entries - consisted of 3 main keys: 'singular' (original word), 'translation', and 'context' (group)
+   * 
+   * @change - new function to update an entry
+   */
+  public static function add_entries($locale, $entries) {
+    if (!bogo_is_available_locale($locale)) { return false; }
 
-	public static function is_ready() {
-		return (bool) self::$mo;
-	}
+    // get current file
+    require_once ABSPATH . WPINC . '/pomo/po.php';
+    $dir = self::dir();
+    $po_file = is_multisite()
+      ? sprintf('%d-%s.po', get_current_blog_id(), $locale)
+      : sprintf('%s.po', $locale);
+    $po_file = path_join($dir, $po_file);
+    $po = new PO();
+    $po->import_from_file($po_file);
 
-	private static function dir() {
-		$dir = path_join( WP_LANG_DIR, 'bogo' );
-		$dir = apply_filters( 'bogo_pomo_dir', $dir );
-		wp_mkdir_p( $dir );
-		return $dir;
-	}
+    // populate with old entries
+    $new_entries = [];
+    foreach ($po->entries as $e) {
+      $new_entries[$e->singular] = (array) $e;
+    }
+
+    // fill in the new one, or update the old one if key exist
+    foreach ($entries as $e) {
+      if (isset($e['translation'])) {
+        $e['translations'] = [$e['translation']];
+      }
+
+      $new_entries[$e['singular']] = $e;
+    }
+
+    self::export($locale, $new_entries);
+  }
+
+  public static function reset() {
+    self::$mo = null;
+  }
+
+  public static function is_ready() {
+    return (bool) self::$mo;
+  }
+
+  private static function dir() {
+    $dir = path_join( WP_LANG_DIR, 'bogo' );
+    $dir = apply_filters( 'bogo_pomo_dir', $dir );
+    wp_mkdir_p( $dir );
+    return $dir;
+  }
 }

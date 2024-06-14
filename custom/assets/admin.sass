@@ -11,21 +11,21 @@
   column-gap: 0.375rem
   row-gap: 0.25rem
 
-  .fi
+  .flag
     cursor: pointer
     opacity: 0.2
     transition: all .25s ease-in-out
     filter: grayscale(50)
     transform: scale(0.9)
 
-  .fi[class*="is-status-"]
+  .flag[class*="is-status-"]
     visibility: visible
     opacity: 1
     filter: none
     transform: none
 
-  .fi.is-status-future,
-  .fi.is-status-draft
+  .flag.is-status-future,
+  .flag.is-status-draft
     position: relative
     opacity: 0.6
 
@@ -42,16 +42,64 @@
       background: white var(--_icon) no-repeat center center
       background-size: contain
 
-  .fi.is-status-draft
+  .flag.is-status-draft
     --_icon: url('./svg/circle-d.svg')
-  .fi.is-status-future
+  .flag.is-status-future
     --_icon: url('./svg/circle-calendar.svg')
   // .fi.is-status-publish
 
-  .fi:hover
+  .flag:hover
     opacity: .75
     filter: none
 
   .is-loading
     background-image: url('./images/spinner.gif')
 
+// LANGUAGE PACKS page
+
+#bogo-language-packs
+  .flag
+    vertical-align: sub
+    width: 1.5em
+    margin-right: 0.5rem
+  code
+    font-size: 90%
+    padding: 0
+    background: transparent
+  
+// MENU page
+
+.field-bogo-titles
+  display: flex
+  flex-wrap: wrap
+  row-gap: 0.4rem
+  column-gap: 0.4rem
+  margin-top: 1rem
+  margin-bottom: 0.5rem
+  width: 100%
+
+  label
+    display: flex
+    align-items: center
+    position: relative
+    width: calc(50% - 0.25rem)
+  input
+    flex: 1
+    width: 100%
+    margin: 0
+    padding-left: 2rem
+
+  .flag
+    position: absolute
+    left: 0.5rem
+    width: 1.25em
+    opacity: .5
+    transition: all .25s ease-in-out
+
+  .is-empty .flag
+    opacity: .3
+    filter: grayscale(1)
+
+  label:focus-within .flag
+    opacity: 1
+    filter: none

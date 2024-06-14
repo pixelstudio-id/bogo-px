@@ -40,8 +40,6 @@ function bogo_create_admin_flag_buttons($post) {
 
   $flags = '';
   foreach ($available_locales as $locale) {
-    preg_match('/[a-zA-Z]+$/', $locale, $matches);
-    $flag_id = isset($matches[0]) ? strtolower($matches[0]) : 'us';
     $language = bogo_get_language($locale) ?: $locale;
 
     $locale_post = isset($available_translations[$locale])
@@ -56,7 +54,7 @@ function bogo_create_admin_flag_buttons($post) {
       ], 'post.php'));
 
       $post_status = $locale_post->post_status;
-      $classes = "fi fi-{$flag_id} is-status-{$post_status}";
+      $classes = "flag flag-{$locale} is-status-{$post_status}";
       $title = "Edit {$language} Translation";
 
       switch ($post_status) {
@@ -71,7 +69,7 @@ function bogo_create_admin_flag_buttons($post) {
     }
     // if no translation, create ADD link
     else {
-      $classes = "fi fi-{$flag_id}";
+      $classes = "flag flag-{$locale}";
       $title = "Add {$language} Translation";
       $flags .= "<a class='{$classes}' title='{$title}' data-id='{$post_id}' data-locale='{$locale}'></a>";
     }

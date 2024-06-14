@@ -151,9 +151,11 @@ class Bogo_Language_Packs_List_Table extends WP_List_Table {
 		return $links;
 	}
 
+	// @changed - added flag and wrapper to locale
 	public function column_name( $item ) {
 		echo sprintf(
-			'<strong>%1$s</strong> [%2$s]',
+			'<i class="flag flag-%1$s"></i><strong>%2$s</strong> <code>[%3$s]</code>',
+			esc_html( $item->locale ),
 			esc_html( $item->language ),
 			esc_html( $item->locale )
 		);

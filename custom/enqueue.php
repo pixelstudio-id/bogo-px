@@ -44,16 +44,13 @@ function bogo_editor_enqueue_scripts_custom() {
       'action' => 'edit',
     ], 'post.php'));
 
-    preg_match('/[a-zA-Z]+$/', $locale, $matches);
-    $flag_id = isset($matches[0]) ? strtolower($matches[0]) : 'us';
-
     $name = bogo_get_language_native_name($locale);
     $name = trim(preg_replace('/\(.+\)/', '', $name));
 
     $options[] = [
       'url' => $url,
       'label' => $name,
-      'flag_id' => $flag_id,
+      'locale' => $locale,
       'status' => $p->post_status,
     ];
   }
