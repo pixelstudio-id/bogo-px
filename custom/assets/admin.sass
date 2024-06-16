@@ -1,3 +1,4 @@
+@import "helpers"
 
 ///// LOCALE COLUMN
 
@@ -66,10 +67,10 @@
     font-size: 90%
     padding: 0
     background: transparent
-  
-// MENU page
 
-.field-bogo-titles
+///// MENU
+
+.bogo-menu-titles
   display: flex
   flex-wrap: wrap
   row-gap: 0.4rem
@@ -78,16 +79,35 @@
   margin-bottom: 0.5rem
   width: 100%
 
-  label
-    display: flex
-    align-items: center
-    position: relative
-    width: calc(50% - 0.25rem)
+label.bogo-field
+  display: flex
+  align-items: center
+  position: relative
+  width: calc(50% - 0.25rem)
+
+  @media ($below-xs)
+    width: 100%
+
   input
     flex: 1
     width: 100%
     margin: 0
     padding-left: 2rem
+    padding-top: 0.75rem
+  span
+    position: absolute
+    top: 0
+    left: 2.1rem
+    opacity: .5
+
+    white-space: nowrap
+    text-transform: uppercase
+    letter-spacing: 0.05em
+    font-size: 10px
+    font-weight: 600
+
+    .form-table &
+      top: 0.25rem
 
   .flag
     position: absolute
@@ -96,10 +116,38 @@
     opacity: .5
     transition: all .25s ease-in-out
 
-  .is-empty .flag
+  &.is-empty .flag
     opacity: .3
     filter: grayscale(1)
+  
+  &.is-empty.has-placeholder .flag
+    opacity: .5
+    filter: none
 
-  label:focus-within .flag
+  &:focus-within .flag
     opacity: 1
     filter: none
+  
+.bogo-menu-notice
+  display: block
+  line-height: 1
+
+  a
+    display: inline-flex
+    align-items: center
+    column-gap: 0.5rem
+    border: 1px solid transparent
+    padding-top: 0.25rem
+
+  i
+    width: 1rem
+    opacity: .5
+
+///// TAXONOMY
+
+.bogo-term-names
+  td
+    display: flex
+    flex-wrap: wrap
+    column-gap: 0.5rem
+    row-gap: 0.5rem

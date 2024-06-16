@@ -10,13 +10,13 @@ This does not pollute your database with tons of extra tables like other multili
 
     ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-flags.png)
 
-1. Automatically change the page title in Menu with the translated version. Also a new shortcode `[bogo-dropdown]` for language selector.
+1. Translate Menu Item. If empty, it will use the translated Title of that post/page.
 
-    ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-menu-translated.png))
+    ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-menu-item-localize.png)
 
-1. Shortcode variation `[bogo-dropdown style="toggle"]` that fits better for mobile.
+1. Translate Category.
 
-    ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-menu-toggle.png)
+    ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-term-localize.png)
 
 1. Added language switcher in the editor's header.
 
@@ -27,8 +27,6 @@ This does not pollute your database with tons of extra tables like other multili
 1. **Automatic Link Conversion** - Links in content and menu automatically converted to the locale version.
 
 1. **ACF Integration** - PostObject and Link field automatically converted to the locale version.
-
-1. **Menu Nav Integration** - Custom Link will have extra fields to enter the translated label.
 
 ## How to Use
 
@@ -52,40 +50,53 @@ This does not pollute your database with tons of extra tables like other multili
     <?= do_shortcode('[bogo-dropdown]'); ?>
     ```
 
-1. (Optional) If you want to hide/add Menu Item depending on the language, each Menu Item now has checkboxes on it's visibility.
+1. Done! Note that if a page doesn't have any translated version, the dropdown won't appear.
 
-1. Done!
+## Language Switcher
 
-## Technical Changes
+Use the shortcode `[bogo-dropdown]` to output a language switcher:
 
-- Added code to escape HTML tag in Gutenberg's attribute after duplicated a post.
-- Changed the `_original_post` meta to store ID instead of GUID for easier querying.
+![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-menu-translated.png))
 
-## Translatable Custom Post Type
+
+Use the variation `[bogo-dropdown style="toggle"]` that fits better for mobile.
+
+![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-menu-toggle.png)
+
+## Custom Post Type / Taxonomy
 
 By default this plugin only add locale option on Pages and Posts. To add it on a custom post type, add this code:
 
 ```php
-// replace 'YOURCPT' with the post type name
-
+// replace 'YOURCPT' with the custom post type name
 add_filter('bogo_localizable_post_types', function($post_types) {
   $post_types[] = 'YOURCPT';
   return $post_types;
 });
+```
 
-add_filter('manage_YOURCPT_posts_columns', function($columns) {
-  return bogo_posts_columns($columns, 'YOURCPT');
+For taxonomy translation, it adds custom fields to the Term's setting page. By default it's active on Category and Tags. To add it on a custom taxonomy, add this code:
+
+```php
+// replace 'YOURTAX' with the custom taxonomy
+add_filter('bogo_localizable_taxonomies', function($taxonomies) {
+  $taxonomies[] = 'YOURTAX';
+  return $taxonomies;
 });
 ```
 
-For custom taxonomy translation, the original plugin already allow this. From the admin sidebar select Language > Terms Translation. It will create a `.po` file in `wp-content/languages/bogo`.
+### Technical Changes
 
-## Known Bugs
+- Added code to escape HTML tag in Gutenberg's attribute after duplicated a post.
+- Changed the `_original_post` meta to store ID instead of GUID for easier querying.
+- Removed the Terms Translation page because it's changed to using custom field.
+
+### Known Bugs
 
 - If you switched the base language mid-way, the Post List table won't show the proper parent post.
 - Some languages are spoken in multiple countries, therefore the flags might be wrong.
 
-## Future Plan
+### Future Plan
 
 - Add interface to add translation within Gutenberg.
-- Change the Terms Translation interface to be within each Category page.
+- Add translatable Description for Menu and Term.

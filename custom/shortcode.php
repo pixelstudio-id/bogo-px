@@ -59,11 +59,17 @@ function bogo_dropdown_shortcode($atts, $content) {
     return '';
   }
 
+  // if has 6 or more items, split to 2 columns
+  $links_classes = '';
+  if ($locale_count > 5) {
+    $links_classes = 'has-columns-2';
+  }
+
   return "<div class='bogo-dropdown is-style-{$atts['style']}'>
     <span class='bogo-dropdown__button' tabindex='0'>
       {$current_lang_name}
     </span>
-    <ul class='bogo-dropdown__links'>
+    <ul class='bogo-dropdown__links {$links_classes}'>
       {$links_html}
     </ul>
   </div>";

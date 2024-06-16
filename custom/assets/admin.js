@@ -42,16 +42,42 @@ const localeColumn = {
   },
 };
 
-const navLocale = {
+/**
+ * Bogo fields that exist in Menu and Category editor
+ */
+const bogoField = {
   init() {
-    const $checkboxes = document.querySelectorAll('.menu-item-custom .bogo-locale-options input[type="checkbox"]');
+    const $fields = document.querySelectorAll('.bogo-field input');
+    if (!$fields) { return; }
+
+    $fields.forEach(($field) => {
+      $field.addEventListener('change', this.onChange);
+    });
+  },
+
+  onChange(e) {
+    const { value } = e.currentTarget;
+    const $wrapper = e.currentTarget.closest('label');
+
+    $wrapper.classList.toggle('is-empty', !value);
+  },
+};
+
+/**
+ *
+ */
+const menuLocale = {
+  init() {
+    if (!document.body.classList.contains('nav-menus-php')) { return; }
+
+    const $checkboxes = document.querySelectorAll('.menu-item .bogo-locale-options input[type="checkbox"]');
     $checkboxes.forEach(($cb) => {
       $cb.addEventListener('change', this.onCheckboxChange);
     });
 
-    const $titles = document.querySelectorAll('.menu-item-custom [name*="_bogo_title"]');
-    $titles.forEach(($t) => {
-      $t.addEventListener('change', this.onTitleChange);
+    const $mainTitles = document.querySelectorAll('.edit-menu-item-title');
+    $mainTitles.forEach(($t) => {
+      $t.addEventListener('input', this.onMainTitleInput);
     });
   },
 
@@ -76,19 +102,50 @@ const navLocale = {
   },
 
   /**
-   * Add or remove the 'is-empty' class
+   * Edit the main title in each menu item
    */
-  onTitleChange(e) {
-    const { value } = e.currentTarget;
-    const $wrapper = e.currentTarget.closest('label');
+  onMainTitleInput(e) {
+    const $input = e.currentTarget;
+    const $wrapper = $input.closest('.menu-item');
+    const $bogoInputs = $wrapper.querySelectorAll('.field-bogo-titles label:not(.has-fixed-placeholder) input');
 
-    $wrapper.classList.toggle('is-empty', !value);
+    $bogoInputs.forEach(($i) => {
+      $i.setAttribute('placeholder', $input.value);
+    });
+  },
+};
+
+/**
+ *
+ */
+const termLocale = {
+  init() {
+    if (!document.body.classList.contains('term-php')) { return; }
+
+    const $name = document.querySelector('input#name');
+    if ($name) {
+      $name.addEventListener('input', this.onNameInput);
+    }
+  },
+
+  /**
+   * Update the placeholder after changing the main name
+   */
+  onNameInput(e) {
+    const $input = e.currentTarget;
+    const $bogoInputs = document.querySelectorAll('.bogo-term-names .bogo-field input');
+
+    $bogoInputs.forEach(($i) => {
+      $i.setAttribute('placeholder', $input.value);
+    });
   },
 };
 
 function onReady() {
+  bogoField.init();
   localeColumn.init();
-  navLocale.init();
+  menuLocale.init();
+  termLocale.init();
 }
 
 document.addEventListener('DOMContentLoaded', onReady);

@@ -9,12 +9,12 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: bogo
  * Domain Path: /languages/
- * Version: 4.3.0
+ * Version: 4.4.0
  * Requires at least: 6.4
  * Requires PHP: 7.4
  */
 
-define( 'BOGO_VERSION', '4.3.0' );
+define( 'BOGO_VERSION', '4.4.0' );
 
 define( 'BOGO_PLUGIN', __FILE__ );
 
@@ -44,14 +44,7 @@ require_once BOGO_PLUGIN_DIR . '/includes/rest-api.php';
 require_once BOGO_PLUGIN_DIR . '/includes/shortcodes.php';
 require_once BOGO_PLUGIN_DIR . '/includes/block-editor/block-editor.php';
 
-define('BOGO_CUSTOM_DIR', BOGO_PLUGIN_DIR . '/custom');
-require_once BOGO_CUSTOM_DIR . '/global-link-groups.php';
-require_once BOGO_CUSTOM_DIR . '/enqueue.php';
-require_once BOGO_CUSTOM_DIR . '/content.php';
-require_once BOGO_CUSTOM_DIR . '/list-table.php';
-require_once BOGO_CUSTOM_DIR . '/nav-menu.php';
-require_once BOGO_CUSTOM_DIR . '/acf.php';
-require_once BOGO_CUSTOM_DIR . '/shortcode.php';
+require_once __DIR__ . '/custom/_index.php';
 
 if ( is_admin() ) {
 	require_once BOGO_PLUGIN_DIR . '/admin/admin.php';

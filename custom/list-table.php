@@ -1,6 +1,10 @@
 <?php
 
 add_filter('pre_get_posts', 'bogo_hide_translated_post_in_list_table');
+add_action('admin_init', 'bogo_add_column_to_custom_post_type');
+
+
+/////
 
 /**
  * @filter pre_get_posts
@@ -30,7 +34,25 @@ function bogo_hide_translated_post_in_list_table($query) {
 }
 
 /**
+ * Add "Locale" column in custom post types
+ * 
+ * @action admin_init
+ */
+function bogo_add_column_to_custom_post_type() {
+  $post_types = bogo_localizable_post_types();
+  foreach ($post_types as $pt) {
+    if ($pt === 'post' || $pt === 'page') { continue; }
+
+    add_filter("manage_{$pt}_posts_columns", function($columns) use ($pt) {
+      return bogo_posts_columns($columns, $pt);
+    });
+  }
+}
+
+/**
  * Create button of flags to Edit/Create locale post
+ * 
+ * @usedin admin/includes/post.php
  */
 function bogo_create_admin_flag_buttons($post) {
   $post_id = $post->ID;
