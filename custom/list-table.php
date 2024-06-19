@@ -70,10 +70,7 @@ function bogo_create_admin_flag_buttons($post) {
 
     // if already has translation, create EDIT link
     if ($locale_post) {
-      $href = esc_url(add_query_arg([
-        'post' => $locale_post->ID,
-        'action' => 'edit',
-      ], 'post.php'));
+      $href = get_edit_post_link($locale_post->ID);
 
       $post_status = $locale_post->post_status;
       $classes = "flag flag-{$locale} is-status-{$post_status}";

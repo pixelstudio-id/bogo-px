@@ -1,7 +1,7 @@
 <?php
 
 add_filter('pre_get_posts', 'bogo_hide_translated_post_in_menu_editor');
-add_filter('wp_get_nav_menu_items', 'bogo_localize_nav_menu_items', 15, 3);
+add_filter('wp_get_nav_menu_items', 'bogo_localize_nav_menu_items', 1, 3);
 
 add_action('wp_nav_menu_item_custom_fields', 'bogo_add_fields_in_menu_item', 1, 2);
 add_action('wp_update_nav_menu', 'bogo_save_translated_custom_link', 10, 2);
@@ -10,7 +10,10 @@ add_action('wp_update_nav_menu', 'bogo_save_translated_custom_link', 10, 2);
  * @filter wp_get_nav_menu_items
  */
 function bogo_localize_nav_menu_items($items, $menu, $args) {
-  foreach ($items as $item) {
+  if (is_admin()) { return $items; } // abort if admin
+  if (get_locale() === BOGO_BASE_LOCALE) { return $items; } // abort if base locale
+
+  foreach ($items as &$item) {
     $titles = json_decode(get_post_meta($item->db_id, '_bogo_title', true), true);
     
     // if custom, it's always replaced by the Bogo Field
@@ -20,15 +23,15 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
     }
     // if post_type, check if empty, use the native title
     elseif ($item->type === 'post_type') {
-
-    }
-
-    elseif ($item->type === 'post_type') {
       $locale_link = bogo_get_locale_link_by_id($item->object_id);
+      $default_title = $item->title;
+
       if ($locale_link) {
-        $item->title = $locale_link['post']->post_title;
+        $default_title = $locale_link['post']->post_title;
         $item->url = $locale_link['url'];
       }
+
+      $item->title = empty($titles[get_locale()]) ? $default_title : $titles[get_locale()];
     }
   }
 
@@ -97,6 +100,11 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
     return;
   }
 
+  // abort if menu title is shortcode
+  if (preg_match('/^\[.+\]$/', trim($menu_item->post_title))) {
+    return;
+  }
+
   $active_locales = $menu_item->bogo_locales;
   $all_locales = bogo_available_languages();
   unset($all_locales[BOGO_BASE_LOCALE]);
@@ -149,12 +157,8 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
  * Show a notice with link to edit the taxonomy
  */
 function _bogo_echo_menu_item_taxonomy_notice($menu_item) {
-  $href = esc_url(add_query_arg([
-    'taxonomy' => $menu_item->object,
-    'tag_ID' => $menu_item->object_id,
-  ], 'term.php'));
+  $href = get_edit_term_link($menu_item->object_id, $menu_item->object);
   ?>
-
   <p class="bogo-menu-notice">
     <a href="<?= $href ?>" target="_blank">
       <i class="dashicons-before dashicons-translation"></i>

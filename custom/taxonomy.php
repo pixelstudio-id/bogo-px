@@ -64,8 +64,11 @@ function bogo_after_save_taxonomy($term_id) {
  */
 function bogo_get_term_translate($term, $taxonomy) {
   $locale = get_locale();
-  $names = json_decode(get_term_meta($term->term_id, '_bogo_name', true), true);
-  $term->name = $names[$locale] ?? $term->name;
+  if ($locale === BOGO_BASE_LOCALE) { return $term; }
 
+  $names = json_decode(get_term_meta($term->term_id, '_bogo_name', true), true);
+  if (!$names) { return $term; }
+
+  $term->name = empty($names[$locale]) ? $term->name : $names[$locale];
   return $term;
 }

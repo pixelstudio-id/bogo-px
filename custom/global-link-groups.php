@@ -89,10 +89,13 @@ function _bogo_get_locale_link($key, $value) {
 
   foreach ($BOGO_LINK_GROUPS as $group) {
     $is_in_this_group = array_search($value, array_column($group, $key));
-
+    
     if ($is_in_this_group !== false) {
       $locale_index = array_search(get_locale(), array_column($group, 'locale'));
-      return $group[$locale_index];
+      
+      if ($locale_index !== false) {
+        return $group[$locale_index];
+      }
     }
   }
 
