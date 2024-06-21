@@ -5,6 +5,7 @@ if (class_exists('ACF')) {
   add_filter('acf/fields/page_link/query', 'bogo_acf_fields_hide_localized_posts', 10, 3);
 
   add_filter('acf/format_value/type=post_object', 'bogo_acf_format_post_to_locale_post', 10, 3);
+  add_filter('acf/format_value/type=page_link', 'bogo_acf_format_post_to_locale_post', 10, 3);
   add_filter('acf/format_value/type=link', 'bogo_acf_format_link_to_locale_link', 10);
 }
 

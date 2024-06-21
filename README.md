@@ -100,3 +100,4 @@ add_filter('bogo_localizable_taxonomies', function($taxonomies) {
 
 - Add interface to add translation within Gutenberg.
 - Add translatable Description for Menu and Term.
+- Add conditional check whether the user has access to edit that language or not. This role thing is already part of BOGO, just need to add conditional and hide the language option.
