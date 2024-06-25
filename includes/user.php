@@ -88,7 +88,7 @@ function bogo_switch_user_locale() {
 }
 
 function bogo_get_user_locale( $user_id = 0 ) {
-	$default_locale = bogo_get_default_locale();
+	$default_locale = BOGO_DEFAULT_LOCALE;
 
 	if ( ! $user_id = absint( $user_id ) ) {
 		if ( function_exists( 'wp_get_current_user' ) ) {
@@ -139,7 +139,7 @@ function bogo_get_user_accessible_locales( $user_id=0 ) {
 	$locales = bogo_filter_locales( $locales );
 
 	if ( empty( $locales ) ) {
-		$locales = array( bogo_get_default_locale() );
+		$locales = array( BOGO_DEFAULT_LOCALE );
 	}
 
 	return $locales;
@@ -155,7 +155,7 @@ function bogo_user_meta_filter( $meta, $user, $update ) {
 	$locale = $meta['locale'];
 
 	if ( empty( $locale ) ) {
-		$locale = bogo_get_default_locale();
+		$locale = BOGO_DEFAULT_LOCALE;
 	}
 
 	$accessible_locales = bogo_filter_locales(

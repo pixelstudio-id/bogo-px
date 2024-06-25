@@ -70,7 +70,7 @@ function bogo_get_post_locale( $post_id ) {
   $locale = get_post_meta( $post_id, '_locale', true );
 
   if ( empty( $locale ) ) {
-    $locale = bogo_get_default_locale();
+    $locale = BOGO_DEFAULT_LOCALE;
   }
 
   return $locale;
@@ -134,17 +134,19 @@ function bogo_get_post_translations( $post_id = 0 ) {
     $original_post = $post->ID;
   }
 
-  $args = array(
+  // @changed - more optimized query
+
+  $posts = get_posts( [
     'bogo_suppress_locale_query' => true,
     'posts_per_page' => -1,
     'post_status' => 'any',
     'post_type' => $post->post_type,
     'meta_key' => '_original_post',
     'meta_value' => $original_post,
-  );
+  ] );
 
-  $q = new WP_Query();
-  $posts = $q->query( $args );
+  // $q = new WP_Query();
+  // $posts = $q->query( $args );
 
   // For back-compat
   if ( is_int( $original_post )
@@ -153,7 +155,7 @@ function bogo_get_post_translations( $post_id = 0 ) {
     array_unshift( $posts, $p );
   }
 
-  $translations[$post->ID] = array();
+  $translations[$post->ID] = [];
 
   foreach ( $posts as $p ) {
     if ( $p->ID === $post->ID ) {
@@ -190,7 +192,7 @@ function bogo_get_page_by_path( $page_path, $locale = null, $post_type = 'page' 
   global $wpdb;
 
   if ( ! bogo_is_available_locale( $locale ) ) {
-    $locale = bogo_get_default_locale();
+    $locale = BOGO_DEFAULT_LOCALE;
   }
 
   $page_path = rawurlencode( urldecode( $page_path ) );
@@ -453,7 +455,7 @@ function bogo_save_post( $post_id, $post ) {
     } elseif ( 'auto-draft' == get_post_status( $post_id ) ) {
       $locale = bogo_get_user_locale();
     } else {
-      $locale = bogo_get_default_locale();
+      $locale = BOGO_DEFAULT_LOCALE;
     }
 
     add_post_meta( $post_id, '_locale', $locale, true );

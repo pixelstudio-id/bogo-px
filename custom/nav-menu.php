@@ -1,10 +1,10 @@
 <?php
 
 add_filter('pre_get_posts', 'bogo_hide_translated_post_in_menu_editor');
-add_filter('wp_get_nav_menu_items', 'bogo_localize_nav_menu_items', 1, 3);
-
 add_action('wp_nav_menu_item_custom_fields', 'bogo_add_fields_in_menu_item', 1, 2);
 add_action('wp_update_nav_menu', 'bogo_save_translated_custom_link', 10, 2);
+
+add_filter('wp_get_nav_menu_items', 'bogo_localize_nav_menu_items', 1, 3);
 
 /**
  * @filter wp_get_nav_menu_items

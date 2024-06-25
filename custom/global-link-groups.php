@@ -23,6 +23,7 @@ function bogo_init_global_link_groups() {
   ]);
 
   $groups = [];
+
   foreach ($posts as $p) {
     $original_post_id = get_post_meta($p->ID, '_original_post', true);
 
@@ -30,16 +31,28 @@ function bogo_init_global_link_groups() {
       $groups[$original_post_id] = [];
     }
 
-    $groups[$original_post_id][] = [
+    $locale = get_post_meta($p->ID, '_locale', true) ?: BOGO_DEFAULT_LOCALE;
+
+    $groups[$original_post_id][$locale] = [
       'id' => $p->ID,
-      'locale' => get_post_meta($p->ID, '_locale', true) ?: BOGO_DEFAULT_LOCALE,
+      'locale' => $locale,
       'url' => get_permalink($p),
       'post' => $p,
     ];
   }
 
-  global $BOGO_LINK_GROUPS;
-  $BOGO_LINK_GROUPS = $groups;
+  // group by URL
+  $groups_by_url = [];
+  foreach ($groups as $group) {
+    $og_url = $group[BOGO_DEFAULT_LOCALE]['url'];
+    $groups_by_url[$og_url] = $group;
+  }
+
+  global $BOGO_GROUPS_BY_ID;
+  global $BOGO_GROUPS_BY_URL;
+
+  $BOGO_GROUPS_BY_ID = $groups;
+  $BOGO_GROUPS_BY_URL = $groups_by_url;
 }
 
 /**
@@ -53,7 +66,10 @@ function bogo_get_locale_link_by_url($url) {
     $base_url .= $parsed_url['path'];
   }
 
-  $link = _bogo_get_locale_link('url', $base_url);
+  global $BOGO_GROUPS_BY_URL;
+  $link = $BOGO_GROUPS_BY_URL[$base_url][get_locale()] ?? null;
+
+  if (!$link) { return null; }
   
   if (isset($parsed_url['query'])) {
     $link['url'] .= "?{$parsed_url['query']}";
@@ -66,7 +82,9 @@ function bogo_get_locale_link_by_url($url) {
  * More verbose function of _bogo_get_locale_link()
  */
 function bogo_get_locale_link_by_id($id) {
-  $link = _bogo_get_locale_link('id', $id);
+  global $BOGO_GROUPS_BY_ID;
+  $link = $BOGO_GROUPS_BY_ID[$id][get_locale()] ?? null;
+
   return $link ?: null;
 }
 
@@ -74,7 +92,7 @@ function bogo_get_locale_link_by_id($id) {
  * 
  */
 function bogo_get_locale_post_by_id($id) {
-  $link = _bogo_get_locale_link('id', $id);
+  $link = bogo_get_locale_link_by_id($id);
 
   if ($link) {
     return $link['post'];
@@ -92,10 +110,8 @@ function _bogo_get_locale_link($key, $value) {
 
   foreach ($BOGO_LINK_GROUPS as $group) {
     $is_in_this_group = array_search($value, array_column($group, $key));
-    
     if ($is_in_this_group !== false) {
       $locale_index = array_search(get_locale(), array_column($group, 'locale'));
-      
       if ($locale_index !== false) {
         return $group[$locale_index];
       }

@@ -40,7 +40,7 @@ function bogo_parse_query( $query ) {
 		}
 
 		if ( empty( $locale ) ) {
-			$locale = bogo_get_default_locale();
+			$locale = BOGO_DEFAULT_LOCALE;
 		}
 	}
 

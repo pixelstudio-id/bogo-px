@@ -36,7 +36,7 @@ class Bogo_Language_Packs_List_Table extends WP_List_Table {
 		sort( $locales );
 
 		$locales = array_unique( array_merge(
-			array( bogo_get_default_locale() ),
+			array( BOGO_DEFAULT_LOCALE ),
 			bogo_available_locales(),
 			array( 'en_US' ),
 			$locales

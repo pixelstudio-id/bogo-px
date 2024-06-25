@@ -9,12 +9,12 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: bogo
  * Domain Path: /languages/
- * Version: 4.4.6
+ * Version: 4.5.0
  * Requires at least: 6.4
  * Requires PHP: 7.4
  */
 
-define( 'BOGO_VERSION', '4.4.6' );
+define( 'BOGO_VERSION', '4.5.0' );
 
 define( 'BOGO_PLUGIN', __FILE__ );
 
@@ -87,7 +87,7 @@ function bogo_locale( $locale ) {
 		return $bogo_locale;
 	}
 
-	$default_locale = bogo_get_default_locale();
+	$default_locale = BOGO_DEFAULT_LOCALE;
 
 	if ( ! empty( $wp_query->query_vars ) ) {
 		if ( $lang = get_query_var( 'lang' )

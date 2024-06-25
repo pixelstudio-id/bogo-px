@@ -376,6 +376,8 @@ function bogo_get_country_code( $locale ) {
 
 /**
  * Retrieves the default locale for the site.
+ * 
+ * @changed - more optimized
  */
 function bogo_get_default_locale() {
 	static $locale = '';
@@ -421,8 +423,8 @@ function bogo_get_default_locale() {
  */
 function bogo_is_default_locale( $locale = null ) {
 	if ($locale) {
-		$default_locale = bogo_get_default_locale();
-		return ! empty( $locale ) && $locale == bogo_get_default_locale();
+		$default_locale = BOGO_DEFAULT_LOCALE;
+		return ! empty( $locale ) && $locale == BOGO_DEFAULT_LOCALE;
 	} else {
 		return get_locale() === BOGO_DEFAULT_LOCALE;
 	}
@@ -457,8 +459,8 @@ function bogo_available_locales( $args = '' ) {
 
 	if ( empty( $installed_locales ) ) {
 		$installed_locales = get_available_languages();
-		$installed_locales[] = bogo_get_default_locale();
-		$installed_locales[] = 'en_US';
+		$installed_locales[] = BOGO_DEFAULT_LOCALE;
+		// $installed_locales[] = 'en_US';
 	}
 
 	$available_locales = $installed_locales;
@@ -776,14 +778,18 @@ function bogo_http_accept_languages() {
 
 /**
  * A wrapper function of bogo_get_url_with_lang().
+ * @changed - more optimized
  */
 function bogo_url( $url = '', $locale = '' ) {
+	// abort early if default locale because no need to change the link
+	if (bogo_is_default_locale()) { return $url; }
+
 	if ( ! $locale ) {
-		$locale = determine_locale();
+		$locale = get_locale(); // determine_locale();
 	}
 
 	$args = array(
-		'using_permalinks' => (bool) get_option( 'permalink_structure' ),
+		'using_permalinks' => true, // (bool) get_option( 'permalink_structure' ),
 	);
 
 	return bogo_get_url_with_lang( $url, $locale, $args );
@@ -829,7 +835,7 @@ function bogo_get_url_with_lang( $url = '', $locale = '', $args = '' ) {
 		}
 	}
 
-	$default_locale = bogo_get_default_locale();
+	$default_locale = BOGO_DEFAULT_LOCALE;
 
 	if ( ! $locale ) {
 		$locale = $default_locale;

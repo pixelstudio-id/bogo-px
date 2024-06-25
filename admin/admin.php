@@ -75,7 +75,7 @@ function bogo_admin_enqueue_scripts( $hook_suffix ) {
 				? '' : wp_create_nonce( 'wp_rest' ),
 		),
 		'availableLanguages' => $available_languages,
-		'defaultLocale' => bogo_get_default_locale(),
+		'defaultLocale' => BOGO_DEFAULT_LOCALE,
 		'pagenow' => trim( $_GET['page'] ?? '' ),
 		'currentPost' => array(),
 		'localizablePostTypes' => bogo_localizable_post_types(),
@@ -158,7 +158,7 @@ function bogo_admin_menu() {
 
 	$available_locales = bogo_available_locales( array(
 		'current_user_can_access' => true,
-		'exclude' => array( bogo_get_default_locale() ),
+		'exclude' => array( BOGO_DEFAULT_LOCALE ),
 	) );
 
 	if ( 0 < count( $available_locales ) ) {

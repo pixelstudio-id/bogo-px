@@ -1,7 +1,27 @@
 <?php
 
-add_filter( 'post_link', 'bogo_post_link', 10, 3 );
+// @changed - make it more optimized
 
+add_filter( 'post_link', 'bogo_post_link', 10, 3 );
+add_filter( 'page_link', 'bogo_page_link', 10, 3 );
+add_filter( 'post_type_link', 'bogo_post_type_link', 10, 4 );
+
+add_filter( 'year_link', 'bogo_year_link', 10, 2 );
+add_filter( 'month_link', 'bogo_month_link', 10, 3 );
+add_filter( 'day_link', 'bogo_day_link', 10, 4 );
+add_filter( 'feed_link', 'bogo_feed_link', 10, 2 );
+add_filter( 'author_feed_link', 'bogo_author_feed_link', 10, 2 );
+add_filter( 'category_feed_link', 'bogo_category_feed_link', 10, 2 );
+add_filter( 'taxonomy_feed_link', 'bogo_taxonomy_feed_link', 10, 3 );
+add_filter( 'post_type_archive_link', 'bogo_post_type_archive_link', 10, 2 );
+add_filter( 'post_type_archive_feed_link', 'bogo_post_type_archive_feed_link', 10, 2);
+add_filter( 'term_link', 'bogo_term_link', 10, 3 );
+add_filter( 'home_url', 'bogo_home_url', 10, 1 );
+
+
+/**
+ *
+ */
 function bogo_post_link( $permalink, $post, $leavename ) {
 	if ( ! bogo_is_localizable_post_type( $post->post_type ) ) {
 		return $permalink;
@@ -21,8 +41,9 @@ function bogo_post_link( $permalink, $post, $leavename ) {
 	return $permalink;
 }
 
-add_filter( 'page_link', 'bogo_page_link', 10, 3 );
-
+/**
+ *
+ */
 function bogo_page_link( $permalink, $post_id, $sample ) {
 	if ( ! bogo_is_localizable_post_type( 'page' ) ) {
 		return $permalink;
@@ -59,8 +80,9 @@ function bogo_page_link( $permalink, $post_id, $sample ) {
 	return $permalink;
 }
 
-add_filter( 'post_type_link', 'bogo_post_type_link', 10, 4 );
-
+/**
+ *
+ */
 function bogo_post_type_link( $permalink, $post, $leavename, $sample ) {
 	if ( ! bogo_is_localizable_post_type( $post->post_type ) ) {
 		return $permalink;
@@ -79,70 +101,51 @@ function bogo_post_type_link( $permalink, $post, $leavename, $sample ) {
 	return $permalink;
 }
 
-add_filter( 'year_link', 'bogo_year_link', 10, 2 );
-
 function bogo_year_link( $link, $year ) {
 	return bogo_url( $link );
 }
 
-add_filter( 'month_link', 'bogo_month_link', 10, 3 );
+
 
 function bogo_month_link( $link, $year, $month ) {
 	return bogo_url( $link );
 }
 
-add_filter( 'day_link', 'bogo_day_link', 10, 4 );
-
 function bogo_day_link( $link, $year, $month, $day ) {
 	return bogo_url( $link );
 }
-
-add_filter( 'feed_link', 'bogo_feed_link', 10, 2 );
 
 function bogo_feed_link( $link, $feed ) {
 	return bogo_url( $link );
 }
 
-add_filter( 'author_feed_link', 'bogo_author_feed_link', 10, 2 );
-
 function bogo_author_feed_link( $link, $feed ) {
 	return bogo_url( $link );
 }
-
-add_filter( 'category_feed_link', 'bogo_category_feed_link', 10, 2 );
 
 function bogo_category_feed_link( $link, $feed ) {
 	return bogo_url( $link );
 }
 
-add_filter( 'taxonomy_feed_link', 'bogo_taxonomy_feed_link', 10, 3 );
-
 function bogo_taxonomy_feed_link( $link, $feed, $taxonomy ) {
 	return bogo_url( $link );
 }
-
-add_filter( 'post_type_archive_link', 'bogo_post_type_archive_link', 10, 2 );
 
 function bogo_post_type_archive_link( $link, $post_type ) {
 	return bogo_url( $link );
 }
 
-add_filter( 'post_type_archive_feed_link',
-	'bogo_post_type_archive_feed_link',
-	10, 2
-);
 
 function bogo_post_type_archive_feed_link( $link, $feed ) {
 	return bogo_url( $link );
 }
 
-add_filter( 'term_link', 'bogo_term_link', 10, 3 );
 
 function bogo_term_link( $link, $term, $taxonomy ) {
 	return bogo_url( $link );
 }
 
-add_filter( 'home_url', 'bogo_home_url', 10, 1 );
+
 
 function bogo_home_url( $url ) {
 	if ( is_admin()
@@ -164,7 +167,7 @@ function bogo_m17n_headers() {
 		if ( $post_id
 		and $translations = bogo_get_post_translations( $post_id ) ) {
 			$locale = get_locale();
-			$translations[$locale] = get_post( $post_id );
+			// $translations[$locale] = get_post( $post_id );
 
 			foreach ( $translations as $lang => $translation ) {
 				$languages[] = array(
