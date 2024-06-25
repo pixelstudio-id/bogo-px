@@ -1,7 +1,5 @@
 <?php
 
-define('BOGO_BASE_LOCALE', apply_filters('bogo_base_locale', 'en_US'));
-
 add_action('init', 'bogo_init_global_link_groups');
 
 /**
@@ -34,7 +32,7 @@ function bogo_init_global_link_groups() {
 
     $groups[$original_post_id][] = [
       'id' => $p->ID,
-      'locale' => get_post_meta($p->ID, '_locale', true) ?: BOGO_BASE_LOCALE,
+      'locale' => get_post_meta($p->ID, '_locale', true) ?: BOGO_DEFAULT_LOCALE,
       'url' => get_permalink($p),
       'post' => $p,
     ];
@@ -48,14 +46,22 @@ function bogo_init_global_link_groups() {
  * Check whether current locale is the same as base locale
  */
 function bogo_is_base_locale() {
-  return get_locale() === BOGO_BASE_LOCALE;
+  return get_locale() === BOGO_DEFAULT_LOCALE;
 }
 
 /**
  * More verbose function of _bogo_get_locale_link()
  */
 function bogo_get_locale_link_by_url($url) {
-  $link = _bogo_get_locale_link('url', $url);
+  $parsed_url = parse_url($url);
+  var_dump($parsed_url);
+  $base_url = "{$parsed_url['scheme']}://{$parsed_url['host']}";
+
+  if (isset($parsed_url['path'])) {
+    $base_url .= $parsed_url['path'];
+  }
+  var_dump($base_url);
+  $link = _bogo_get_locale_link('url', $base_url);
   return $link ?: null;
 }
 

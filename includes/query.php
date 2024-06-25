@@ -200,8 +200,9 @@ function bogo_option_sticky_posts( $posts ) {
 	return $posts;
 }
 
-add_filter( 'option_page_on_front', 'bogo_get_local_post', 10, 1 );
-add_filter( 'option_page_for_posts', 'bogo_get_local_post', 10, 1 );
+// @changes - disable this as it makes tons of duplicate query - replaced by custom/content.php
+// add_filter( 'option_page_on_front', 'bogo_get_local_post', 10, 1 );
+// add_filter( 'option_page_for_posts', 'bogo_get_local_post', 10, 1 );
 
 function bogo_get_local_post( $post_id ) {
 	global $wpdb;

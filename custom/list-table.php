@@ -56,16 +56,17 @@ function bogo_add_column_to_custom_post_type() {
  */
 function bogo_create_admin_flag_buttons($post) {
   $post_id = $post->ID;
-  $available_locales = bogo_available_locales();
-  $available_locales = array_diff($available_locales, [get_locale()]);
-  $available_translations = bogo_get_post_translations($post);
+  $accessible_locales = bogo_get_user_accessible_locales();
+  $accessible_locales = array_diff($accessible_locales, [get_locale()]);
+
+  $accessible_posts = bogo_get_post_translations($post);
 
   $flags = '';
-  foreach ($available_locales as $locale) {
+  foreach ($accessible_locales as $locale) {
     $language = bogo_get_language($locale) ?: $locale;
 
-    $locale_post = isset($available_translations[$locale])
-      ? $available_translations[$locale]
+    $locale_post = isset($accessible_posts[$locale])
+      ? $accessible_posts[$locale]
       : null;
 
     // if already has translation, create EDIT link

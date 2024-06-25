@@ -113,9 +113,13 @@ function bogo_get_user_locale( $user_id = 0 ) {
 	return $default_locale;
 }
 
-function bogo_get_user_accessible_locales( $user_id ) {
+// @changed - add default value to $user_id and defaults to currently logged-in user
+function bogo_get_user_accessible_locales( $user_id=0 ) {
 	global $wpdb;
 
+	if (!$user_id) {
+		$user_id = get_current_user_id();
+	}
 	$user_id = absint( $user_id );
 
 	if ( user_can( $user_id, 'bogo_access_all_locales' ) ) {

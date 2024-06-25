@@ -11,7 +11,7 @@ add_action('wp_update_nav_menu', 'bogo_save_translated_custom_link', 10, 2);
  */
 function bogo_localize_nav_menu_items($items, $menu, $args) {
   if (is_admin()) { return $items; } // abort if admin
-  if (get_locale() === BOGO_BASE_LOCALE) { return $items; } // abort if base locale
+  if (get_locale() === BOGO_DEFAULT_LOCALE) { return $items; } // abort if base locale
 
   foreach ($items as &$item) {
     $titles = json_decode(get_post_meta($item->db_id, '_bogo_title', true), true);
@@ -107,7 +107,7 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
 
   $active_locales = $menu_item->bogo_locales;
   $all_locales = bogo_available_languages();
-  unset($all_locales[BOGO_BASE_LOCALE]);
+  unset($all_locales[BOGO_DEFAULT_LOCALE]);
 
   $values = json_decode(get_post_meta($id, '_bogo_title', true), true);
   $placeholders = [];

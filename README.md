@@ -28,6 +28,8 @@ This does not pollute your database with tons of extra tables like other multili
 
 1. **ACF Integration** - PostObject and Link field automatically converted to the locale version.
 
+1. **User Restriction** - Limit users from editing certain language.
+
 ## How to Use
 
 1. If your base language is not `en_US`, you need to add filter to change it:
@@ -98,6 +100,6 @@ add_filter('bogo_localizable_taxonomies', function($taxonomies) {
 
 ### Future Plan
 
-- Add interface to add translation within Gutenberg.
+- In the language dropdown in Gutenberg, add link to create missing translation.
 - Add translatable Description for Menu and Term.
-- Add conditional check whether the user has access to edit that language or not. This role thing is already part of BOGO, just need to add conditional and hide the language option.
+- Allow locale post listing in trash to restore/permanently delete

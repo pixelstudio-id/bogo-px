@@ -22,7 +22,7 @@ function bogo_init_add_fields_to_taxonomies() {
  */
 function bogo_add_fields_to_taxonomies($term, $taxonomy) {
   $locales = bogo_available_languages();
-  unset($locales[BOGO_BASE_LOCALE]);
+  unset($locales[BOGO_DEFAULT_LOCALE]);
 
   $values = json_decode(get_term_meta($term->term_id, '_bogo_name', true), true);
   ?>
@@ -64,7 +64,7 @@ function bogo_after_save_taxonomy($term_id) {
  */
 function bogo_get_term_translate($term, $taxonomy) {
   $locale = get_locale();
-  if ($locale === BOGO_BASE_LOCALE) { return $term; }
+  if ($locale === BOGO_DEFAULT_LOCALE) { return $term; }
 
   $names = json_decode(get_term_meta($term->term_id, '_bogo_name', true), true);
   if (!$names) { return $term; }

@@ -30,22 +30,24 @@ function bogo_editor_enqueue_scripts_custom() {
  
   // get current locale for dropdown
   global $post;
-  $current_locale = get_post_meta($post->ID, '_locale', true) ?: BOGO_BASE_LOCALE;
+  $current_locale = get_post_meta($post->ID, '_locale', true) ?: BOGO_DEFAULT_LOCALE;
 
-  $locale_posts = array_merge(
+  $accessible_locales = bogo_get_user_accessible_locales();
+  $accessible_posts = array_merge(
     [ $current_locale => $post ],
     bogo_get_post_translations($post),
   );
 
   $options = [];
-  foreach ($locale_posts as $locale => $p) {
-    $url = get_edit_post_link($p->ID);
-
+  foreach ($accessible_locales as $locale) {
+    if (!isset($accessible_posts[$locale])) { continue; }
+    
+    $p = $accessible_posts[$locale];
     $name = bogo_get_language_native_name($locale);
     $name = trim(preg_replace('/\(.+\)/', '', $name));
 
     $options[] = [
-      'url' => $url,
+      'url' => get_edit_post_link($p->ID),
       'label' => $name,
       'locale' => $locale,
       'status' => $p->post_status,
