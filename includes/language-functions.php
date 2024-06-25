@@ -417,11 +417,15 @@ function bogo_get_default_locale() {
  * Returns true if the specified locale is the default locale.
  *
  * @param string $locale Locale code.
+ * @changed - allow empty param which compare current locale to default
  */
-function bogo_is_default_locale( $locale ) {
-	$default_locale = bogo_get_default_locale();
-
-	return ! empty( $locale ) && $locale == bogo_get_default_locale();
+function bogo_is_default_locale( $locale = null ) {
+	if ($locale) {
+		$default_locale = bogo_get_default_locale();
+		return ! empty( $locale ) && $locale == bogo_get_default_locale();
+	} else {
+		return get_locale() === BOGO_DEFAULT_LOCALE;
+	}
 }
 
 
