@@ -34,7 +34,7 @@ function onReady() {
     </ul>
   </div>`;
 
-  setTimeout(addLanguageDropdown, 100);
+  setTimeout(addLanguageDropdown, 500);
   function addLanguageDropdown() {
     const $header = document.querySelector('.edit-post-header__toolbar');
     if ($header) {

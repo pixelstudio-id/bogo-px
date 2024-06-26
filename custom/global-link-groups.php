@@ -60,6 +60,10 @@ function bogo_init_global_link_groups() {
  */
 function bogo_get_locale_link_by_url($url) {
   $parsed_url = parse_url($url);
+
+  // abort if doesn't have scheme (maybe a #id link)
+  if (!isset($parsed_url['scheme'])) { return null; }
+
   $base_url = "{$parsed_url['scheme']}://{$parsed_url['host']}";
 
   if (isset($parsed_url['path'])) {

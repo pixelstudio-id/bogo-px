@@ -32,12 +32,6 @@ This does not pollute your database with tons of extra tables like other multili
 
 ## How to Use
 
-1. If your base language is not `en_US`, you need to add filter to change it:
-
-    ```php
-    add_filter('bogo_base_language', function() { return 'id_ID'; })
-    ```
-
 1. After activating the plugin, go to Languages and select the available language.
 
 1. You will now see a new column called "Locale" in Posts and Pages table with transparent flags in it.

@@ -39,10 +39,9 @@ function bogo_editor_enqueue_scripts_custom() {
   );
 
   $options = [];
-  foreach ($accessible_locales as $locale) {
-    if (!isset($accessible_posts[$locale])) { continue; }
+  foreach ($accessible_posts as $locale => $p) {
+    if (!in_array($locale, $accessible_locales)) { continue; }
     
-    $p = $accessible_posts[$locale];
     $name = bogo_get_language_native_name($locale);
     $name = trim(preg_replace('/\(.+\)/', '', $name));
 
