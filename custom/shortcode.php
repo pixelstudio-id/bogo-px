@@ -20,13 +20,8 @@ function bogo_dropdown_shortcode($atts, $content) {
     // $classes = bogo_language_tag($link['locale']) . ' ' . bogo_lang_slug($link['locale']);
     $label = $link['native_name'] ?: $link['title']; 
 
-    // if no link
     if (empty($link['href'])) {
-      $links_html .= "<li class='has-no-link'>
-        <a title='No {$link['title']} translation for this page'>
-          {$label}
-        </a>
-      </li>";
+      // skip empty link
     }
     // if current link
     elseif ($link['locale'] === get_locale()) {
