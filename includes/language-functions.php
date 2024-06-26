@@ -778,18 +778,14 @@ function bogo_http_accept_languages() {
 
 /**
  * A wrapper function of bogo_get_url_with_lang().
- * @changed - more optimized
  */
 function bogo_url( $url = '', $locale = '' ) {
-	// abort early if default locale because no need to change the link
-	if (bogo_is_default_locale()) { return $url; }
-
 	if ( ! $locale ) {
-		$locale = get_locale(); // determine_locale();
+		$locale = determine_locale();
 	}
 
 	$args = array(
-		'using_permalinks' => true, // (bool) get_option( 'permalink_structure' ),
+		'using_permalinks' => (bool) get_option( 'permalink_structure' ),
 	);
 
 	return bogo_get_url_with_lang( $url, $locale, $args );

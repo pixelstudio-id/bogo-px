@@ -1,7 +1,5 @@
 <?php
 
-// @changed - make it more optimized
-
 add_filter( 'post_link', 'bogo_post_link', 10, 3 );
 add_filter( 'page_link', 'bogo_page_link', 10, 3 );
 add_filter( 'post_type_link', 'bogo_post_type_link', 10, 4 );
@@ -167,7 +165,7 @@ function bogo_m17n_headers() {
 		if ( $post_id
 		and $translations = bogo_get_post_translations( $post_id ) ) {
 			$locale = get_locale();
-			// $translations[$locale] = get_post( $post_id );
+			$translations[$locale] = get_post( $post_id );
 
 			foreach ( $translations as $lang => $translation ) {
 				$languages[] = array(

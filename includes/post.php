@@ -134,19 +134,27 @@ function bogo_get_post_translations( $post_id = 0 ) {
     $original_post = $post->ID;
   }
 
-  // @changed - more optimized query
-
-  $posts = get_posts( [
+  $args = array(
     'bogo_suppress_locale_query' => true,
     'posts_per_page' => -1,
     'post_status' => 'any',
     'post_type' => $post->post_type,
     'meta_key' => '_original_post',
     'meta_value' => $original_post,
-  ] );
+  );
 
-  // $q = new WP_Query();
-  // $posts = $q->query( $args );
+  // @changed - more optimized query
+  // $posts = get_posts( [
+  //   'bogo_suppress_locale_query' => true,
+  //   'posts_per_page' => -1,
+  //   'post_status' => 'any',
+  //   'post_type' => $post->post_type,
+  //   'meta_key' => '_original_post',
+  //   'meta_value' => $original_post,
+  // ] );
+
+  $q = new WP_Query();
+  $posts = $q->query( $args );
 
   // For back-compat
   if ( is_int( $original_post )

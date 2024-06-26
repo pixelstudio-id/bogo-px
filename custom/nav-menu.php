@@ -4,14 +4,14 @@ add_filter('pre_get_posts', 'bogo_hide_translated_post_in_menu_editor');
 add_action('wp_nav_menu_item_custom_fields', 'bogo_add_fields_in_menu_item', 1, 2);
 add_action('wp_update_nav_menu', 'bogo_save_translated_custom_link', 10, 2);
 
-add_filter('wp_get_nav_menu_items', 'bogo_localize_nav_menu_items', 1, 3);
+add_filter('wp_get_nav_menu_items', 'bogo_localize_nav_menu_items', 15, 3);
 
 /**
  * @filter wp_get_nav_menu_items
  */
 function bogo_localize_nav_menu_items($items, $menu, $args) {
   if (is_admin()) { return $items; } // abort if admin
-  if (get_locale() === BOGO_DEFAULT_LOCALE) { return $items; } // abort if base locale
+  if (bogo_is_default_locale()) { return $items; } // abort if base locale
 
   foreach ($items as &$item) {
     $titles = json_decode(get_post_meta($item->db_id, '_bogo_title', true), true);

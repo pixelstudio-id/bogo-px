@@ -56,7 +56,7 @@ function bogo_init_global_link_groups() {
 }
 
 /**
- * More verbose function of _bogo_get_locale_link()
+ * Get the translated version of a post by URL
  */
 function bogo_get_locale_link_by_url($url) {
   $parsed_url = parse_url($url);
@@ -79,7 +79,7 @@ function bogo_get_locale_link_by_url($url) {
 }
 
 /**
- * More verbose function of _bogo_get_locale_link()
+ * Get the translated version of a post by ID
  */
 function bogo_get_locale_link_by_id($id) {
   global $BOGO_GROUPS_BY_ID;
@@ -96,26 +96,6 @@ function bogo_get_locale_post_by_id($id) {
 
   if ($link) {
     return $link['post'];
-  }
-
-  return null;
-}
-
-/**
- * Get locale link by searching through its $key
- */
-function _bogo_get_locale_link($key, $value) {
-  global $BOGO_LINK_GROUPS;
-  if (!$BOGO_LINK_GROUPS) { return null; }
-
-  foreach ($BOGO_LINK_GROUPS as $group) {
-    $is_in_this_group = array_search($value, array_column($group, $key));
-    if ($is_in_this_group !== false) {
-      $locale_index = array_search(get_locale(), array_column($group, 'locale'));
-      if ($locale_index !== false) {
-        return $group[$locale_index];
-      }
-    }
   }
 
   return null;
