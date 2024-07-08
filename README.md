@@ -97,3 +97,30 @@ add_filter('bogo_localizable_taxonomies', function($taxonomies) {
 - In the language dropdown in Gutenberg, add link to create missing translation.
 - Add translatable Description for Menu and Term.
 - Allow locale post listing in trash to restore/permanently delete
+
+### Using it in API
+
+If you want to get translated page during API call, you need to change the locale and initiate the BOGO's global object:
+
+```php
+
+/**
+ * @route GET /page/:id?lang=xx
+ */
+function api_callback_get_page($params) {
+  $id = $params['id'];
+  $lang = $params['lang'] ?? '';
+
+  if ($lang) {
+    add_filter('locale', function($locale) use ($lang) {
+      return $lang;
+    });
+    bogo_init_global_link_groups()
+  }
+
+  $page = get_post($id); // now this will return the translated version, if any
+  return $page
+}
+
+
+```

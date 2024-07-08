@@ -11,6 +11,7 @@ function bogo_init_global_link_groups() {
   // abort if current language is base language
   if (is_admin() || bogo_is_default_locale()) { return; }
 
+
   $posts = get_posts([
     'post_type' => 'any',
     'meta_query' => [
@@ -63,6 +64,9 @@ function bogo_get_locale_link_by_url($url) {
 
   // abort if doesn't have scheme (maybe a #id link)
   if (!isset($parsed_url['scheme'])) { return null; }
+
+  // abort if doesn't have host (maybe a tel or mailto link)
+  if (!isset($parsed_url['host'])) { return null; }
 
   $base_url = "{$parsed_url['scheme']}://{$parsed_url['host']}";
 
