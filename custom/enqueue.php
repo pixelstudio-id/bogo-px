@@ -22,6 +22,9 @@ function bogo_admin_enqueue_scripts_custom() {
   wp_enqueue_style('bogo-flags', BOGO_DIST . '/flags.css', [], '1.0.0');
 }
 
+/**
+ * @action enqueue_block_editor_assets
+ */
 function bogo_editor_enqueue_scripts_custom() {
   if (!is_admin()) { return; }
 

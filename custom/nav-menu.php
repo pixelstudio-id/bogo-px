@@ -17,7 +17,7 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
     $titles = json_decode(get_post_meta($item->db_id, '_bogo_title', true), true);
     
     // if custom, it's always replaced by the Bogo Field
-    if ($item->type === 'custom') {
+    if ($item->type === '' || $item->type === 'post_type_archive') {
       $titles = json_decode(get_post_meta($item->db_id, '_bogo_title', true), true);
       $item->title = empty($titles[get_locale()]) ? $item->title : $titles[get_locale()];
     }
