@@ -3,6 +3,28 @@
 add_filter('the_content', 'bogo_localize_links_in_content', 20);
 add_filter('pre_get_posts', 'bogo_only_show_translated_posts', 20);
 
+
+/**
+ * @filter the_content
+ */
+function bogo_localize_links_in_content($content) {
+  if (bogo_is_default_locale()) { return $content; }
+
+  $content = preg_replace_callback('/(<a.+href=")(.+)(".*>.+<\/a>)/Ui', function($matches) {
+    $url = $matches[2];
+    $locale_link = bogo_get_locale_link_by_url($url);
+
+    if ($locale_link) {
+      $url = $locale_link['url'];
+    }
+
+    return $matches[1] . $url . $matches[3];
+  }, $content);
+
+  return $content;
+}
+
+
 /**
  * Add meta_query to only include posts that are translated
  * 
@@ -12,6 +34,7 @@ function bogo_only_show_translated_posts($query) {
   if (is_admin()) { return $query; }
 
   // abort if 'post' because there's a bug with the main blog query
+  // @todo - find a way to filter main posts query
   $post_type = $query->get('post_type');
   if ($post_type === 'post' || $post_type === 'page') { return $query; }
 
@@ -47,24 +70,4 @@ function bogo_only_show_translated_posts($query) {
   }
   
   return $query;
-}
-
-/**
- * @filter the_content
- */
-function bogo_localize_links_in_content($content) {
-  if (bogo_is_default_locale()) { return $content; }
-
-  $content = preg_replace_callback('/(<a.+href=")(.+)(".*>.+<\/a>)/Ui', function($matches) {
-    $url = $matches[2];
-    $locale_link = bogo_get_locale_link_by_url($url);
-
-    if ($locale_link) {
-      $url = $locale_link['url'];
-    }
-
-    return $matches[1] . $url . $matches[3];
-  }, $content);
-
-  return $content;
 }

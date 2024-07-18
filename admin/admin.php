@@ -5,7 +5,7 @@ require_once BOGO_PLUGIN_DIR . '/admin/includes/post.php';
 require_once BOGO_PLUGIN_DIR . '/admin/includes/nav-menu.php';
 require_once BOGO_PLUGIN_DIR . '/admin/includes/widgets.php';
 require_once BOGO_PLUGIN_DIR . '/admin/includes/language-packs.php';
-require_once BOGO_PLUGIN_DIR . '/admin/includes/terms-translation.php';
+// require_once BOGO_PLUGIN_DIR . '/admin/includes/terms-translation.php'; // @changed - disable terms translation
 
 add_action( 'admin_init', 'bogo_upgrade', 10, 0 );
 
@@ -161,18 +161,18 @@ function bogo_admin_menu() {
 		'exclude' => array( BOGO_DEFAULT_LOCALE ),
 	) );
 
-	if ( 0 < count( $available_locales ) ) {
-		$texts = add_submenu_page(
-			'bogo',
-			__( 'Terms Translation', 'bogo' ),
-			__( 'Terms Translation', 'bogo' ),
-			'bogo_edit_terms_translation',
-			'bogo-texts',
-			'bogo_texts_page'
-		);
-
-		add_action( 'load-' . $texts, 'bogo_load_texts_page', 10, 0 );
-	}
+	// @changed - disable terms translation
+	// if ( 0 < count( $available_locales ) ) {
+	// 	$texts = add_submenu_page(
+	// 		'bogo',
+	// 		__( 'Terms Translation', 'bogo' ),
+	// 		__( 'Terms Translation', 'bogo' ),
+	// 		'bogo_edit_terms_translation',
+	// 		'bogo-texts',
+	// 		'bogo_texts_page'
+	// 	);
+	// 	add_action( 'load-' . $texts, 'bogo_load_texts_page', 10, 0 );
+	// }
 }
 
 add_filter(
@@ -361,6 +361,7 @@ function bogo_tools_page() {
 <?php
 }
 
+/* // @changed - remove terms translation
 function bogo_load_texts_page() {
 	$action = $_POST['action'] ?? '';
 
@@ -432,56 +433,57 @@ function bogo_load_texts_page() {
 		) );
 	}
 }
+*/
 
+/* // @changed - remove terms translation
 function bogo_texts_page() {
 	$list_table = new Bogo_Terms_Translation_List_Table();
 	$list_table->prepare_items();
+	?>
+	<div class="wrap">
 
-?>
-<div class="wrap">
+	<h1 class="wp-heading-inline"><?php
+		echo esc_html( __( 'Terms Translation', 'bogo' ) );
+	?></h1>
 
-<h1 class="wp-heading-inline"><?php
-	echo esc_html( __( 'Terms Translation', 'bogo' ) );
-?></h1>
+	<?php
+		if ( ! empty( $_REQUEST['s'] ) ) {
+			echo sprintf(
+				'<span class="subtitle">%s</span>',
+				sprintf(
+					__( 'Search results for &#8220;%s&#8221;', 'bogo' ),
+					esc_html( $_REQUEST['s'] )
+				)
+			);
+		}
+	?>
 
-<?php
-	if ( ! empty( $_REQUEST['s'] ) ) {
-		echo sprintf(
-			'<span class="subtitle">%s</span>',
-			sprintf(
-				/* translators: %s: search query */
-				__( 'Search results for &#8220;%s&#8221;', 'bogo' ),
-				esc_html( $_REQUEST['s'] )
-			)
+	<hr class="wp-header-end">
+
+	<?php bogo_admin_notice(); ?>
+
+	<form action="" method="get">
+	<input type="hidden" name="page" value="<?php echo esc_attr( $_REQUEST['page'] ?? '' ); ?>" />
+	<input type="hidden" name="locale" value="<?php echo esc_attr( $_REQUEST['locale'] ?? '' ); ?>" />
+	<?php
+		$list_table->search_box(
+			__( 'Search Translation', 'bogo' ), 'bogo-terms-translation'
 		);
-	}
-?>
+	?>
+	</form>
 
-<hr class="wp-header-end">
-
-<?php bogo_admin_notice(); ?>
-
-<form action="" method="get">
-<input type="hidden" name="page" value="<?php echo esc_attr( $_REQUEST['page'] ?? '' ); ?>" />
-<input type="hidden" name="locale" value="<?php echo esc_attr( $_REQUEST['locale'] ?? '' ); ?>" />
-<?php
-	$list_table->search_box(
-		__( 'Search Translation', 'bogo' ), 'bogo-terms-translation'
-	);
-?>
-</form>
-
-<form action="" method="post" id="bogo-terms-translation">
-<input type="hidden" name="action" value="save" />
-<input type="hidden" name="paged" value="<?php echo absint( $_GET['paged'] ?? '' ); ?>" />
-<?php
-	wp_nonce_field( 'bogo-edit-text-translation' );
-	$list_table->display();
-?>
-</form>
-</div>
-<?php
+	<form action="" method="post" id="bogo-terms-translation">
+	<input type="hidden" name="action" value="save" />
+	<input type="hidden" name="paged" value="<?php echo absint( $_GET['paged'] ?? '' ); ?>" />
+	<?php
+		wp_nonce_field( 'bogo-edit-text-translation' );
+		$list_table->display();
+	?>
+	</form>
+	</div>
+	<?php
 }
+*/
 
 function bogo_admin_notice( $reason = '' ) {
 	if ( empty( $reason ) and isset( $_GET['message'] ) ) {

@@ -9,12 +9,12 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: bogo
  * Domain Path: /languages/
- * Version: 4.5.5
+ * Version: 4.5.7
  * Requires at least: 6.4
  * Requires PHP: 7.4
  */
 
-define( 'BOGO_VERSION', '4.5.5' );
+define( 'BOGO_VERSION', '4.5.7' );
 
 define( 'BOGO_PLUGIN', __FILE__ );
 
@@ -34,14 +34,14 @@ require_once BOGO_PLUGIN_DIR . '/includes/rewrite.php';
 require_once BOGO_PLUGIN_DIR . '/includes/link-template.php';
 require_once BOGO_PLUGIN_DIR . '/includes/language-switcher.php';
 require_once BOGO_PLUGIN_DIR . '/includes/nav-menu.php';
-require_once BOGO_PLUGIN_DIR . '/includes/widgets.php';
+// require_once BOGO_PLUGIN_DIR . '/includes/widgets.php';
 require_once BOGO_PLUGIN_DIR . '/includes/post.php';
 require_once BOGO_PLUGIN_DIR . '/includes/user.php';
 require_once BOGO_PLUGIN_DIR . '/includes/capabilities.php';
 require_once BOGO_PLUGIN_DIR . '/includes/query.php';
-require_once BOGO_PLUGIN_DIR . '/includes/flags.php';
+// require_once BOGO_PLUGIN_DIR . '/includes/flags.php'; // @changed - disabling this
 require_once BOGO_PLUGIN_DIR . '/includes/rest-api.php';
-require_once BOGO_PLUGIN_DIR . '/includes/shortcodes.php';
+// require_once BOGO_PLUGIN_DIR . '/includes/shortcodes.php';
 require_once BOGO_PLUGIN_DIR . '/includes/block-editor/block-editor.php';
 
 require_once __DIR__ . '/custom/_index.php';

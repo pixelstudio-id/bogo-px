@@ -16,6 +16,7 @@ const entryPoints = {
 module.exports = {
   entry: entryPoints,
   output: {
+    publicPath: '',
     path: path.resolve(__dirname, outputPath),
     filename: '[name].js',
   },

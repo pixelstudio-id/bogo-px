@@ -115,7 +115,13 @@ function bogo_get_user_locale( $user_id = 0 ) {
 
 // @changed - add default value to $user_id and defaults to currently logged-in user
 function bogo_get_user_accessible_locales( $user_id=0 ) {
+	global $bogo_accessible_locales;
 	global $wpdb;
+
+	// check for cache
+	if ($bogo_accessible_locales) {
+		return $bogo_accessible_locales;
+	}
 
 	if (!$user_id) {
 		$user_id = get_current_user_id();
@@ -124,6 +130,7 @@ function bogo_get_user_accessible_locales( $user_id=0 ) {
 
 	if ( user_can( $user_id, 'bogo_access_all_locales' ) ) {
 		$locales = bogo_available_locales();
+		$bogo_accessible_locales = $locales; // cache
 
 		return $locales;
 	}
@@ -142,6 +149,7 @@ function bogo_get_user_accessible_locales( $user_id=0 ) {
 		$locales = array( BOGO_DEFAULT_LOCALE );
 	}
 
+	$bogo_accessible_locales = $locales; // cache
 	return $locales;
 }
 

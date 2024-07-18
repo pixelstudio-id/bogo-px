@@ -107,7 +107,7 @@ const menuLocale = {
   onMainTitleInput(e) {
     const $input = e.currentTarget;
     const $wrapper = $input.closest('.menu-item');
-    const $bogoInputs = $wrapper.querySelectorAll('.field-bogo-titles label:not(.has-fixed-placeholder) input');
+    const $bogoInputs = $wrapper.querySelectorAll('.bogo-menu-titles label:not(.has-fixed-placeholder) input');
 
     $bogoInputs.forEach(($i) => {
       $i.setAttribute('placeholder', $input.value);

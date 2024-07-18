@@ -14,11 +14,11 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
   if (bogo_is_default_locale()) { return $items; } // abort if base locale
 
   foreach ($items as &$item) {
-    $titles = json_decode(get_post_meta($item->db_id, '_bogo_title', true), true);
+    $titles = json_decode(get_post_meta($item->db_id, 'bogo_titles', true), true);
     
     // if custom, it's always replaced by the Bogo Field
     if ($item->type === '' || $item->type === 'post_type_archive') {
-      $titles = json_decode(get_post_meta($item->db_id, '_bogo_title', true), true);
+      $titles = json_decode(get_post_meta($item->db_id, 'bogo_titles', true), true);
       $item->title = empty($titles[get_locale()]) ? $item->title : $titles[get_locale()];
     }
     // if post_type, check if empty, use the native title
@@ -109,7 +109,7 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
   $all_locales = bogo_available_languages();
   unset($all_locales[BOGO_DEFAULT_LOCALE]);
 
-  $values = json_decode(get_post_meta($id, '_bogo_title', true), true);
+  $values = json_decode(get_post_meta($id, 'bogo_titles', true), true);
   $placeholders = [];
 
   if ($menu_item->type === 'post_type') {
@@ -143,7 +143,7 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
         <input
           type="text"
           placeholder="<?= $placeholder ?>"
-          name="_bogo_title[<?= $id ?>][<?= $locale ?>]"
+          name="bogo_titles[<?= $id ?>][<?= $locale ?>]"
           value="<?= $value ?>"
         >
       </label>
@@ -178,10 +178,10 @@ function _bogo_echo_menu_item_taxonomy_notice($menu_item) {
  * @action wp_update_nav_menu
  */
 function bogo_save_translated_custom_link($menu_id, $menu_data = []) {
-  $titles = $_POST['_bogo_title'] ?? null;
+  $titles = $_POST['bogo_titles'] ?? null;
   if (!$titles) { return; }
 
   foreach ($titles as $id => $title) {
-    update_post_meta($id, '_bogo_title', json_encode($title, JSON_UNESCAPED_UNICODE));
+    update_post_meta($id, 'bogo_titles', json_encode($title, JSON_UNESCAPED_UNICODE));
   }
-} 
+}

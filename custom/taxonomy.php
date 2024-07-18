@@ -24,7 +24,7 @@ function bogo_add_fields_to_taxonomies($term, $taxonomy) {
   $locales = bogo_available_languages();
   unset($locales[BOGO_DEFAULT_LOCALE]);
 
-  $values = json_decode(get_term_meta($term->term_id, '_bogo_name', true), true);
+  $values = json_decode(get_term_meta($term->term_id, 'bogo_names', true), true);
   ?>
   <tr class="form-field bogo-term-names">
 		<th><label>Localized Names</label></th>
@@ -39,7 +39,7 @@ function bogo_add_fields_to_taxonomies($term, $taxonomy) {
           <input
             type="text"
             placeholder="<?= $term->name ?>"
-            name="_bogo_name[<?= $locale ?>]"
+            name="bogo_names[<?= $locale ?>]"
             value="<?= $value ?>"
           >
         </label>
@@ -53,10 +53,10 @@ function bogo_add_fields_to_taxonomies($term, $taxonomy) {
  * @action saved_{$taxonomy}
  */
 function bogo_after_save_taxonomy($term_id) {
-  $name = $_POST['_bogo_name'] ?? null;
+  $name = $_POST['bogo_names'] ?? null;
   if (!$name) { return; }
 
-  update_term_meta($term_id, '_bogo_name', json_encode($name, JSON_UNESCAPED_UNICODE));
+  update_term_meta($term_id, 'bogo_names', json_encode($name, JSON_UNESCAPED_UNICODE));
 }
 
 /**
@@ -66,7 +66,7 @@ function bogo_get_term_translate($term, $taxonomy) {
   $locale = get_locale();
   if ($locale === BOGO_DEFAULT_LOCALE) { return $term; }
 
-  $names = json_decode(get_term_meta($term->term_id, '_bogo_name', true), true);
+  $names = json_decode(get_term_meta($term->term_id, 'bogo_names', true), true);
   if (!$names) { return $term; }
 
   $term->name = empty($names[$locale]) ? $term->name : $names[$locale];

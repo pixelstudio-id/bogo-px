@@ -51,7 +51,7 @@ function bogo_manage_posts_custom_column( $column_name, $post_id ) {
   $is_parent_post = !$locale || $locale === get_locale();
   
   // Create list of flags with Edit/Create link
-  if ($is_parent_post) {
+  if ($is_parent_post && function_exists('bogo_create_admin_flag_buttons')) {
     echo bogo_create_admin_flag_buttons( $post );
   }
   else {
