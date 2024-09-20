@@ -46,7 +46,7 @@ function bogo_add_column_to_custom_post_type() {
 
     add_filter("manage_{$pt}_posts_columns", function($columns) use ($pt) {
       return bogo_posts_columns($columns, $pt);
-    });
+    }, 9999);
   }
 }
 

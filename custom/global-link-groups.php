@@ -13,7 +13,7 @@ function bogo_init_global_link_groups() {
 
 
   $posts = get_posts([
-    'post_type' => 'any',
+    'post_type' => bogo_localizable_post_types(),
     'meta_query' => [
       [
         'key' => '_original_post',
