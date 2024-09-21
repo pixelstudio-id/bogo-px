@@ -1,19 +1,45 @@
 <?php
 
 /**
- * Get the IP address of visitor
+ * Returns true if the specified locale is the default locale.
+ *
+ * @param string $locale Locale code.
  */
-static function bogo_get_visitor_ip() {
-  $ip = $_SERVER['REMOTE_ADDR'];
-  if ($deep_detect) {
-    if (filter_var(@$_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP)) {
-      $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    }
+function bogoHelper_is_default_locale($locale = null) {
+	if ($locale) {
+		return $locale === BOGO_DEFAULT_LOCALE;
+	} else {
+		return get_locale() === BOGO_DEFAULT_LOCALE;
+	}
+}
 
-    if (isset($_SERVER['HTTP_CLIENT_IP']) && filter_var(@$_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP)) {
-      $ip = $_SERVER['HTTP_CLIENT_IP'];
-    }
+/**
+ *
+ */
+function bogoHelper_get_localizable_post_types() {
+  static $post_types = [];
+  if (!$post_types) {
+    $post_types = apply_filters('bogo_localizable_post_types', ['post', 'page']);
+    $post_types = array_diff($post_types, ['attachment', 'revision', 'nav_menu_item']);
   }
 
-  return $ip;
+  return $post_types;
+}
+
+/**
+ * Give all translated versions of that post
+ */
+function bogoHelper_get_post_translations($post_id, $return_raw_post = true) {
+  $original_post_id = (int) get_post_meta($post_id, '_original_post', true);
+  global $BOGO_GROUPS_BY_ID;
+  
+  $group = $BOGO_GROUPS_BY_ID[$original_post_id] ?? [];
+
+  if ($return_raw_post) {
+    $group = array_map(function($p) {
+      return $p['post'];
+    }, $group);
+  }
+
+  return $group;
 }

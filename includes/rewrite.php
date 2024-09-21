@@ -42,7 +42,7 @@ function bogo_rewrite_rules_array( $rules ) {
 		);
 	}
 
-	$localizable_post_types = bogo_localizable_post_types();
+	$localizable_post_types = Bogo::get_localizable_post_types();
 
 	foreach ( $localizable_post_types as $post_type ) {
 		if ( ! $post_type_obj = get_post_type_object( $post_type )

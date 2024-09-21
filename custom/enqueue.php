@@ -38,7 +38,7 @@ function bogo_editor_enqueue_scripts_custom() {
   $accessible_locales = bogo_get_user_accessible_locales();
   $accessible_posts = array_merge(
     [ $current_locale => $post ],
-    bogo_get_post_translations($post),
+    Bogo::get_post_translations($post->ID),
   );
 
   $options = [];

@@ -40,7 +40,8 @@ function bogo_hide_translated_post_in_list_table($query) {
  * @action admin_init
  */
 function bogo_add_column_to_custom_post_type() {
-  $post_types = bogo_localizable_post_types();
+  $post_types = Bogo::get_localizable_post_types();
+
   foreach ($post_types as $pt) {
     if ($pt === 'post' || $pt === 'page') { continue; }
 
@@ -60,7 +61,7 @@ function bogo_create_admin_flag_buttons($post) {
   $accessible_locales = bogo_get_user_accessible_locales();
   $accessible_locales = array_diff($accessible_locales, [get_locale()]);
 
-  $accessible_posts = bogo_get_post_translations($post);
+  $accessible_posts = Bogo::get_post_translations($post_id);
 
   $flags = '';
   foreach ($accessible_locales as $locale) {

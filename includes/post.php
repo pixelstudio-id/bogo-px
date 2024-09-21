@@ -5,7 +5,7 @@
 add_action( 'init',
 
   function() {
-    $post_types = bogo_localizable_post_types();
+    $post_types = Bogo::get_localizable_post_types();
 
     $auth_callback = function ( $allowed, $meta_key, $object_id, $user_id ) {
       return user_can( $user_id, 'edit_post', $object_id );
@@ -76,6 +76,9 @@ function bogo_get_post_locale( $post_id ) {
   return $locale;
 }
 
+/**
+ * @deprecated - replaced by bogoHelper_get_localizable_post_types()
+ */
 function bogo_localizable_post_types() {
   $localizable = apply_filters( 'bogo_localizable_post_types',
     array( 'post', 'page' )
@@ -90,7 +93,7 @@ function bogo_localizable_post_types() {
 }
 
 function bogo_is_localizable_post_type( $post_type ) {
-  return ! empty( $post_type ) && in_array( $post_type, bogo_localizable_post_types() );
+  return ! empty( $post_type ) && in_array( $post_type, Bogo::get_localizable_post_types() );
 }
 
 function bogo_count_posts( $locale, $post_type = 'post' ) {
@@ -114,9 +117,11 @@ function bogo_count_posts( $locale, $post_type = 'post' ) {
   return (int) $wpdb->get_var( $q );
 }
 
+/**
+ * @deprecated - replaced by bogoHelper_get_post_translations()
+ */
 function bogo_get_post_translations( $post_id = 0 ) {
   $post = get_post( $post_id );
-
   if ( ! $post ) {
     return false;
   }
@@ -127,7 +132,7 @@ function bogo_get_post_translations( $post_id = 0 ) {
     return $translations[$post->ID];
   }
 
-  $original_post = get_post_meta( $post->ID, '_original_post', true );
+  $original_post = (int) get_post_meta( $post->ID, '_original_post', true );
 
   // For back-compat
   if ( empty( $original_post ) ) {
@@ -158,8 +163,8 @@ function bogo_get_post_translations( $post_id = 0 ) {
 
   // For back-compat
   if ( is_int( $original_post )
-  and $p = get_post( $original_post )
-  and 'trash' !== get_post_status( $p ) ) {
+    and $p = get_post( $original_post )
+    and 'trash' !== get_post_status( $p ) ) {
     array_unshift( $posts, $p );
   }
 
@@ -187,7 +192,7 @@ function bogo_get_post_translations( $post_id = 0 ) {
 }
 
 function bogo_get_post_translation( $post_id, $locale ) {
-  $translations = bogo_get_post_translations( $post_id );
+  $translations = Bogo::get_post_translations($post_id);
 
   if ( isset( $translations[$locale] ) ) {
     return $translations[$locale];
@@ -367,29 +372,28 @@ function bogo_duplicate_post( $original_post, $locale ) {
       }
     }
 
-    update_post_meta( $new_post_id, '_locale', $locale );
+    
+    $original_post_id = $original_post->ID;
+    update_post_meta($original_post_id, '_original_post', $original_post_id);
+    update_post_meta($new_post_id, '_original_post', $original_post_id);
+    update_post_meta($new_post_id, '_locale', $locale);
 
-    $meta_original_post = get_post_meta( $original_post->ID, '_original_post', true );
-
-    if ( $meta_original_post ) {
-      update_post_meta( $new_post_id,
-        '_original_post', $meta_original_post
-      );
-    } else {
-      // @changed - original_post is now storing ID instead of GUID
-      $original_post_id = $original_post->ID;
-      $translations = bogo_get_post_translations( $original_post );
-
-      update_post_meta( $original_post_id, '_original_post', $original_post_id );
-
-      if ( $translations ) {
-        foreach ( $translations as $tr_locale => $tr_post ) {
-          update_post_meta( $tr_post->ID, '_original_post', $original_post_id );
-        }
-      }
-
-      update_post_meta( $new_post_id, '_original_post', $original_post_id );
-    }
+    // $meta_original_post = get_post_meta( $original_post->ID, '_original_post', true );
+    // if ( $meta_original_post ) {
+    //   update_post_meta( $new_post_id,
+    //     '_original_post', $meta_original_post
+    //   );
+    // } else {
+    //   $original_post_id = $original_post->ID;
+    //   update_post_meta( $original_post_id, '_original_post', $original_post_id );
+    //   $translations = Bogo::get_post_translations($original_post);
+    //   if ( $translations ) {
+    //     foreach ( $translations as $tr_locale => $tr_post ) {
+    //       update_post_meta( $tr_post->ID, '_original_post', $original_post_id );
+    //     }
+    //   }
+    //   update_post_meta( $new_post_id, '_original_post', $original_post_id );
+    // }
   }
 
   return $new_post_id;
@@ -423,22 +427,23 @@ function bogo_get_pages( $pages, $args ) {
   return $new_pages;
 }
 
-add_action( 'save_post', 'bogo_save_post', 10, 2 );
+// @changed - i think this is not needed?
+// add_action( 'save_post', 'bogo_save_post', 10, 2 );
 
 function bogo_save_post( $post_id, $post ) {
-  if ( did_action( 'import_start' )
-  and ! did_action( 'import_end' ) ) {
-    // Importing
+  // abort if importing
+  if (did_action('import_start') and ! did_action('import_end')) {
     return;
   }
 
-  if ( ! bogo_is_localizable_post_type( $post->post_type ) ) {
+  // abort if not localizable
+  if (!bogo_is_localizable_post_type($post->post_type)) {
     return;
   }
 
   $current_locales = get_post_meta( $post_id, '_locale' );
   $locale = null;
-
+  
   if ( ! empty( $current_locales ) ) {
     foreach ( $current_locales as $current_locale ) {
       if ( bogo_is_available_locale( $current_locale ) ) {
@@ -469,20 +474,17 @@ function bogo_save_post( $post_id, $post ) {
     add_post_meta( $post_id, '_locale', $locale, true );
   }
 
-  // @changed - original_post meta now storing ID instead of GUID
-  $original_post = get_post_meta( $post_id, '_original_post', true );
-
-  if ( empty( $original_post ) ) {
-    $translations = bogo_get_post_translations( $post_id );
-
-    update_post_meta( $post_id, '_original_post', $post_id );
-
-    if ( $translations ) {
-      foreach ( $translations as $tr_locale => $tr_post ) {
-        update_post_meta( $tr_post->ID, '_original_post', $post_id );
-      }
-    }
-  }
+  // @todo - _original_post already set when duplicating, no need for this
+  // $original_post = get_post_meta($post_id, '_original_post', true);
+  // if (empty($original_post)) {
+  //   update_post_meta($post_id, '_original_post', $post_id);
+  //   $translations = Bogo::get_post_translations( $post_id );
+  //   if ( $translations ) {
+  //     foreach ( $translations as $tr_locale => $tr_post ) {
+  //       update_post_meta( $tr_post->ID, '_original_post', $post_id );
+  //     }
+  //   }
+  // }
 }
 
 add_filter( 'pre_wp_unique_post_slug', 'bogo_unique_post_slug', 10, 6 );

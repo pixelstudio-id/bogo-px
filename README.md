@@ -64,19 +64,18 @@ Use the variation `[bogo-dropdown style="toggle"]` that fits better for mobile.
 By default this plugin only add locale option on Pages and Posts. To add it on a custom post type, add this code:
 
 ```php
-// replace 'YOURCPT' with the custom post type name
 add_filter('bogo_localizable_post_types', function($post_types) {
-  $post_types[] = 'YOURCPT';
+  $post_types[] = 'custom_pt';
   return $post_types;
 });
 ```
 
-For taxonomy translation, it adds custom fields to the Term's setting page. By default it's active on Category and Tags. To add it on a custom taxonomy, add this code:
+For taxonomy translation, it adds custom fields to the Term's setting page. By default it's active on Post Category. To add it on Post Tags or custom taxonomy, add this code:
 
 ```php
-// replace 'YOURTAX' with the custom taxonomy
 add_filter('bogo_localizable_taxonomies', function($taxonomies) {
-  $taxonomies[] = 'YOURTAX';
+  $taxonomies[] = 'post_tag';
+  $taxonomies[] = 'custom_tax';
   return $taxonomies;
 });
 ```
@@ -95,7 +94,7 @@ add_filter('bogo_localizable_taxonomies', function($taxonomies) {
 ### Future Plan
 
 - In the language dropdown in Gutenberg, add link to create missing translation.
-- Add translatable Description for Menu and Term.
+- Add translatable Description for Menu.
 - Allow locale post listing in trash to restore/permanently delete
 
 ### Using it in API

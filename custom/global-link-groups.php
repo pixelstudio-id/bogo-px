@@ -8,12 +8,10 @@ add_action('init', 'bogo_init_global_link_groups');
  * @action init
  */
 function bogo_init_global_link_groups() {
-  // abort if current language is base language
-  if (is_admin() || bogo_is_default_locale()) { return; }
-
+  // @todo - is this too slow to always run?
 
   $posts = get_posts([
-    'post_type' => bogo_localizable_post_types(),
+    'post_type' => Bogo::get_localizable_post_types(),
     'meta_query' => [
       [
         'key' => '_original_post',

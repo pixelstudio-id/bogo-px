@@ -11,9 +11,9 @@ function bogo_dropdown_shortcode($atts, $content) {
   ], $atts);
 
   $links = bogo_language_switcher_links([ 'echo' => false ]);
+
   $current_lang_name = '';
   $links_html = '';
-
   $locale_count = 0;
 
   foreach ($links as $link) {

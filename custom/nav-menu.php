@@ -11,7 +11,7 @@ add_filter('wp_get_nav_menu_items', 'bogo_localize_nav_menu_items', 15, 3);
  */
 function bogo_localize_nav_menu_items($items, $menu, $args) {
   if (is_admin()) { return $items; } // abort if admin
-  if (bogo_is_default_locale()) { return $items; } // abort if base locale
+  if (Bogo::is_default_locale()) { return $items; } // abort if base locale
 
   foreach ($items as &$item) {
     $titles = json_decode(get_post_meta($item->db_id, 'bogo_titles', true), true);
@@ -113,7 +113,7 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
   $placeholders = [];
 
   if ($menu_item->type === 'post_type') {
-    $posts = bogo_get_post_translations($menu_item->object_id);
+    $posts = Bogo::get_post_translations($menu_item->object_id);
     $placeholders = array_map(function($p) {
       return $p->post_title;
     }, $posts);

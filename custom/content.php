@@ -8,7 +8,7 @@ add_filter('pre_get_posts', 'bogo_only_show_translated_posts', 20);
  * @filter the_content
  */
 function bogo_localize_links_in_content($content) {
-  if (bogo_is_default_locale()) { return $content; }
+  if (Bogo::is_default_locale()) { return $content; }
 
   $content = preg_replace_callback('/(<a.+href=")(.+)(".*>.+<\/a>)/Ui', function($matches) {
     $url = $matches[2];
@@ -39,7 +39,7 @@ function bogo_only_show_translated_posts($query) {
   if ($post_type === 'post' || $post_type === 'page') { return $query; }
 
   // abort if post_type is not localizable
-  if (!in_array($post_type, bogo_localizable_post_types())) { return $query; }
+  if (!in_array($post_type, Bogo::get_localizable_post_types())) { return $query; }
   
   $locale = get_locale();
   $meta_query = [
@@ -50,7 +50,7 @@ function bogo_only_show_translated_posts($query) {
     ],
   ];
 
-  if ($locale === BOGO_DEFAULT_LOCALE) {
+  if (Bogo::is_default_locale($locale)) {
     $meta_query['relation'] = 'OR';
     $meta_query[] = [
       'key' => '_locale',

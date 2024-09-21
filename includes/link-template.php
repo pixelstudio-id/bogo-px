@@ -163,7 +163,7 @@ function bogo_m17n_headers() {
 		$post_id = get_queried_object_id();
 
 		if ( $post_id
-		and $translations = bogo_get_post_translations( $post_id ) ) {
+		and $translations = Bogo::get_post_translations( $post_id ) ) {
 			$locale = get_locale();
 			$translations[$locale] = get_post( $post_id );
 

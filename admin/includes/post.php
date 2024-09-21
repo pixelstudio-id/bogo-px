@@ -190,7 +190,8 @@ function bogo_add_translation() {
 
 /* Single Post */
 
-add_action( 'add_meta_boxes', 'bogo_add_l10n_meta_boxes', 10, 2 );
+// @changed - metabox replaced by the dropdown at the top bar
+// add_action( 'add_meta_boxes', 'bogo_add_l10n_meta_boxes', 10, 2 );
 
 function bogo_add_l10n_meta_boxes( $post_type, $post ) {
   if ( ! bogo_is_localizable_post_type( $post_type ) ) {
@@ -218,7 +219,7 @@ function bogo_l10n_meta_box( $post ) {
     $post_locale = bogo_get_post_locale( $post->ID );
   }
 
-  $translations = bogo_get_post_translations( $post->ID );
+  $translations = Bogo::get_post_translations($post->ID);
   $available_languages = bogo_available_languages( array(
     'current_user_can_access' => true,
   ) );
