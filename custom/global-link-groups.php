@@ -12,12 +12,11 @@ function bogo_init_global_link_groups() {
 
   $posts = get_posts([
     'post_type' => Bogo::get_localizable_post_types(),
-    'meta_query' => [
-      [
-        'key' => '_original_post',
-        'compare' => 'EXISTS',
-      ],
-    ],
+    'meta_query' => [[
+      'key' => '_original_post',
+      'compare' => 'EXISTS',
+    ]],
+    'post_status' => is_admin() ? ['publish', 'draft'] : ['publish'],
     'posts_per_page' => -1
   ]);
 
@@ -40,6 +39,9 @@ function bogo_init_global_link_groups() {
     ];
   }
 
+  global $BOGO_GROUPS_BY_ID;
+  $BOGO_GROUPS_BY_ID = $groups;
+
   // group by URL
   $groups_by_url = [];
   foreach ($groups as $group) {
@@ -47,11 +49,31 @@ function bogo_init_global_link_groups() {
     $groups_by_url[$og_url] = $group;
   }
 
-  global $BOGO_GROUPS_BY_ID;
   global $BOGO_GROUPS_BY_URL;
-
-  $BOGO_GROUPS_BY_ID = $groups;
   $BOGO_GROUPS_BY_URL = $groups_by_url;
+
+  // group by post type and lang
+  $groups_by_pt = [];
+  foreach ($groups as $original_id => $group) {
+    $post_type = isset($group[BOGO_DEFAULT_LOCALE]) ? $group[BOGO_DEFAULT_LOCALE]['post']->post_type : '';
+    if (!$post_type) { continue; }
+
+    if (!isset($groups_by_pt[$post_type])) {
+      $groups_by_pt[$post_type] = [];
+    }
+
+    // group by lang
+    foreach ($group as $locale => $item) {
+      if (!isset($groups_by_pt[$post_type][$locale])) {
+        $groups_by_pt[$post_type][$locale] = [];
+      }
+
+      $groups_by_pt[$post_type][$locale][] = $item['post'];
+    }
+  }
+
+  global $BOGO_GROUPS_BY_POST_TYPE;
+  $BOGO_GROUPS_BY_POST_TYPE = $groups_by_pt;
 }
 
 /**

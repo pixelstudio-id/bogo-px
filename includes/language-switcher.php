@@ -187,7 +187,6 @@ function bogo_language_switcher_links( $args = '' ) {
     $is_singular = true;
   }
 
-
   $links = array();
 
   foreach ( $available_languages as $code => $name ) {
@@ -205,15 +204,30 @@ function bogo_language_switcher_links( $args = '' ) {
       'href' => '',
     );
 
-    if ( $is_singular ) {
-      $link['href'] = $translations[$code]['url'];
-      // if ( $locale === $code ) {
-        // $link['href'] = get_permalink( get_queried_object_id() );
-      // } elseif ( ! empty( $translations[$code] ) and 'publish' == get_post_status( $translations[$code] ) ) {
-      //   $link['href'] = get_permalink( $translations[$code] );
-      // }
-    } else {
-      $link['href'] = bogo_url( null, $code );
+    if (is_home()) {
+      $posts_page = get_option('page_for_posts');
+      if ($posts_page) {
+        $has_any_post = Bogo::is_post_type_has_locale_post('post', $code);
+        $link['href'] = $has_any_post ? $translations[$code]['url'] : '';
+      } else {
+        $link['href'] = bogo_url(null, $code);
+      }
+    }
+    elseif ($is_singular) {
+      $link['href'] = $translations[$code]['url'] ?? '';
+    }
+    elseif (is_archive()) {
+      if (Bogo::is_default_locale($code)) {
+        $link['href'] = bogo_url(null, $code);
+      } else {
+        global $posts;
+        $post_type = $posts[0]->post_type;
+        $has_any_post = Bogo::is_post_type_has_locale_post($post_type, $code);
+        $link['href'] = $has_any_post ? bogo_url(null, $code) : '';
+      }
+    }
+    else {
+      $link['href'] = bogo_url(null, $code);
     }
 
     $links[] = $link;

@@ -38,7 +38,7 @@
     height: 0.75rem
     background-image: url('./svg/chevron-down.svg')
 
-.bogo-dropdown__links
+.bogo-options
   visibility: hidden
   opacity: 0
 
@@ -53,18 +53,12 @@
   box-shadow: 0 1.5px 4px rgba(0,0,0, .24), 0 1.5px 6px rgba(0,0,0, .12)
   padding: 0.5rem 0
 
-  list-style-type: none
   color: var(--text, #222)
 
-  &::before
-    content: "AVAILABLE LANGUAGE"
-    opacity: .5
-    padding: 0.25rem 0.75rem
-    margin-bottom: 0.25rem
-    font-size: 80%
-    font-weight: 700
-    white-space: nowrap
-    text-transform: uppercase
+  ul
+    list-style-type: none
+    margin: 0
+    padding: 0
 
   .bogo-dropdown:hover &
     visibility: visible
@@ -90,9 +84,20 @@
     opacity: 1
     transform: none
 
+  h6
+    display: block
+    opacity: .3
+    padding: 0.25rem 0.75rem
+    margin: 0
+    font-size: 80%
+    font-weight: 700
+    white-space: nowrap
+    text-transform: uppercase
+    
   li
     margin-bottom: 0
   a
+    cursor: pointer
     display: flex
     align-items: center
     column-gap: 0.5rem
@@ -104,9 +109,9 @@
     font-weight: 500
     color: var(--text, #222)
     white-space: nowrap
-  a[href]:hover
+  a:hover
     background-color: rgba(black, .1)
-  a[href]:active
+  a:active
     background-color: rgba(black, .15)
     transition: none
 
@@ -118,4 +123,16 @@
     font-size: 75%
     opacity: 0.5
 
+
+.bogo-options__new
+  i
+    filter: grayscale(100%)
+    opacity: .3
+  b
+    display: none
+
+  li.is-loading
+    i
+      background-image: url('./images/spinner.gif')
+      background-size: contain
 

@@ -374,6 +374,7 @@ function bogo_duplicate_post( $original_post, $locale ) {
 
     
     $original_post_id = $original_post->ID;
+
     update_post_meta($original_post_id, '_original_post', $original_post_id);
     update_post_meta($new_post_id, '_original_post', $original_post_id);
     update_post_meta($new_post_id, '_locale', $locale);
