@@ -9,9 +9,9 @@
  *   myFetch.get('/posts');
  *   myFetch.post('/create-post', {...});
  */
-class MyFetch {
-  constructor(baseURL, headers = {}) {
-    this.baseURL = baseURL;
+export class MyFetch {
+  constructor(url, headers) {
+    this.url = url || '';
     this.headers = {
       'Content-Type': 'application/json',
       ...headers,
@@ -19,11 +19,11 @@ class MyFetch {
   }
 
   /**
-   * @param string path - path to append to the base URL
+   *
    */
-  async get(path) {
+  async get(apiPath) {
     try {
-      const response = await fetch(this.baseURL + path, {
+      const response = await fetch(this.url + apiPath, {
         method: 'GET',
         headers: this.headers,
       });
@@ -33,8 +33,9 @@ class MyFetch {
       }
 
       return response.json();
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
+      return Promise.reject(error);
     }
   }
 
@@ -47,9 +48,13 @@ class MyFetch {
       return JSON.parse(cached);
     }
 
-    const data = await this.get(path);
-    sessionStorage.setItem(path, JSON.stringify(data));
-    return data;
+    try {
+      const data = await this.get(path);
+      sessionStorage.setItem(path, JSON.stringify(data));
+      return data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   /**
@@ -61,9 +66,13 @@ class MyFetch {
       return JSON.parse(cached);
     }
 
-    const data = await this.get(path);
-    localStorage.setItem(path, JSON.stringify(data));
-    return data;
+    try {
+      const data = await this.get(path);
+      localStorage.setItem(path, JSON.stringify(data));
+      return data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   async post(apiPath, body) {
@@ -75,7 +84,7 @@ class MyFetch {
     }
 
     try {
-      const response = await fetch(this.baseURL + apiPath, {
+      const response = await fetch(this.url + apiPath, {
         method: 'POST',
         body: bodyData,
         headers: this.headers,
@@ -86,8 +95,9 @@ class MyFetch {
       }
 
       return response.json();
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
+      return Promise.reject(error);
     }
   }
 
@@ -97,11 +107,24 @@ class MyFetch {
         method: 'DELETE',
       });
 
-      return await response;
-    } catch (err) {
-      console.log(err);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return Promise.reject(error);
     }
   }
 }
 
+// Initiate the method
+const headers = {};
+const { nonce, root } = window.bogoApiSettings;
+
+if (nonce) {
+  headers['X-WP-Nonce'] = nonce;
+}
+
+const myFetch = new MyFetch();
+const bogoFetch = new MyFetch(root, headers);
+
 export default MyFetch;
+export { myFetch, bogoFetch };

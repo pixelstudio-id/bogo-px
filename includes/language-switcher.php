@@ -187,7 +187,6 @@ function bogo_language_switcher_links( $args = '' ) {
     $is_singular = true;
   }
 
-
   $links = array();
 
   foreach ( $available_languages as $code => $name ) {
@@ -206,13 +205,35 @@ function bogo_language_switcher_links( $args = '' ) {
     );
 
     if ( $is_singular ) {
-      $link['href'] = $translations[$code]['url'];
+      $link['href'] = $translations[$code]['url'] ?? '';
       // if ( $locale === $code ) {
         // $link['href'] = get_permalink( get_queried_object_id() );
       // } elseif ( ! empty( $translations[$code] ) and 'publish' == get_post_status( $translations[$code] ) ) {
       //   $link['href'] = get_permalink( $translations[$code] );
       // }
-    } else {
+    }
+    elseif (is_archive() && Bogo::is_default_locale($code)) {
+      $link['href'] = bogo_url(null, $code);
+    }
+    elseif (is_archive()) {
+      // check if it has any post in that locale
+      $object = get_queried_object();
+      $object_name = get_class($object);
+
+      // @todo - if object is WP_Term, get posts with tax_query
+
+      $post_type = $object->name;
+      $has_any_post = get_posts([
+        'post_type' => $post_type,
+        'meta_query' => [[
+          'key' => '_locale',
+          'value' => $code,
+          'compare' => '=',
+        ]],
+      ]);
+      $link['href'] = $has_any_post ? bogo_url(null, $code) : '';
+    }
+    else {
       $link['href'] = bogo_url( null, $code );
     }
 

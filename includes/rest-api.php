@@ -166,6 +166,12 @@ function bogo_rest_post_translations( WP_REST_Request $request ) {
 
 function bogo_rest_create_post_translation( WP_REST_Request $request ) {
 	$post_id = $request->get_param( 'id' );
+	
+	// make sure it copies the original
+	$original_post_id = get_post_meta($post_id, '_original_post', true);
+	if ($original_post_id) {
+		$post_id = $original_post_id;
+	}
 
 	$post = get_post( $post_id );
 

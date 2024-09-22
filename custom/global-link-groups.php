@@ -18,6 +18,7 @@ function bogo_init_global_link_groups() {
         'compare' => 'EXISTS',
       ],
     ],
+    'post_status' => is_admin() ? ['publish', 'draft'] : ['publish'],
     'posts_per_page' => -1
   ]);
 

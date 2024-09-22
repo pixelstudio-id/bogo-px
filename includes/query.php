@@ -200,38 +200,38 @@ function bogo_option_sticky_posts( $posts ) {
 	return $posts;
 }
 
-// @todo - this filter makes tons of request but necessary to output content of Home and Blog page - optimize it
 add_filter( 'option_page_on_front', 'bogo_get_local_post', 10, 1 );
 add_filter( 'option_page_for_posts', 'bogo_get_local_post', 10, 1 );
 
 function bogo_get_local_post( $post_id ) {
 	global $wpdb;
 
-	if ( is_admin()
-	or empty( $post_id ) ) {
+	if (is_admin() || empty($post_id)) {
 		return $post_id;
 	}
 
-	$post_type = get_post_type( $post_id );
-
-	if ( ! post_type_exists( $post_type )
-	or ! bogo_is_localizable_post_type( $post_type ) ) {
+	$post_type = get_post_type($post_id);
+	if (!post_type_exists($post_type) || !bogo_is_localizable_post_type($post_type)) {
 		return $post_id;
 	}
 
 	$locale = get_locale();
-
-	if ( bogo_get_post_locale( $post_id ) == $locale ) {
+	if (bogo_get_post_locale($post_id) === $locale) {
 		return $post_id;
 	}
 
-	$original_post = get_post_meta( $post_id, '_original_post', true );
+	$locale_post = bogo_get_post_translation($post_id, $locale);
+	if ($locale_post) {
+		return $locale_post->ID;
+	}
 
-	// For back-compat
-	if ( empty( $original_post ) ) {
+	// for back compat
+	$original_post = (int) get_post_meta($post_id, '_original_post', true);
+	if (empty($original_post)) {
 		$original_post = $post_id;
 	}
 
+	/*
 	$q = "SELECT ID FROM $wpdb->posts AS posts";
 	$q .= " LEFT JOIN $wpdb->postmeta AS pm1";
 	$q .= " ON posts.ID = pm1.post_id AND pm1.meta_key = '_original_post'";
@@ -258,11 +258,12 @@ function bogo_get_local_post( $post_id ) {
 
 	$q .= ")";
 
-	$translation = absint( $wpdb->get_var( $q ) );
+	$translation = absint($wpdb->get_var($q));
 
-	if ( $translation ) {
+	if ($translation) {
 		return $translation;
 	}
-
+	
 	return $post_id;
+	*/
 }

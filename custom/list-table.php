@@ -1,6 +1,4 @@
 <?php
-// @todo - adding the Locale column is quite heavy. Find a way to optimize it
-
 add_filter('pre_get_posts', 'bogo_hide_translated_post_in_list_table');
 add_action('admin_init', 'bogo_add_column_to_custom_post_type');
 
