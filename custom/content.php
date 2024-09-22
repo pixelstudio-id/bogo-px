@@ -33,10 +33,13 @@ function bogo_localize_links_in_content($content) {
 function bogo_only_show_translated_posts($query) {
   if (is_admin()) { return $query; }
 
+  global $posts;
+  $post_type = isset($posts[0]) ? $posts[0]->post_type : 'page';
+  if ($post_type === 'page') { return $query; }
+
   // abort if 'post' because there's a bug with the main blog query
   // @todo - find a way to filter main posts query
-  $post_type = $query->get('post_type');
-  if ($post_type === 'post' || $post_type === 'page') { return $query; }
+  // if ($post_type === 'post') { return $query; }
 
   // abort if post_type is not localizable
   if (!in_array($post_type, Bogo::get_localizable_post_types())) { return $query; }

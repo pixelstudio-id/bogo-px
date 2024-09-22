@@ -43,3 +43,12 @@ function bogoHelper_get_post_translations($post_id, $return_raw_post = true) {
 
   return $group;
 }
+
+/**
+ * Check if a post type has any translated post
+ */
+function bogoHelper_is_post_type_has_locale_post($post_type, $locale = BOGO_DEFAULT_LOCALE) {
+  global $BOGO_GROUPS_BY_POST_TYPE;
+  $groups = $BOGO_GROUPS_BY_POST_TYPE; // shortener
+  return isset($groups[$post_type][$locale]) && is_array($groups[$post_type]) && count($groups[$post_type][$locale]) > 0;
+}
