@@ -90,12 +90,14 @@ add_filter('bogo_localizable_taxonomies', function($taxonomies) {
 
 - If you switched the base language mid-way, the Post List table won't show the proper parent post.
 - Some languages are spoken in multiple countries, therefore the flags might be wrong.
+- If parent post changed category, the other language isn't changed.
 
 ### Future Plan
 
-- In the language dropdown in Gutenberg, add link to create missing translation.
 - Add translatable Description for Menu.
-- Allow locale post listing in trash to restore/permanently delete
+- Allow locale post listing in trash to restore/permanently delete.
+- Change the category & author of locale post when the original post is changed too.
+- Add direct link to view the locale post within table.
 
 ### Using it in API
 

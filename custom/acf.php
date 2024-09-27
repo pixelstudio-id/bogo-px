@@ -51,8 +51,11 @@ function bogo_acf_format_link_to_locale_link($value) {
     return $value;
   }
 
+  if (Bogo::is_default_locale()) {
+    return $value;
+  }
+  
   $locale_link = bogo_get_locale_link_by_url($value['url']);
-
   if ($locale_link) {
     $value['title'] = $locale_link['post']->post_title;
     $value['url'] = $locale_link['url'];

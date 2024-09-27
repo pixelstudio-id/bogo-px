@@ -53,7 +53,7 @@ function bogo_only_show_translated_posts($query) {
     ],
   ];
 
-  if (Bogo::is_default_locale($locale)) {
+  if (Bogo::is_default_locale()) {
     $meta_query['relation'] = 'OR';
     $meta_query[] = [
       'key' => '_locale',

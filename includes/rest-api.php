@@ -92,7 +92,7 @@ function bogo_rest_post_translations( WP_REST_Request $request ) {
 	}
 
 	$response = array();
-	$translations = bogo_get_post_translations( $post );
+	$translations = Bogo::get_post_translations($post->ID);
 
 	foreach ( $translations as $locale => $translation ) {
 		if ( ! current_user_can( 'edit_post', $translation->ID )
