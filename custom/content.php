@@ -5,6 +5,8 @@ add_filter('pre_get_posts', 'bogo_only_show_translated_posts', 20);
 
 
 /**
+ * Replace all links in content with localized version, if any
+ * 
  * @filter the_content
  */
 function bogo_localize_links_in_content($content) {
@@ -12,10 +14,10 @@ function bogo_localize_links_in_content($content) {
 
   $content = preg_replace_callback('/(<a.+href=")(.+)(".*>.+<\/a>)/Ui', function($matches) {
     $url = $matches[2];
-    $locale_link = bogo_get_locale_link_by_url($url);
+    $locale_obj = bogo_localize_by_url($url);
 
-    if ($locale_link) {
-      $url = $locale_link['url'];
+    if ($locale_obj) {
+      $url = $locale_obj['url'];
     }
 
     return $matches[1] . $url . $matches[3];

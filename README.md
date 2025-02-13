@@ -80,26 +80,60 @@ add_filter('bogo_localizable_taxonomies', function($taxonomies) {
 });
 ```
 
-### Technical Changes
+## Technical Changes
 
 - Added code to escape HTML tag in Gutenberg's attribute after duplicated a post.
 - Changed the `_original_post` meta to store ID instead of GUID for easier querying.
 - Removed the Terms Translation page because it's changed to using custom field.
 
-### Known Bugs
+## Utility Functions
 
-- If you switched the base language mid-way, the Post List table won't show the proper parent post.
-- Some languages are spoken in multiple countries, therefore the flags might be wrong.
-- If parent post changed category, the other language isn't changed.
+```php
+bogo_localize_by_url($url, $force_locale)
+```
 
-### Future Plan
+Get the localized object using a URL.
 
-- Add translatable Description for Menu.
-- Allow locale post listing in trash to restore/permanently delete.
-- Change the category & author of locale post when the original post is changed too.
-- Add direct link to view the locale post within table.
+- `$url` (string) - The URL of the post you want to get locale version of. Only URL from base language can be used.
+- `$force_locale` (string?) - Force to get the localized version of specified language. By default it uses the current language. But WP always use base language if within API call, so you need to add this param.
 
-### Using it in API
+**RETURN**
+
+`array` - If localized post exist. It contains:
+
+- `id` - Post ID.
+- `locale` - language code.
+- `url` - the localized URL.
+- `post` - the WP_Post object.
+
+`null` - If localized post not found or if URL doesn't contain "http".
+
+```php
+bogo_localize_by_id($id, $force_locale)
+```
+
+Similar to the above but using ID instead of URL.
+
+- `$id` (string) - The ID of the post you want to get locale version of. Only ID from base language can be used.
+- `$force_locale` (string?)
+
+**RETURN**
+
+Same as above.
+
+```php
+bogo_localize_post_by_id($id, $force_locale)
+```
+
+Same as `bogo_localize_by_id()` but it immediately returns the WP_Post object instead of the full data. Just a quick shortcut.
+
+**RETURN**
+
+`WP_Post` - If localized post exist
+
+`null` - If localized post doesn't exist
+
+## Using it in API
 
 If you want to get translated page during API call, you need to change the locale and initiate the BOGO's global object:
 
@@ -122,6 +156,17 @@ function api_callback_get_page($params) {
   $page = get_post($id); // now this will return the translated version, if any
   return $page
 }
-
-
 ```
+
+### Known Bugs
+
+- If you switched the base language mid-way, the Post List table won't show the proper parent post.
+- Some languages are spoken in multiple countries, therefore the flags might be wrong.
+- If parent post changed category, the other language isn't changed.
+
+### Future Plan
+
+- Add translatable Description for Menu.
+- Allow locale post listing in trash to restore/permanently delete.
+- Change the category & author of locale post when the original post is changed too.
+- Add direct link to view the locale post within table.

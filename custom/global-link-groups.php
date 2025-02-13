@@ -38,14 +38,14 @@ function bogo_init_global_link_groups() {
       'post' => $p,
     ];
   }
-
+  
   global $BOGO_GROUPS_BY_ID;
   $BOGO_GROUPS_BY_ID = $groups;
 
   // group by URL
   $groups_by_url = [];
   foreach ($groups as $group) {
-    $og_url = $group[BOGO_DEFAULT_LOCALE]['url'];
+    $og_url = isset($group[BOGO_DEFAULT_LOCALE]) ? $group[BOGO_DEFAULT_LOCALE]['url'] : '';
     $groups_by_url[$og_url] = $group;
   }
 
@@ -79,7 +79,7 @@ function bogo_init_global_link_groups() {
 /**
  * Get the translated version of a post by URL
  */
-function bogo_get_locale_link_by_url($url) {
+function bogo_localize_by_url($url) {
   $parsed_url = parse_url($url);
 
   // abort if doesn't have scheme (maybe a #id link)
@@ -109,18 +109,29 @@ function bogo_get_locale_link_by_url($url) {
 /**
  * Get the translated version of a post by ID
  */
-function bogo_get_locale_link_by_id($id) {
+function bogo_localize_by_id($id, $force_locale = null) {
   global $BOGO_GROUPS_BY_ID;
-  $link = $BOGO_GROUPS_BY_ID[$id][get_locale()] ?? null;
+  $id = is_array($id) ? $id[0] : $id;
 
-  return $link ?: null;
+  $locale = get_locale();
+  if ($force_locale) {
+    switch_to_locale($force_locale);
+    $locale = determine_locale();
+  }
+
+  if (isset($BOGO_GROUPS_BY_ID[$id])) {
+    $link = $BOGO_GROUPS_BY_ID[$id][$locale] ?? null;
+    return $link;
+  }
+
+  return null;
 }
 
 /**
- * 
+ * Shortcut to directly get the 'post' object from bogo_localize_by_id()
  */
-function bogo_get_locale_post_by_id($id) {
-  $link = bogo_get_locale_link_by_id($id);
+function bogo_localize_post_by_id($id, $force_locale = null) {
+  $link = bogo_localize_by_id($id, $force_locale);
 
   if ($link) {
     return $link['post'];

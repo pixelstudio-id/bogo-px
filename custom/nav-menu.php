@@ -23,12 +23,12 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
     }
     // if post_type, check if empty, use the native title
     elseif ($item->type === 'post_type') {
-      $locale_link = bogo_get_locale_link_by_id($item->object_id);
+      $locale_obj = bogo_localize_by_id($item->object_id);
       $default_title = $item->title;
 
-      if ($locale_link) {
-        $default_title = $locale_link['post']->post_title;
-        $item->url = $locale_link['url'];
+      if ($locale_obj) {
+        $default_title = $locale_obj['post']->post_title;
+        $item->url = $locale_obj['url'];
       }
 
       $item->title = empty($titles[get_locale()]) ? $default_title : $titles[get_locale()];

@@ -34,7 +34,7 @@ function bogo_acf_fields_hide_localized_posts($args, $field, $post_id) {
  * @filter acf/format_value/type=post_object
  */
 function bogo_acf_format_post_to_locale_post($value, $post_id, $field) {
-  $locale_post = bogo_get_locale_post_by_id($value);
+  $locale_post = bogo_localize_post_by_id($value);
 
   if ($locale_post) {
     $value = $locale_post;
@@ -55,10 +55,10 @@ function bogo_acf_format_link_to_locale_link($value) {
     return $value;
   }
   
-  $locale_link = bogo_get_locale_link_by_url($value['url']);
-  if ($locale_link) {
-    $value['title'] = $locale_link['post']->post_title;
-    $value['url'] = $locale_link['url'];
+  $locale_obj = bogo_localize_by_url($value['url']);
+  if ($locale_obj) {
+    $value['title'] = $locale_obj['post']->post_title;
+    $value['url'] = $locale_obj['url'];
   }
 
   return $value;
