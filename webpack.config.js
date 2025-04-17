@@ -7,10 +7,9 @@ const outputPath = '_dist';
 
 const localDomain = 'http://flexiclasses.test/';
 const entryPoints = {
-  public: './custom/assets/public.js',
-  admin: './custom/assets/admin.js',
-  editor: './custom/assets/editor.js',
-  flags: './custom/assets/flags.sass',
+  'bogopx-public': './custom/bogopx-public.js',
+  'bogopx-admin': './custom/bogopx-admin.js',
+  'bogopx-editor': './custom/bogopx-editor.js',
 };
 
 module.exports = {
@@ -92,5 +91,10 @@ module.exports = {
         ],
       },
     ],
+  },
+  resolve: {
+    alias: {
+      '@lib': path.resolve(__dirname, '_lib/'),
+    },
   },
 };

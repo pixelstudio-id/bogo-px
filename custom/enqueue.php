@@ -8,20 +8,18 @@ add_action('enqueue_block_editor_assets', 'bogo_editor_enqueue_scripts_custom', 
  * @action wp_enqueue_scripts
  */
 function bogo_public_enqueue_scripts_custom() {
-  wp_enqueue_script('bogo-public-custom', BOGO_DIST . '/public.js', [], BOGO_VERSION, true);
-  wp_enqueue_style('bogo-public-custom', BOGO_DIST . '/public.css', [], BOGO_VERSION);
+  wp_enqueue_script('bogopx-public', BOGO_DIST . '/bogopx-public.js', [], BOGO_VERSION, true);
+  wp_enqueue_style('bogopx-public', BOGO_DIST . '/bogopx-public.css', [], BOGO_VERSION);
 }
 
 /**
  * @action admin_enqueue_scripts
  */
 function bogo_admin_enqueue_scripts_custom() {
-  wp_enqueue_script('bogo-admin-custom', BOGO_DIST . '/admin.js', [], BOGO_VERSION, true);
-  wp_enqueue_style('bogo-admin-custom', BOGO_DIST . '/admin.css', [], BOGO_VERSION);
+  wp_enqueue_script('bogopx-admin', BOGO_DIST . '/bogopx-admin.js', [], BOGO_VERSION, true);
+  wp_enqueue_style('bogopx-admin', BOGO_DIST . '/bogopx-admin.css', [], BOGO_VERSION);
 
-  wp_enqueue_style('bogo-flags', BOGO_DIST . '/flags.css', [], '1.0.0');
-
-  wp_localize_script('bogo-admin-custom', 'bogoApiSettings', [
+  wp_localize_script('bogopx-admin', 'bogoApiSettings', [
     'root' => esc_url_raw(rest_url('bogo/v1')),
     'namespace' => 'bogo/v1',
     'nonce' => wp_create_nonce('wp_rest'),
@@ -34,8 +32,8 @@ function bogo_admin_enqueue_scripts_custom() {
 function bogo_editor_enqueue_scripts_custom() {
   if (!is_admin()) { return; }
 
-  wp_enqueue_script('bogo-editor-custom', BOGO_DIST . '/editor.js', [ 'wp-blocks', 'wp-dom' ] , BOGO_VERSION, true);
-  wp_enqueue_style('bogo-editor-custom', BOGO_DIST . '/editor.css', [ 'wp-edit-blocks' ], BOGO_VERSION);
+  wp_enqueue_script('bogopx-editor', BOGO_DIST . '/bogopx-editor.js', [ 'wp-blocks', 'wp-dom' ] , BOGO_VERSION, true);
+  wp_enqueue_style('bogopx-editor', BOGO_DIST . '/bogopx-editor.css', [ 'wp-edit-blocks' ], BOGO_VERSION);
  
   // get current locale for dropdown
   global $post;
@@ -79,13 +77,13 @@ function bogo_editor_enqueue_scripts_custom() {
     }
   }
 
-  wp_localize_script('bogo-editor-custom', 'bogoLanguageDropdown', [
+  wp_localize_script('bogopx-editor', 'bogoLanguageDropdown', [
     'currentOption' => $current_option,
     'options' => $options,
     'optionsCreate' => $options_create,
   ]);
 
-  wp_localize_script('bogo-editor-custom', 'bogoApiSettings', [
+  wp_localize_script('bogopx-editor', 'bogoApiSettings', [
     'root' => esc_url_raw(rest_url('bogo/v1')),
     'namespace' => 'bogo/v1',
     'nonce' => wp_create_nonce('wp_rest'),

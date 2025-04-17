@@ -1,0 +1,18 @@
+@import "@lib/helpers"
+
+.bogo-term-names
+  td
+    display: grid
+    grid-template-columns: 1fr 1fr
+    flex-wrap: wrap
+    column-gap: 0.5rem
+    row-gap: 0.5rem
+
+    @media ($below-xs)
+      grid-template-columns: 1fr
+
+  label,
+  textarea
+    width: 100%
+  textarea
+    margin-top: 0.5rem

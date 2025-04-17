@@ -1,0 +1,56 @@
+@import "@lib/helpers"
+
+.wp-list-table th.column-locale
+  width: auto
+  max-width: 10rem
+
+.column-locale__inner
+  display: flex
+  flex-wrap: wrap
+  column-gap: 0.375rem
+  row-gap: 0.25rem
+  max-width: 10rem
+
+  .flag
+    cursor: pointer
+    opacity: 0.2
+    transition: all .25s ease-in-out
+    filter: grayscale(50)
+    transform: scale(0.9)
+
+  .flag[class*="is-status-"]
+    visibility: visible
+    opacity: 1
+    filter: none
+    transform: none
+
+  .flag.is-status-future,
+  .flag.is-status-draft
+    position: relative
+    opacity: 0.6
+
+    &::before
+      content: ""
+      position: absolute
+      bottom: 0
+      right: 0
+      transform: translateY(25%) translateX(25%)
+      display: inline-block
+      width: 1rem
+      height: 1rem
+      border-radius: 50%
+      background: white var(--_icon) no-repeat center center
+      background-size: contain
+
+  .flag.is-status-draft
+    --_icon: url('./img/pen-circle.svg')
+  .flag.is-status-future
+    --_icon: url('./img/circle-calendar.svg')
+  // .fi.is-status-publish
+
+  .flag:hover
+    opacity: .75
+    filter: none
+
+  .is-loading
+    background-image: url('./img/spinner.gif')
