@@ -29,3 +29,17 @@ class Bogo {
     }
   }
 }
+
+add_filter('bogo_duplicate_post', 'bogopx_escape_copied_content', 10, 3);
+
+/**
+ * @filter bogo_duplicate_post
+ */
+function bogopx_escape_copied_content($postarr, $original_post, $locale) {
+  $postarr['post_content'] = preg_replace(
+    '/\\\\(u[0-9a-fA-F]{4}|[nrtbfv\\"\'\/])/',
+    '\\\\$0',
+    $postarr['post_content']
+  );
+  return $postarr;
+}
