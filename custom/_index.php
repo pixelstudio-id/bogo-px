@@ -33,6 +33,8 @@ class Bogo {
 add_filter('bogo_duplicate_post', 'bogopx_escape_copied_content', 10, 3);
 
 /**
+ * Fixed the HTML tag within JSON comment when copying post being escaped
+ * 
  * @filter bogo_duplicate_post
  */
 function bogopx_escape_copied_content($postarr, $original_post, $locale) {

@@ -44,8 +44,10 @@ function bogo_parse_query( $query ) {
     }
   }
 
+  // @changed - added third condition to check if locale is default, cause sometimes _locale is empty in DB causing bugs
   if ( empty( $locale )
-  or ! bogo_is_available_locale( $locale ) ) {
+    or ! bogo_is_available_locale( $locale )
+    or BOGO::is_default_locale( $locale ) ) {
     $qv['bogo_suppress_locale_query'] = true;
     return;
   }
@@ -123,6 +125,7 @@ function bogo_parse_query( $query ) {
   $query->is_embed =
     $query->is_embed && ( $query->is_singular || $query->is_404 );
 }
+
 
 add_filter( 'posts_join', 'bogo_posts_join', 10, 2 );
 

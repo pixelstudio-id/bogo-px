@@ -23,6 +23,11 @@ function bogo_hide_translated_post_in_list_table($query) {
       ],
       [
         'key' => '_locale',
+        'value' => '',
+        'compare' => '=',
+      ],
+      [
+        'key' => '_locale',
         'value' => get_locale(),
         'compare' => '=',
       ],

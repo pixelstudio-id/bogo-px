@@ -61,6 +61,11 @@ function bogo_only_show_translated_posts($query) {
       'key' => '_locale',
       'compare' => 'NOT EXISTS',
     ];
+    $meta_query[] = [
+      'key' => '_locale',
+      'value' => '',
+      'compare' => '=',
+    ];
   }
 
   // If has old meta query, combine them
