@@ -45,11 +45,12 @@
   opacity: 0
 
   position: absolute
+  z-index: 1000
   top: 100%
-  left: 50%
-  width: 10rem
+  right: 0
+  width: var(--_wrapperWidth, 10rem)
   margin: 0
-  transform: translateX(-50%) translateY(0.5rem)
+  transform: translateY(0.5rem)
   background: var(--textInvert, white)
   border-radius: 0.5rem
   box-shadow: 0 1.5px 4px rgba(0,0,0, .24), 0 1.5px 6px rgba(0,0,0, .12)
@@ -57,20 +58,34 @@
 
   color: var(--text, #222)
 
+  &.is-large
+    --_wrapperWidth: 18rem
+    --_width: 50%
+  &.is-huge
+    --_wrapperWidth: 25rem
+    --_width: 33.3333%
+
   ul
     list-style-type: none
+    display: flex
+    flex-wrap: wrap
     margin: 0
     padding: 0
+  li
+    width: var(--_width, 100%)
+    margin-bottom: 0
+  li:first-child
+    width: 100%
 
   .bogo-dropdown:hover &
     visibility: visible
     opacity: 1
-    transform: translateX(-50%)
+    transform: none
     transition: all .2s ease-in-out
   .bogo-dropdown:focus-within &
     visibility: visible
     opacity: 1
-    transform: translateX(-50%)
+    transform: none
     transition: all .2s ease-in-out
 
   .is-style-toggle &
@@ -95,9 +110,7 @@
     font-weight: 700
     white-space: nowrap
     text-transform: uppercase
-    
-  li
-    margin-bottom: 0
+
   a
     cursor: pointer
     display: flex

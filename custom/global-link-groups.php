@@ -16,7 +16,7 @@ function bogo_init_global_link_groups() {
       'key' => '_original_post',
       'compare' => 'EXISTS',
     ]],
-    'post_status' => is_admin() ? ['publish', 'draft'] : ['publish'],
+    'post_status' => is_user_logged_in() ? ['publish', 'draft'] : ['publish'],
     'posts_per_page' => -1
   ]);
 

@@ -19,7 +19,7 @@ function bogoHelper_is_default_locale($locale = null) {
 function bogoHelper_get_localizable_post_types() {
   static $post_types = [];
   if (!$post_types) {
-    $post_types = apply_filters('bogo_localizable_post_types', ['post', 'page']);
+    $post_types = apply_filters('bogo_localizable_post_types', ['post', 'page', 'wp_block']);
     $post_types = array_diff($post_types, ['attachment', 'revision', 'nav_menu_item']);
   }
 
@@ -28,11 +28,12 @@ function bogoHelper_get_localizable_post_types() {
 
 /**
  * Give all translated versions of that post
+ * 
+ * @todo - might be bugged because sometimes _original_post is empty on its parent post
  */
 function bogoHelper_get_post_translations($post_id, $return_raw_post = true) {
   $original_post_id = (int) get_post_meta($post_id, '_original_post', true);
   global $BOGO_GROUPS_BY_ID;
-  
   $group = $BOGO_GROUPS_BY_ID[$original_post_id] ?? [];
 
   if ($return_raw_post) {

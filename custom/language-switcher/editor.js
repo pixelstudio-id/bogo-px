@@ -46,9 +46,16 @@ function onReady() {
     });
   }
 
+  let dropdownSize = '';
+  if (window.bogoLanguageDropdown.length > 10) {
+    dropdownSize = 'huge';
+  } else if (window.bogoLanguageDropdown.length > 5) {
+    dropdownSize = 'large';
+  }
+
   const selectHTML = `<div class="bogo-dropdown">
     ${currentHTML}
-    <div class="bogo-options">
+    <div class="bogo-options is-${dropdownSize}">
       <ul class="bogo-options__available">
         ${optionsHTML}
       </ul>
@@ -83,27 +90,34 @@ function onReady() {
     const { route, locale } = $link.dataset;
 
     $wrapper.classList.add('is-loading');
+    let editLink = '';
 
     try {
       const result = await bogoFetch.post(route);
       const localePost = result[locale];
 
-      // move it to available <ul>
-      $link.setAttribute('href', localePost.edit_link);
-      $wrapper.classList.remove('is-loading');
+      editLink = localePost.edit_link;
+    } catch (err) {
+      console.log(err);
 
+      // if already exists, the error contain the existing edit link
+      if (err.code === 'bogo_translation_exists') {
+        editLink = err.data.edit_link;
+      }
+    }
+
+    $wrapper.classList.remove('is-loading');
+    if (editLink) {
+      $link.setAttribute('href', editLink);
+
+      // move it to available <ul>
       const $targetToMove = $wrapper.closest('.bogo-options').querySelector('.bogo-options__available');
       if ($targetToMove) {
         $targetToMove.insertAdjacentHTML('beforeend', $wrapper.outerHTML);
         $wrapper.remove();
       }
-
-      window.open(localePost.edit_link, '_blank');
-    } catch (err) {
-      console.log(err);
+      window.open(editLink, '_blank');
     }
-
-    $wrapper.classList.remove('is-loading');
   }
 }
 

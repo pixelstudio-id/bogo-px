@@ -12,11 +12,12 @@
   max-width: 10rem
 
   .flag
-    cursor: pointer
     opacity: 0.2
     transition: all .25s ease-in-out
     filter: grayscale(50)
     transform: scale(0.9)
+  a.flag
+    cursor: pointer
 
   .flag[class*="is-status-"]
     visibility: visible
@@ -48,7 +49,7 @@
     --_icon: url('./img/circle-calendar.svg')
   // .fi.is-status-publish
 
-  .flag:hover
+  a.flag:hover
     opacity: .75
     filter: none
 

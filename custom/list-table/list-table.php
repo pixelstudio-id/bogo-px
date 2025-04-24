@@ -2,7 +2,6 @@
 add_filter('pre_get_posts', 'bogo_hide_translated_post_in_list_table');
 add_action('admin_init', 'bogo_add_column_to_custom_post_type');
 
-
 /////
 
 /**
@@ -11,6 +10,9 @@ add_action('admin_init', 'bogo_add_column_to_custom_post_type');
 function bogo_hide_translated_post_in_list_table($query) {
   global $pagenow;
   if ($pagenow !== 'edit.php' || !$query->is_main_query()) { return $query; }
+
+  $is_trash_view = isset($_GET['post_status']) && $_GET['post_status'] === 'trash';
+  if ($is_trash_view) { return $query; }
 
   // if has no 'lang' query, show only parent post
   $lang = get_query_var('lang');
@@ -59,7 +61,7 @@ function bogo_add_column_to_custom_post_type() {
  * 
  * @usedin admin/includes/post.php
  */
-function bogo_create_admin_flag_buttons($post) {
+function bogopx_create_admin_flag_buttons($post) {
   $post_id = $post->ID;
   $accessible_locales = bogo_get_user_accessible_locales();
   $accessible_locales = array_diff($accessible_locales, [get_locale()]);
@@ -101,4 +103,19 @@ function bogo_create_admin_flag_buttons($post) {
   }
 
   return "<div class='column-locale__inner'> {$flags} </div>";
+}
+
+/**
+ * Create a flag for the given locale
+ */
+function bogopx_create_flag($locale) {
+  $label = bogo_get_language( $locale ) ?: $locale;
+  ob_start(); ?>
+
+  <div class="column-locale__inner">
+    <span class="flag flag-<?= esc_attr($locale); ?> is-status-publish" title="<?= esc_attr($label); ?>"></span>
+  </div>
+
+  <?php
+  return ob_get_clean();
 }

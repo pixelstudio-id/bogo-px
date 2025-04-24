@@ -81,6 +81,7 @@ function bogo_editor_enqueue_scripts_custom() {
     'currentOption' => $current_option,
     'options' => $options,
     'optionsCreate' => $options_create,
+    'length' => count($options) + count($options_create),
   ]);
 
   wp_localize_script('bogopx-editor', 'bogoApiSettings', [

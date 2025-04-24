@@ -51,21 +51,11 @@ function bogo_manage_posts_custom_column( $column_name, $post_id ) {
   $is_parent_post = !$locale || $locale === get_locale();
   
   // Create list of flags with Edit/Create link
-  if ($is_parent_post && function_exists('bogo_create_admin_flag_buttons')) {
-    echo bogo_create_admin_flag_buttons( $post );
+  if ($is_parent_post && function_exists('bogopx_create_admin_flag_buttons')) {
+    echo bogopx_create_admin_flag_buttons( $post );
   }
   else {
-    $language = bogo_get_language( $locale ) ?: $locale;
-    echo $language;
-    // echo sprintf( '<a href="%1$s">%2$s</a>',
-    //   esc_url(
-    //     add_query_arg( array(
-    //       'post_type' => $post_type,
-    //       'lang' => $locale,
-    //     ), 'edit.php' )
-    //   ),
-    //   esc_html( $language )
-    // );
+    echo bogopx_create_flag( $locale );
   }
 
 }

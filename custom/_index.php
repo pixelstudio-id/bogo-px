@@ -12,6 +12,7 @@ require_once __DIR__ . '/nav-menu/nav-menu.php';
 require_once __DIR__ . '/acf.php';
 require_once __DIR__ . '/language-switcher/language-switcher.php';
 require_once __DIR__ . '/user.php';
+require_once __DIR__ . '/reusable-blocks/reusable-blocks.php';
 
 /**
  * Any function with the prefix bogoHelper can be called with Bogo::function_name()

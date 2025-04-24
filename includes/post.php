@@ -81,7 +81,7 @@ function bogo_get_post_locale( $post_id ) {
  */
 function bogo_localizable_post_types() {
   $localizable = apply_filters( 'bogo_localizable_post_types',
-    array( 'post', 'page' )
+    array( 'post', 'page', 'wp_block' )
   );
 
   $localizable = array_diff(
@@ -535,6 +535,14 @@ function bogo_unique_post_slug( $override_slug, $slug, $post_id, $post_status, $
 
     if ( $is_bad_slug ) {
       $suffix = 1;
+      
+      // @changed - if duplicate slug, check if it duplicate with its translation. If yes, allow it
+      $locale_posts = Bogo::get_post_translations($post_id);
+      foreach ($locale_posts as $locale => $p) {
+        if ($p->post_name === $slug) {
+          return $slug;
+        }
+      }
 
       while ( $is_bad_slug ) {
         $suffix += 1;
