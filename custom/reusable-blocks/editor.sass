@@ -1,0 +1,33 @@
+@import "@lib/helpers"
+
+.wp-block.is-reusable.has-child-selected + .bogopx-reusable-label
+  display: none
+
+label.bogopx-reusable-label
+  position: absolute
+  z-index: 1000
+  left: 1rem
+  transform: translateY(-50%)
+
+  display: inline-flex
+  column-gap: 0.5rem
+  align-items: center
+  background: var(--grayLight)
+
+  margin-top: 0 !important
+  padding: 0.25rem 0.5rem
+  border-radius: var(--gRadius)
+  box-shadow: var(--shadow1)
+
+  font-size: var(--sFontSize)
+
+  .flag
+    width: 1.25rem
+
+  a
+    font-weight: 700
+    text-transform: uppercase
+    text-decoration: none
+    letter-spacing: 0.05em
+  a:hover
+    text-decoration: underline

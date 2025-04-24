@@ -150,4 +150,4 @@ function api_callback_get_page($params) {
 
 - Sync category & author from original to locale post.  
 - Add direct view link for locale post in table.
-- Added an edit link in Reusable block for the localized version.
+- Added "Origin" column when filtering for a language.

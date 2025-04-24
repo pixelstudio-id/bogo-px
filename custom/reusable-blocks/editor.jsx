@@ -1,35 +1,51 @@
+import './editor.sass';
+
 const { wp } = window;
+const { createHigherOrderComponent } = wp.compose;
 
-function onReady() {
-  const { addFilter } = wp.hooks;
-  const { createHigherOrderComponent } = wp.compose;
-  const { Fragment } = wp.element;
-  const { BlockPreview, BlockIcon } = wp.blockEditor;
-  const { getEntityRecords } = wp.data.select( 'core' );
-
-  const { unregisterBlockType } = wp.blocks;
-
-  const HIDDEN_REUSABLE_BLOCK_IDS = window.bogoReusableBlocks.localizedIds;
-
-  // Filter the inserter to exclude specific reusable blocks
-  const withFilteredInserterItems = createHigherOrderComponent( ( BlockListBlock ) => ( props ) => {
-    const { name, attributes } = props;
-
-    // Only filter core/block (reusable block wrapper)
-    if (name === 'core/block') {
-      if ( HIDDEN_REUSABLE_BLOCK_IDS.includes( attributes.ref ) ) {
-        return null; // Hide this block
-      }
+const addTranslationNotice = createHigherOrderComponent((BlockEdit) => {  
+  return (props) => {
+    if (props.name !== 'core/block') {
+      return (
+        <BlockEdit { ...props } />
+      );
     }
 
-    return <BlockListBlock { ...props } />;
-  }, 'withFilteredInserterItems' );
+    if (!window.bogoReusableBlocks) {
+      return (
+        <BlockEdit { ...props } />
+      );
+    }
 
-  addFilter(
-    'editor.BlockListBlock',
-    'custom/hide-reusable-blocks',
-    withFilteredInserterItems
-  );
-}
+    const { ref } = props.attributes;
+    const { localizedBlocks, locale, localeName, indexURL, editURL } = window.bogoReusableBlocks;
+    const block = localizedBlocks[ref] || null;
 
-wp.domReady(onReady);
+    const message = block
+      ? `This block has ${localeName} translation`
+      : `No ${localeName} translation found`;
+    const buttonText = block
+      ? 'EDIT »'
+      : 'CREATE »';
+    const buttonLink = block
+      ? editURL.replace('$$$', block[locale])
+      : indexURL;
+
+    console.log({ message, buttonText, buttonLink });
+
+    return (
+      <>
+        <BlockEdit key="edit" { ...props } />
+        <label class="bogopx-reusable-label">
+          <i class={`flag flag-${locale}`}></i>
+          <span>{message}</span>
+          <a href={buttonLink} target="_blank">
+            {buttonText}
+          </a>
+        </label>
+      </>
+    );
+  };
+}, 'addTranslationNotice');
+
+wp.hooks.addFilter('editor.BlockEdit', 'bogo-px/add-translation-notice', addTranslationNotice);
