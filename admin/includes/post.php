@@ -118,13 +118,14 @@ function bogo_post_row_actions( $actions, $post ) {
     $text = __( 'Edit %s translation', 'bogo' );
     $edit_link = get_edit_post_link( $translation->ID );
   } else {
-    $text = __( 'Translate into %s', 'bogo' );
-    $edit_link = admin_url( 'post-new.php?post_type=' . $post->post_type
-      . '&action=bogo-add-translation'
-      . '&locale=' . $user_locale
-      . '&original_post=' . $post->ID
-    );
-    $edit_link = wp_nonce_url( $edit_link, 'bogo-add-translation' );
+    // @changed - remove this because translation button is changed to the flag
+    // $text = __( 'Translate into %s', 'bogo' );
+    // $edit_link = admin_url( 'post-new.php?post_type=' . $post->post_type
+    //   . '&action=bogo-add-translation'
+    //   . '&locale=' . $user_locale
+    //   . '&original_post=' . $post->ID
+    // );
+    // $edit_link = wp_nonce_url( $edit_link, 'bogo-add-translation' );
   }
 
   $language = bogo_get_language( $user_locale );
