@@ -1,90 +1,71 @@
 # Bogo PX
 
-This is modified version of [Bogo](https://wordpress.org/plugins/bogo/), a straight-forward multilingual plugin for WordPress.
-
-This does not pollute your database with tons of extra tables like other multilingual plugins.
+A modified version of [Bogo](https://wordpress.org/plugins/bogo/), a simple multilingual plugin for WordPress.  
+Doesn’t clutter your database with extra tables like others.
 
 ## New Features
 
-1. Flag buttons in Post List table as a shortcut to edit/create translation. Translated posts no longer displayed in the table.
+1. Flag buttons in Post List to edit/create translations. Only original posts are shown.
 
     ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-flags.png)
 
-1. Translate Menu Item. If empty, it will use the translated Title of that post/page.
+2. Translate Menu Item (fallbacks to translated title).
 
     ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-menu-item-localize.png)
 
-1. Translate Category.
+3. Translate Category.
 
     ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-term-localize.png)
 
-1. Added language switcher in the editor's header.
+4. Editor header now has language switcher.
 
     ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-editor-switcher.png)
 
 **OTHER FEATURES**
 
-1. **Automatic Link Conversion** - Links in content and menu automatically converted to the locale version.
-
-1. **ACF Integration** - PostObject and Link field automatically converted to the locale version.
-
-1. **User Restriction** - Limit users from editing certain language.
+- **Auto Link Conversion** – Links update to the correct locale.
+- **ACF Integration** – PostObject and Link field are localized.
+- **User Restriction** – Limit users by language.
+- **Reusable Blocks Translation** – Automatically replaced by locale version on frontend.
 
 ## How to Use
 
-1. After activating the plugin, go to Languages and select the available language.
+1. Activate plugin → go to Languages and choose available languages.  
+2. Posts/Pages show "Locale" column with flags:  
+   - B&W: no translation. Click to create.  
+   - Colored + "D": Draft. Click to edit.  
+   - Colored: Published. Click to edit.  
+3. Add language switcher with:
 
-1. You will now see a new column called "Locale" in Posts and Pages table with transparent flags in it.
-
-    - Black & White flag means no translation of that language. Click it to copy existing content and add that translation.
-    - Colored flag with "D" means it's on Draft. Click it to edit.
-    - Colored flag means it's published. Click it to edit.
-
-1. Add `[bogo-dropdown]` shortcode somewhere in your theme to allow user to switch language.
-
-    ```php
     <?= do_shortcode('[bogo-dropdown]'); ?>
-    ```
 
-1. Done! Note that if a page doesn't have any translated version, the dropdown won't appear.
+4. Done! Dropdown only shows if translation exists.
 
 ## Language Switcher
 
-Use the shortcode `[bogo-dropdown]` to output a language switcher:
+Use `[bogo-dropdown]` for switcher:
 
 ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-menu-translated.png))
 
-
-Use the variation `[bogo-dropdown style="toggle"]` that fits better for mobile.
+Or `[bogo-dropdown style="toggle"]` for mobile-friendly version:
 
 ![](https://raw.github.com/hrsetyono/cdn/master/bogo/bogo-menu-toggle.png)
 
 ## Custom Post Type / Taxonomy
 
-By default this plugin only add locale option on Pages and Posts. To add it on a custom post type, add this code:
+By default only support Post, Page, and Reusable Block. You can enable for custom post types:
 
-```php
-add_filter('bogo_localizable_post_types', function($post_types) {
-  $post_types[] = 'custom_pt';
-  return $post_types;
-});
-```
+    add_filter('bogo_localizable_post_types', fn($types) => [...$types, 'custom_pt']);
 
-For taxonomy translation, it adds custom fields to the Term's setting page. By default it's active on Post Category. To add it on Post Tags or custom taxonomy, add this code:
+By default only support Post Category. You can enable for other taxonomies:
 
-```php
-add_filter('bogo_localizable_taxonomies', function($taxonomies) {
-  $taxonomies[] = 'post_tag';
-  $taxonomies[] = 'custom_tax';
-  return $taxonomies;
-});
-```
+    add_filter('bogo_localizable_taxonomies', fn($tax) => [...$tax, 'post_tag', 'custom_tax']);
 
 ## Technical Changes
 
-- Added code to escape HTML tag in Gutenberg's attribute after duplicated a post.
-- Changed the `_original_post` meta to store ID instead of GUID for easier querying.
-- Removed the Terms Translation page because it's changed to using custom field.
+- Escaped HTML tags in duplicated post’s Gutenberg attributes.  
+- `_original_post` now stores ID (not GUID).
+- Removed Terms Translation page (replaced by custom field).
 
 ## Utility Functions
 
@@ -92,19 +73,20 @@ add_filter('bogo_localizable_taxonomies', function($taxonomies) {
 bogo_localize_by_url($url, $force_locale)
 ```
 
-Get the localized object using a URL.
+Get the localized post from a base language URL.
 
-- `$url` (string) - The URL of the post you want to get locale version of. Only URL from base language can be used.
-- `$force_locale` (string?) - Force to get the localized version of specified language. By default it uses the current language. But WP always use base language if within API call, so you need to add this param.
+$url (string) – Base language URL of the post.
+
+$force_locale (string?) – Optional. Language code to force localization. Needed in API calls, as WP defaults to base language.
 
 **RETURN**
 
-`array` - If localized post exist. It contains:
+`array` – If found, contains:
 
-- `id` - Post ID.
-- `locale` - language code.
-- `url` - the localized URL.
-- `post` - the WP_Post object.
+- `id` – Post ID.
+- `locale` – Language code.
+- `url` – Localized URL.
+- `post` – WP_Post object.
 
 `null` - If localized post not found or if URL doesn't contain "http".
 
@@ -135,7 +117,7 @@ Same as `bogo_localize_by_id()` but it immediately returns the WP_Post object in
 
 ## Using it in API
 
-If you want to get translated page during API call, you need to change the locale and initiate the BOGO's global object:
+To get translated post in API calls, you need to set the global `locale` variable and initiate Bogo with `bogo_init_global_link_groups()`:
 
 ```php
 
@@ -160,13 +142,12 @@ function api_callback_get_page($params) {
 
 ### Known Bugs
 
-- If you switched the base language mid-way, the Post List table won't show the proper parent post.
-- Some languages are spoken in multiple countries, therefore the flags might be wrong.
-- If parent post changed category, the other language isn't changed.
+- Switching base language mid-way breaks parent link in Post List.  
+- Some flags might be incorrect for shared languages.  
+- Category change on original doesn't sync to translations.  
 
 ### Future Plan
 
-- Add translatable Description for Menu.
-- Allow locale post listing in trash to restore/permanently delete.
-- Change the category & author of locale post when the original post is changed too.
-- Add direct link to view the locale post within table.
+- Sync category & author from original to locale post.  
+- Add direct view link for locale post in table.
+- Added an edit link in Reusable block for the localized version.
