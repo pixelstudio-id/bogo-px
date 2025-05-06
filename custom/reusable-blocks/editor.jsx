@@ -31,8 +31,6 @@ const addTranslationNotice = createHigherOrderComponent((BlockEdit) => {
       ? editURL.replace('$$$', block[locale])
       : indexURL;
 
-    console.log({ message, buttonText, buttonLink });
-
     return (
       <>
         <BlockEdit key="edit" { ...props } />
