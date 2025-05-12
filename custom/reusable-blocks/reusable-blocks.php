@@ -5,7 +5,6 @@ add_action('enqueue_block_editor_assets', 'bogopx_localize_reusable_blocks', 110
 add_action('admin_head', 'bogopx_add_style_localized_blocks', 110);
 
 add_filter('render_block_core/block', 'bogopx_render_localized_reusable_block', 10, 2);
-add_action('admin_menu', 'bogopx_add_reusable_blocks_menu', 10);
 
 
 /**
@@ -111,19 +110,4 @@ function bogopx_render_localized_reusable_block($block_content, $block) {
   }
 
   return $block_content;
-}
-
-/**
- * Add a shortcut to Reusable Blocks in the admin menu
- * 
- * @action admin_menu
- */
-function bogopx_add_reusable_blocks_menu() {
-  add_submenu_page(
-    'edit.php?post_type=page',
-    __('Reusable Blocks', 'bogo'),
-    __('Reusable Blocks', 'bogo'),
-    'edit_posts',
-    'edit.php?post_type=wp_block'
-  );
 }
