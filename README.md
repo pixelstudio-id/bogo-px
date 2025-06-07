@@ -30,16 +30,21 @@ Doesn’t clutter your database with extra tables like others.
 
 ## How to Use
 
-1. Activate plugin → go to Languages and choose available languages.  
-2. Posts/Pages show "Locale" column with flags:  
-   - B&W: no translation. Click to create.  
-   - Colored + "D": Draft. Click to edit.  
-   - Colored: Published. Click to edit.  
+1. **Activate Plugin** → Go to Languages and select your languages.
+
+2. **Manage Translations** in Posts/Pages via the "Locale" column:
+
+   - Black & white flag: No translation – click to create
+   - Transparent color: Draft – click to edit
+   - Solid color: Published – click to edit
+
 3. Add language switcher with:
 
+    ```php
     <?= do_shortcode('[bogo-dropdown]'); ?>
+    ```
 
-4. Done! Dropdown only shows if translation exists.
+4. Done! Dropdown appears only if a translation exists.
 
 ## Language Switcher
 

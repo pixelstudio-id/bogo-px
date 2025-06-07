@@ -9,46 +9,32 @@ add_action('enqueue_block_editor_assets', 'bogopx_localize_dropdown_args', 110);
  */
 function bogopx_dropdown_shortcode($atts, $content) {
   $atts = shortcode_atts([
-    'style' => 'popup', // or 'toggle'
+    'style' => 'popup', // 'toggle'
+    'compact' => '0', // '0' or '1'
   ], $atts);
 
   $links = bogo_language_switcher_links([ 'echo' => false ]);
+  $is_compact = $atts['compact'] === '1';
 
+  $wrapper_classes = '';
   $current_lang_name = '';
-  $links_html = '';
   $locale_count = 0;
 
-  foreach ($links as $link) {
-    // $classes = bogo_language_tag($link['locale']) . ' ' . bogo_lang_slug($link['locale']);
-    $label = $link['native_name'] ?: $link['title']; 
-
-    if (empty($link['href'])) {
-      // skip empty link
+  foreach ($links as $i => $link) {
+    $link['label'] = $link['native_name'] ?: $link['title'];
+    $link['classes'] = '';
+    $link['title_attr'] = '';
+ 
+    if ($link['locale'] === get_locale()) {
+      $current_lang_name = $is_compact ? strtoupper(substr(get_locale(), 0, 2)) : $link['label'];
+      $link['classes'] = 'is-current';
     }
-    // if current link
-    elseif ($link['locale'] === get_locale()) {
-      $current_lang_name = $label;
-      $links_html .= "<li class='is-current'>
-        <a
-          hreflang='{$link['lang']}'
-          href='{$link['href']}'
-        >
-          {$label}
-        </a>
-      </li>";
-    }
-    else {
+    else if (!empty($link['href'])) {
       $locale_count += 1;
-      $links_html .= "<li>
-        <a
-          hreflang='{$link['lang']}'
-          title='View {$link['title']} translation'
-          href='{$link['href']}'
-        >
-          {$label}
-        </a>
-      </li>";
+      $link['title_attr'] = "View {$link['title']} translation";
     }
+
+    $links[$i] = $link;
   }
 
   // if no translation, return nothing
@@ -57,19 +43,32 @@ function bogopx_dropdown_shortcode($atts, $content) {
   }
 
   // if has 6 or more items, split to 2 columns
-  $links_classes = '';
-  if ($locale_count > 5) {
-    $links_classes = 'has-columns-2';
+  if ($locale_count >= 5) {
+    $wrapper_classes = 'has-columns-2';
   }
 
-  return "<div class='bogo-dropdown is-style-{$atts['style']}'>
-    <span class='bogo-dropdown__button' tabindex='0'>
-      {$current_lang_name}
+  ob_start(); ?>
+
+  <div class="bogo-dropdown is-style-<?= $atts['style'] ?>">
+    <span class="bogo-dropdown__button" tabindex="0">
+      <?= esc_html($current_lang_name) ?>
     </span>
-    <ul class='bogo-dropdown__links {$links_classes}'>
-      {$links_html}
+    <ul class="bogo-dropdown__links <?= $wrapper_classes ?>">
+    <?php foreach ($links as $link): if (!empty($link['href'])): ?>  
+      <li class="<?= esc_attr($link['classes']) ?>">
+        <a
+          hreflang="<?= esc_attr($link['lang']) ?>"
+          href="<?= esc_url($link['href']) ?>"
+          title="<?= esc_attr($link['title_attr']) ?>"
+        >
+          <?= esc_html($link['label']) ?>
+        </a>
+      </li>
+    <?php endif; endforeach ?>
     </ul>
-  </div>";
+  </div>
+
+  <?php return ob_get_clean();
 }
 
 /**
