@@ -33,7 +33,7 @@ function bogopx_localize_links_in_content($content) {
  * 
  * @filter pre_get_posts
  */
-function bogopx_fix_posts_from_all_locale_displayed($query) {
+function bogopx_prevent_base_post_overriden_with_locale_post($query) {
   if (is_admin()) { return $query; }
 
   $is_single_query = $query->is_main_query() && $query->is_single();
@@ -69,7 +69,7 @@ function bogopx_fix_posts_from_all_locale_displayed($query) {
  * 
  * @filter pre_get_posts
  */
-function bogopx_fix_posts_from_all_lang_displayed($query) {
+function bogopx_fix_posts_from_all_locale_displayed($query) {
   if (is_admin()) { return $query; }
 
   $post_type = $query->get('post_type') ?: 'post';
@@ -77,9 +77,7 @@ function bogopx_fix_posts_from_all_lang_displayed($query) {
     return $query;
   }
 
-  if (!Bogo::is_default_locale()) {
-     return $query;
-  }
+  if (!Bogo::is_default_locale()) { return $query; }
 
   
   // global $posts;
