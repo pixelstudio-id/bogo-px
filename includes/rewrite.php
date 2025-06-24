@@ -19,7 +19,6 @@ function bogo_add_rewrite_tags() {
 	}
 }
 
-
 add_filter( 'rewrite_rules_array', 'bogo_rewrite_rules_array', 10, 1 );
 
 function bogo_rewrite_rules_array( $rules ) {

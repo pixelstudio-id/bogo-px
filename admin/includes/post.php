@@ -15,10 +15,15 @@ function bogo_posts_columns( $posts_columns, $post_type ) {
     return $posts_columns;
   }
 
+  // @changed - different label for base and locale table
+  $col_label = isset($_GET['lang']) && !Bogo::is_default_locale($_GET['lang'])
+  ? __( 'Origin', 'bogo' )
+  : __( 'Locale', 'bogo' );
+
   if ( ! isset( $posts_columns['locale'] ) ) {
     $posts_columns = array_merge(
       array_slice( $posts_columns, 0, 3 ),
-      array( 'locale' => __( 'Locale', 'bogo' ) ),
+      array( 'locale' => $col_label ),
       array_slice( $posts_columns, 3 )
     );
   }
@@ -55,7 +60,7 @@ function bogo_manage_posts_custom_column( $column_name, $post_id ) {
     echo bogopx_create_admin_flag_buttons( $post );
   }
   else {
-    echo bogopx_create_flag( $locale );
+    echo bogopx_fill_origin_post_column( $post_id, $locale );
   }
 
 }

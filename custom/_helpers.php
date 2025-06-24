@@ -14,7 +14,9 @@ function bogoHelper_is_default_locale($locale = null) {
 }
 
 /**
- *
+ * Get all localizable post types
+ * 
+ * @return array
  */
 function bogoHelper_get_localizable_post_types() {
   static $post_types = [];
@@ -24,6 +26,17 @@ function bogoHelper_get_localizable_post_types() {
   }
 
   return $post_types;
+}
+
+/**
+ * Check if a post type is localizable
+ * 
+ * @param string $post_type
+ * @return bool
+ */
+function bogoHelper_is_localizable_post_type($post_type) {
+  $localizable_post_types = bogoHelper_get_localizable_post_types();
+  return in_array($post_type, $localizable_post_types, true);
 }
 
 /**

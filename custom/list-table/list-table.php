@@ -1,13 +1,13 @@
 <?php
-add_filter('pre_get_posts', 'bogo_hide_translated_post_in_list_table');
-add_action('admin_init', 'bogo_add_column_to_custom_post_type');
+add_filter('pre_get_posts', 'bogopx_hide_translated_post_in_list_table');
+add_action('admin_init', 'bogopx_add_column_to_custom_post_type');
 
 /////
 
 /**
  * @filter pre_get_posts
  */
-function bogo_hide_translated_post_in_list_table($query) {
+function bogopx_hide_translated_post_in_list_table($query) {
   global $pagenow;
   if ($pagenow !== 'edit.php' || !$query->is_main_query()) { return $query; }
 
@@ -44,7 +44,7 @@ function bogo_hide_translated_post_in_list_table($query) {
  * 
  * @action admin_init
  */
-function bogo_add_column_to_custom_post_type() {
+function bogopx_add_column_to_custom_post_type() {
   $post_types = Bogo::get_localizable_post_types();
 
   foreach ($post_types as $pt) {
@@ -106,16 +106,44 @@ function bogopx_create_admin_flag_buttons($post) {
 }
 
 /**
- * Create a flag for the given locale
+ * Create the origin post for the list table showing all locale post
  */
-function bogopx_create_flag($locale) {
-  $label = bogo_get_language( $locale ) ?: $locale;
+function bogopx_fill_origin_post_column($post_id, $locale) {
+  global $BOGO_GROUPS_BY_ID;
+  $original_id = null;
+
+  foreach ($BOGO_GROUPS_BY_ID as $id => $group) {
+    $locale_ids = array_column($group, 'id');
+    
+    if (in_array($post_id, $locale_ids)) {
+      $original_id = $id;
+      break;
+    }
+  }
+
+  $original_post = $BOGO_GROUPS_BY_ID[$original_id][BOGO_DEFAULT_LOCALE];
+  $view_url = $original_post['url'];
+  $edit_url = get_edit_post_link($original_post['id']);
+  $title = $original_post['post']->post_title;
+
   ob_start(); ?>
 
-  <div class="column-locale__inner">
-    <span class="flag flag-<?= esc_attr($locale); ?> is-status-publish" title="<?= esc_attr($label); ?>"></span>
+  <strong>
+    <?= $title ?>
+  </strong>
+  <div class="row-actions">
+    <span>
+      <a href="<?= $edit_url ?>" target="_blank">
+        <?= __('Edit') ?>
+      </a>
+      | 
+    </span>
+    <span>
+      <a href="<?= $view_url ?>" target="_blank">
+        <?= __('View') ?>
+      </a>
+    </span>
   </div>
 
-  <?php
-  return ob_get_clean();
+  <?php return ob_get_clean();
 }

@@ -186,6 +186,7 @@ function bogo_language_switcher_links( $args = '' ) {
     $translations = Bogo::get_post_translations(get_queried_object_id(), false);
     $is_singular = true;
   }
+  
 
   $links = array();
 
@@ -204,11 +205,14 @@ function bogo_language_switcher_links( $args = '' ) {
       'href' => '',
     );
 
+    // @todo - german blog posts is empty??
     if (is_home()) {
       $posts_page = get_option('page_for_posts');
       if ($posts_page) {
         $has_any_post = Bogo::is_post_type_has_locale_post('post', $code);
-        $link['href'] = $has_any_post ? $translations[$code]['url'] : '';
+        if ($has_any_post) {
+          $link['href'] = isset($translations[$code]) ? $translations[$code]['url'] : '';
+        }
       } else {
         $link['href'] = bogo_url(null, $code);
       }

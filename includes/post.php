@@ -93,7 +93,7 @@ function bogo_localizable_post_types() {
 }
 
 function bogo_is_localizable_post_type( $post_type ) {
-  return ! empty( $post_type ) && in_array( $post_type, Bogo::get_localizable_post_types() );
+  return ! empty( $post_type ) && Bogo::is_localizable_post_type($post_type);
 }
 
 function bogo_count_posts( $locale, $post_type = 'post' ) {
@@ -611,6 +611,14 @@ function bogo_unique_post_slug( $override_slug, $slug, $post_id, $post_status, $
 
     if ( $is_bad_slug ) {
       $suffix = 1;
+
+      // @changed - if duplicate slug, check if it duplicate with its translation. If yes, allow it
+      $locale_posts = Bogo::get_post_translations($post_id);
+      foreach ($locale_posts as $locale => $p) {
+        if ($p->post_name === $slug) {
+          return $slug;
+        }
+      }
 
       while ( $is_bad_slug ) {
         $suffix += 1;
