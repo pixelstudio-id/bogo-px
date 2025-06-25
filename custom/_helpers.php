@@ -40,6 +40,31 @@ function bogoHelper_is_localizable_post_type($post_type) {
 }
 
 /**
+ * Get the original post by one of its locale ID
+ * 
+ * @param int $post_id - ID of one of the translated post
+ * @return array - Contains URL, ID, and WP_Post object of the original post
+ */
+function bogoHelper_get_original_post_by_locale_id($post_id) {
+  global $BOGO_GROUPS_BY_ID;
+  $original_id = null;
+
+  foreach ($BOGO_GROUPS_BY_ID as $id => $group) {
+    $locale_ids = array_column($group, 'id');
+    
+    if (in_array($post_id, $locale_ids)) {
+      $original_id = $id;
+      break;
+    }
+  }
+
+  if ($original_id) {
+    $original_post = $BOGO_GROUPS_BY_ID[$original_id][BOGO_DEFAULT_LOCALE];
+    return $original_post;
+  }
+}
+
+/**
  * Give all translated versions of that post
  * 
  * @todo - might be bugged because sometimes _original_post is empty on its parent post

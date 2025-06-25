@@ -44,7 +44,7 @@ function bogo_init_global_link_groups() {
     if ($home_id === $p->ID) {
       $url = trailingslashit(home_url());
     } else if ($home_id == $original_post_id) { // @warn - intentionally "==" because $original_post_id is a string
-      $url = trailingslashit(home_url()) . '/' . bogo_lang_slug($locale);
+      $url = trailingslashit(home_url()) . bogo_lang_slug($locale);
     } else {
       $url = get_permalink($p->ID);
     }

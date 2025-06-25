@@ -1,22 +1,47 @@
 @import "@lib/helpers"
 
-.bogo-menu-titles
-  display: flex
-  flex-wrap: wrap
-  row-gap: 0.4rem
+.bogo-menu-fields
+  display: grid
+  grid-template-columns: 1fr 1fr
+  row-gap: 1rem
   column-gap: 0.4rem
   margin-top: 1rem
   margin-bottom: 0.5rem
   width: 100%
 
+  @media ($below-xs)
+    grid-template-columns: 1fr
+
+// Also used in /taxonomy
+.bogo-field-wrapper
+  display: flex
+  flex-direction: column
+  row-gap: 0
+  border: 1px solid #8c8f94
+  border-radius: 4px
+  background-color: white
+
+  @media ($below-xs)
+    width: 100%
+
+  input:focus,
+  textarea:focus
+    position: relative
+    z-index: 2
+    border-color: #8c8f94
+
+  textarea
+    border-color: transparent
+    body.nav-menus-php &
+      font-size: 0.75rem
+
+  textarea::placeholder
+    color: #999
+
 label.bogo-field
   display: flex
   align-items: center
   position: relative
-  width: calc(50% - 0.25rem)
-
-  @media ($below-xs)
-    width: 100%
 
   input
     flex: 1
@@ -24,8 +49,10 @@ label.bogo-field
     margin: 0
     padding-left: 2rem
     padding-top: 0.75rem
+    border-color: transparent
   span
     position: absolute
+    z-index: 3
     top: 0
     left: 2.1rem
     opacity: .5
@@ -41,6 +68,7 @@ label.bogo-field
 
   .flag
     position: absolute
+    z-index: 3
     left: 0.5rem
     width: 1.25em
     opacity: .5

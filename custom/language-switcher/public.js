@@ -3,7 +3,7 @@ import './public.sass';
 const bogoDropdown = () => {
   const $toggles = document.querySelectorAll('.bogo-dropdown.is-style-toggle .bogo-dropdown__button');
   $toggles.forEach(($t) => {
-    $t.addEventListener('click', this.onClick);
+    $t.addEventListener('click', onClick);
   });
 
   /**

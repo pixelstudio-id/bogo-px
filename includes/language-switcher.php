@@ -186,7 +186,6 @@ function bogo_language_switcher_links( $args = '' ) {
     $translations = Bogo::get_post_translations(get_queried_object_id(), false);
     $is_singular = true;
   }
-  
 
   $links = array();
 

@@ -145,15 +145,26 @@ function api_callback_get_page($params) {
 }
 ```
 
+### Search
+
+For Search bar to work properly, the `<form>` action has to have trailing slash:
+
+```php
+<form action="<?= trailingslashit(home_url()) ?>" method="get">
+  ...
+</form>
+```
+
+or manually add it: `home_url() . '/'`.
+
 ### Known Bugs
 
 - 🔗 Switching base language mid-way breaks parent link in Post List.
 - 🎌 Some flags might be incorrect due to shared languages between multiple country.
 - 🔄 Category change on original doesn't sync to translations.
-- 🔍 For Search bar to work properly, the `<form>` action has to be `<?= home_url() ?>`
 
 ### Future Plan
 
-- Sync category & author from original to locale post.   
+- Sync category & author from original to locale post.
 - Add direct view link for locale post in table.
-- Added "Origin" column when filtering for a language.
+- Add "dirty" detection when editing nav item so it only update the meta when it's changed - Possibly by emptying the `name` attribute when idle.

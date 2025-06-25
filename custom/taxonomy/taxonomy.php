@@ -36,12 +36,34 @@ function bogo_add_fields_to_taxonomies($term, $taxonomy) {
   $locales = bogo_available_languages();
   unset($locales[BOGO_DEFAULT_LOCALE]);
 
-  $names = get_term_meta($term->term_id, 'bogo_names', true);
-  $descs = get_term_meta($term->term_id, 'bogo_descriptions', true);
+  $fields = get_term_meta($term->term_id, 'bogo_fields', true);
 
-  // if names is JSON string (from deprecated code), convert it first
-  if (is_string($names)) {
-    $names = json_decode($names, true);
+  // if still using the old data format
+  if (!$fields) {
+    $names = get_term_meta($term->term_id, 'bogo_names', true) ?: [];
+    $descs = get_term_meta($term->term_id, 'bogo_descriptions', true) ?: [];
+
+    $fields = [];
+    foreach ($names as $locale => $name) {
+      $fields[$locale] = [
+        'n' => $name,
+        'd' => $descs[$locale] ?? '',
+      ];
+    }
+  }
+
+  foreach ($locales as $locale => $label) {
+    $name = isset($fields[$locale]) && !empty($fields[$locale]['n']) ? $fields[$locale]['n'] : '';
+    $desc = isset($fields[$locale]) && !empty($fields[$locale]['d']) ? $fields[$locale]['d'] : '';
+
+    $locales[$locale] = [
+      'label' => $label,
+      'name' => $name,
+      'description' => $desc,
+      'classes' => $name ? '' : 'is-empty',
+      'field_name_n' => "bogo_fields[{$locale}][n]",
+      'field_name_d' => "bogo_fields[{$locale}][d]",
+    ];
   }
 
   // ?>
@@ -49,27 +71,25 @@ function bogo_add_fields_to_taxonomies($term, $taxonomy) {
   <tr class="form-field bogo-term-names">
 		<th><label>Localized Names and Descriptions</label></th>
 		<td>
-      <?php foreach ($locales as $locale => $label):
-        $name = $names[$locale] ?? '';
-        $desc = $descs[$locale] ?? '';
-        $classes = $name ? '' : 'is-empty';
-      ?>
-      <div>
-        <label class="bogo-field <?= $classes ?>">
-          <i class="flag flag-<?= $locale ?>"></i>
-          <span><?= $label ?></span>
+      <?php foreach ($locales as $locale => $att): ?>
+      <div class="bogo-field-wrapper">
+        <label class="bogo-field <?= esc_attr($att['classes']) ?>">
+          <i class="flag flag-<?= esc_attr($locale) ?>"></i>
+          <span>
+            <?= esc_html($att['label']) ?>
+          </span>
           <input
             type="text"
-            placeholder="<?= $term->name ?>"
-            name="bogo_names[<?= $locale ?>]"
-            value="<?= $name ?>"
+            placeholder="<?= esc_attr($term->name) ?>"
+            name="<?= esc_attr($att['field_name_n']) ?>"
+            value="<?= esc_attr($att['name']) ?>"
           >
         </label>
         <textarea
-          placeholder="<?= $label ?> Description"
+          placeholder="<?= esc_attr($att['label']) ?> Description"
           rows="5"
-          name="bogo_descriptions[<?= $locale ?>]"
-        ><?= $desc ?></textarea>
+          name="<?= esc_attr($att['field_name_d']) ?>"
+        ><?= esc_textarea($att['description']) ?></textarea>
       </div>
       <?php endforeach; ?>
 		</td>
@@ -81,14 +101,9 @@ function bogo_add_fields_to_taxonomies($term, $taxonomy) {
  * @action saved_{$taxonomy}
  */
 function bogo_after_save_taxonomy($term_id) {
-  $names = $_POST['bogo_names'] ?? null;
-  if ($names) {
-    update_term_meta($term_id, 'bogo_names', $names);
-  }
-
-  $descs = $_POST['bogo_descriptions'] ?? null;
-  if ($descs) {
-    update_term_meta($term_id, 'bogo_descriptions', $descs);
+  $fields = $_POST['bogo_fields'] ?? null;
+  if ($fields) {
+    update_term_meta($term_id, 'bogo_fields', $fields);
   }
 }
 
@@ -100,20 +115,25 @@ function bogo_get_term_translate($term, $taxonomy) {
   if (Bogo::is_default_locale($locale)) { return $term; }
   if (!in_array($taxonomy, Bogo::get_localizable_taxonomies())) { return $term; }
 
-  $names = get_term_meta($term->term_id, 'bogo_names', true);
-  if ($names) {
-    // if names is JSON string (from deprecated code), convert it first
-    if (is_string($names)) {
-      $names = json_decode($names, true);
+  $fields = get_term_meta($term->term_id, 'bogo_fields', true) ?: [];
+
+  // If still using the old data format
+  if (!$fields) {
+    $names = get_term_meta($term->term_id, 'bogo_names', true) ?: [];
+    $names = is_string($names) ? json_decode($names, true) : $names; // if names is JSON string (from deprecated code)
+
+    $descs = get_term_meta($term->term_id, 'bogo_descriptions', true) ?: [];
+
+    foreach ($names as $locale => $name) {
+      $fields[$locale] = [
+        'n' => $name,
+        'd' => $descs[$locale] ?? '',
+      ];
     }
-
-    $term->name = empty($names[$locale]) ? $term->name : $names[$locale];
   }
 
-  $descs = get_term_meta($term->term_id, 'bogo_descriptions', true);
-  if ($descs) {
-    $term->description = empty($descs[$locale]) ? $term->description : $descs[$locale];
-  }
+  $term->name = isset($fields[$locale]) && !empty($fields[$locale]['n']) ? $fields[$locale]['n'] : $term->name;
+  $term->description = isset($fields[$locale]) && !empty($fields[$locale]['d']) ? $fields[$locale]['d'] : $term->description;
 
   return $term;
 }

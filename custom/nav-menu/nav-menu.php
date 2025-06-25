@@ -1,10 +1,10 @@
 <?php
+add_filter('wp_get_nav_menu_items', 'bogo_localize_nav_menu_items', 15, 3);
 
 add_filter('pre_get_posts', 'bogo_hide_translated_post_in_menu_editor');
 add_action('wp_nav_menu_item_custom_fields', 'bogo_add_fields_in_menu_item', 1, 2);
-add_action('wp_update_nav_menu', 'bogo_save_translated_custom_link', 10, 2);
+add_action('wp_update_nav_menu', 'bogo_save_translated_menu_item', 10, 2);
 
-add_filter('wp_get_nav_menu_items', 'bogo_localize_nav_menu_items', 15, 3);
 
 /**
  * @filter wp_get_nav_menu_items
@@ -14,12 +14,29 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
   if (Bogo::is_default_locale()) { return $items; } // abort if base locale
 
   foreach ($items as &$item) {
-    $titles = json_decode(get_post_meta($item->db_id, 'bogo_titles', true), true);
-    
+    $fields = get_post_meta($item->db_id, 'bogo_fields', true) ?: [];
+
+    // fallback if still using the old data format
+    if (!$fields) { 
+      $titles = json_decode(get_post_meta($item->db_id, 'bogo_titles', true), true) ?: [];
+      $descs = json_decode(get_post_meta($item->db_id, 'bogo_descriptions', true), true) ?: [];
+
+      $fields = [];
+      foreach ($titles as $locale => $title) {
+        $fields[$locale] = [
+          't' => $title,
+          'd' => $descs[$locale] ?? '',
+        ];
+      }
+    }
+
+    $locale = get_locale();
+    $custom_title = isset($fields[$locale]) && !empty($fields[$locale]['t']) ? $fields[$locale]['t'] : '';
+    $custom_desc = isset($fields[$locale]) && !empty($fields[$locale]['d']) ? $fields[$locale]['d'] : '';
+
     // if custom, it's always replaced by the Bogo Field
     if ($item->type === '' || $item->type === 'post_type_archive') {
-      $titles = json_decode(get_post_meta($item->db_id, 'bogo_titles', true), true);
-      $item->title = empty($titles[get_locale()]) ? $item->title : $titles[get_locale()];
+      $item->title = $custom_title ?: $item->title;
     }
     // if post_type, check if empty, use the native title
     elseif ($item->type === 'post_type') {
@@ -31,7 +48,18 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
         $item->url = $locale_obj['url'];
       }
 
-      $item->title = empty($titles[get_locale()]) ? $default_title : $titles[get_locale()];
+      $item->title = $custom_title ?: $default_title;
+    }
+    // if taxonomy, use the translated name, if any
+    elseif ($item->type === 'taxonomy') {
+      $fields = get_term_meta($item->object_id, 'bogo_fields', true) ?: [];
+      $custom_title = isset($fields[$locale]) && !empty($fields[$locale]['n']) ? $fields[$locale]['n'] : '';
+      $item->title = $custom_title ?: $item->title;
+    }
+
+    if (!empty($custom_desc)) {
+      $item->post_content = $custom_desc;
+      $item->description = $custom_desc;
     }
   }
 
@@ -116,50 +144,75 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
   $active_locales = $menu_item->bogo_locales;
   $all_locales = bogo_available_languages();
   unset($all_locales[BOGO_DEFAULT_LOCALE]);
-  
-  $values = json_decode(get_post_meta($id, 'bogo_titles', true), true);
+
+  $fields = get_post_meta($id, 'bogo_fields', true) ?: [];
+
+  // fallback if still using the old data format
+  if (!$fields) { 
+    $titles = json_decode(get_post_meta($id, 'bogo_titles', true), true) ?: [];
+    $descs = json_decode(get_post_meta($id, 'bogo_descriptions', true), true) ?: [];
+
+    foreach ($titles as $locale => $title) {
+      $fields[$locale] = [
+        't' => $title,
+        'd' => $descs[$locale] ?? '',
+      ];
+    }
+  }
 
   $posts = [];
   if ($menu_item->type === 'post_type') {
     $posts = Bogo::get_post_translations($menu_item->object_id);
   }
 
-  $fields = [];
+  $html_fields = [];
   foreach ($all_locales as $locale => $label) {
     $placeholder = isset($posts[$locale]) ? $posts[$locale]->post_title : $menu_item->post_title;
     $classes = [];
     $classes[] = isset($posts[$locale]) ? 'has-fixed-placeholder' : '';
-    $classes[] = isset($posts[$locale]) || !empty($value) ? '' : 'is-empty';
+
+    $custom_title = $fields[$locale]['t'] ?? '';
+    $custom_desc = $fields[$locale]['d'] ?? '';
+    $classes[] = isset($posts[$locale]) || !empty($custom_title) ? '' : 'is-empty';
   
     $styles = [];
     $styles[] = in_array($locale, $active_locales) ? '' : 'display: none';
 
-    $fields[$locale] = [
-      'value' => $values[$locale] ?? '',
+    $html_fields[$locale] = [
+      'title' => $custom_title,
+      'description' => $custom_desc,
       'placeholder' => $placeholder,
       'classes' => implode(' ', $classes),
       'styles' => implode('; ', $styles),
       'label' => $label,
-      'field_name' => "bogo_titles[{$id}][{$locale}]",
+      'field_name_title' => "bogo_fields[{$id}][{$locale}][t]",
+      'field_name_description' => "bogo_fields[{$id}][{$locale}][d]",
     ];
   }
 
   ?>
-    <div class="bogo-menu-titles">
-    <?php foreach ($fields as $locale => $att): ?>
+    <div class="bogo-menu-fields">
+    <?php foreach ($html_fields as $locale => $att): ?>
 
-      <label class="bogo-field <?= esc_attr($att['classes']) ?>" style="<?= esc_attr($att['styles']) ?>">
-        <i class="flag flag-<?= esc_attr($locale) ?>"></i>
-        <span>
-          <?= esc_html($att['label']) ?>
-        </span>
-        <input
-          type="text"
-          placeholder="<?= esc_attr($att['placeholder']) ?>"
-          name="<?= esc_attr($att['field_name']) ?>"
-          value="<?= esc_attr($att['value']) ?>"
-        >
-      </label>
+      <div class="bogo-field-wrapper">
+        <label class="bogo-field <?= esc_attr($att['classes']) ?>" style="<?= esc_attr($att['styles']) ?>">
+          <i class="flag flag-<?= esc_attr($locale) ?>"></i>
+          <span>
+            <?= esc_html($att['label']) ?>
+          </span>
+          <input
+            type="text"
+            placeholder="<?= esc_attr($att['placeholder']) ?>"
+            name="<?= esc_attr($att['field_name_title']) ?>"
+            value="<?= esc_attr($att['title']) ?>"
+          >
+        </label>
+        <textarea
+          placeholder="<?= esc_attr($att['label']) ?> Description"
+          rows="3"
+          name="<?= esc_attr($att['field_name_description']) ?>"
+        ><?= esc_textarea($att['description']) ?></textarea>
+      </div>
 
     <?php endforeach; ?>
     </div>
@@ -186,15 +239,15 @@ function _bogo_echo_menu_item_taxonomy_notice($menu_item) {
 
 
 /**
- * Add custom field containing the translated title
+ * Add custom field containing the translated title and description
  * 
  * @action wp_update_nav_menu
  */
-function bogo_save_translated_custom_link($menu_id, $menu_data = []) {
-  $titles = $_POST['bogo_titles'] ?? null;
-  if (!$titles) { return; }
-
-  foreach ($titles as $id => $title) {
-    update_post_meta($id, 'bogo_titles', json_encode($title, JSON_UNESCAPED_UNICODE));
+function bogo_save_translated_menu_item($menu_id, $menu_data = []) {
+  $fields = $_POST['bogo_fields'] ?? null;
+  if ($fields) {
+    foreach ($fields as $id => $field) {
+      update_post_meta($id, 'bogo_fields', $field);
+    }
   }
 }

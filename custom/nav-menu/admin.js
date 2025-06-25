@@ -32,12 +32,12 @@ const menuLocale = () => {
     // abort if no input
     if (!$input) { return; }
 
-    const $inputWrapper = $input.closest('label');
+    const $wrapper = $input.closest('.bogo-menu-field');
 
     if (checked) {
-      $inputWrapper.style.display = '';
+      $wrapper.style.display = '';
     } else {
-      $inputWrapper.style.display = 'none';
+      $wrapper.style.display = 'none';
     }
   }
 

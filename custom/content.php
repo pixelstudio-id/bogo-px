@@ -4,8 +4,6 @@ add_filter('the_content', 'bogopx_localize_links_in_content', 20);
 add_filter('pre_get_posts', 'bogopx_prevent_base_post_overriden_with_locale_post', 15);
 add_filter('pre_get_posts', 'bogopx_fix_posts_from_all_locale_displayed', 20);
 
-add_filter('home_url', 'bogopx_add_trailing_slash_to_home_url_in_search', 10, 4);
-
 /**
  * Replace all links in content with localized version, if any
  * 
@@ -76,24 +74,6 @@ function bogopx_fix_posts_from_all_locale_displayed($query) {
   if ($post_type === 'page' || !Bogo::is_localizable_post_type($post_type)) {
     return $query;
   }
-
-  if (!Bogo::is_default_locale()) { return $query; }
-
-  
-  // global $posts;
-  // if (!$posts) { return $query; }
-  
-  // @todo - can be bugged if there's only 1 post in the loop
-  // if (is_array($posts) && count($posts) <= 1) {
-  //   return $query;
-  // }
-
-  // abort if 'post' because there's a bug with the main blog query
-  // @todo - find a way to filter main posts query
-  // if ($post_type === 'post') { return $query; }
-
-  // abort if post_type is not localizable
-  // if (!Bogo::is_localizable_post_type($post_type)) { return $query; }
   
   $locale = get_locale();
   $meta_query = [
@@ -129,15 +109,4 @@ function bogopx_fix_posts_from_all_locale_displayed($query) {
   }
   
   return $query;
-}
-
-/**
- * Search bar needs to have trailing slash in the <form> for it to detect the locale
- * 
- * @filter home_url
- */
-function bogopx_add_trailing_slash_to_home_url_in_search($url) {
-  if (!is_search()) { return $url; }
-
-  return trailingslashit($url);
 }

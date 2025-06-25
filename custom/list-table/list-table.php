@@ -109,19 +109,8 @@ function bogopx_create_admin_flag_buttons($post) {
  * Create the origin post for the list table showing all locale post
  */
 function bogopx_fill_origin_post_column($post_id, $locale) {
-  global $BOGO_GROUPS_BY_ID;
-  $original_id = null;
+  $original_post = Bogo::get_original_post_by_locale_id($post_id);
 
-  foreach ($BOGO_GROUPS_BY_ID as $id => $group) {
-    $locale_ids = array_column($group, 'id');
-    
-    if (in_array($post_id, $locale_ids)) {
-      $original_id = $id;
-      break;
-    }
-  }
-
-  $original_post = $BOGO_GROUPS_BY_ID[$original_id][BOGO_DEFAULT_LOCALE];
   $view_url = $original_post['url'];
   $edit_url = get_edit_post_link($original_post['id']);
   $title = $original_post['post']->post_title;
