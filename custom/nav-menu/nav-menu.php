@@ -167,7 +167,8 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
 
   $html_fields = [];
   foreach ($all_locales as $locale => $label) {
-    $placeholder = isset($posts[$locale]) ? $posts[$locale]->post_title : $menu_item->post_title;
+    $menu_title = empty($menu_item->post_title) ? $menu_item->title : $menu_item->post_title;
+    $placeholder = isset($posts[$locale]) && !empty($posts[$locale]->post_title) ? $posts[$locale]->post_title : $menu_title;
     $classes = [];
     $classes[] = isset($posts[$locale]) ? 'has-fixed-placeholder' : '';
 
@@ -191,11 +192,15 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
   }
 
   ?>
-    <div class="bogo-menu-fields">
+    <div class="bogo-fields">
     <?php foreach ($html_fields as $locale => $att): ?>
 
-      <div class="bogo-field-wrapper">
-        <label class="bogo-field <?= esc_attr($att['classes']) ?>" style="<?= esc_attr($att['styles']) ?>">
+      <div
+        class="bogo-field <?= esc_attr($att['classes']) ?>"
+        data-locale="<?= esc_attr($locale) ?>"
+        style="<?= esc_attr($att['styles']) ?>"
+      >
+        <label>
           <i class="flag flag-<?= esc_attr($locale) ?>"></i>
           <span>
             <?= esc_html($att['label']) ?>
@@ -203,14 +208,14 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
           <input
             type="text"
             placeholder="<?= esc_attr($att['placeholder']) ?>"
-            name="<?= esc_attr($att['field_name_title']) ?>"
+            data-name="<?= esc_attr($att['field_name_title']) ?>"
             value="<?= esc_attr($att['title']) ?>"
           >
         </label>
         <textarea
           placeholder="<?= esc_attr($att['label']) ?> Description"
           rows="3"
-          name="<?= esc_attr($att['field_name_description']) ?>"
+          data-name="<?= esc_attr($att['field_name_description']) ?>"
         ><?= esc_textarea($att['description']) ?></textarea>
       </div>
 

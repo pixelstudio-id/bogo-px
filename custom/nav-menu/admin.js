@@ -6,8 +6,8 @@ import './admin.sass';
 const menuLocale = () => {
   if (!document.body.classList.contains('nav-menus-php')) { return; }
 
-  const $checkboxes = document.querySelectorAll('.menu-item .bogo-locale-options input[type="checkbox"]');
-  $checkboxes.forEach(($cb) => {
+  const $bogoCheckboxes = document.querySelectorAll('.menu-item .bogo-locale-options input[type="checkbox"]');
+  $bogoCheckboxes.forEach(($cb) => {
     $cb.addEventListener('change', onCheckboxChange);
   });
 
@@ -16,10 +16,17 @@ const menuLocale = () => {
     $t.addEventListener('input', onMainTitleInput);
   });
 
-  const $fields = document.querySelectorAll('.bogo-field input');
-  $fields.forEach(($field) => {
-    $field.addEventListener('change', onChangeInput);
+  const $bogoInputs = document.querySelectorAll('.bogo-field input, .bogo-field textarea');
+  $bogoInputs.forEach(($i) => {
+    $i.addEventListener('input', onInputField);
   });
+
+  // Screen options for description
+  const $cbDescriptionSO = document.querySelector('.metabox-prefs input[type="checkbox"][name="description-hide"]');
+  if ($cbDescriptionSO) {
+    $cbDescriptionSO.addEventListener('change', onChangeDescriptionSO);
+    onChangeDescriptionSO({ currentTarget: $cbDescriptionSO });
+  }
 
   /**
    * Hide or show the translation field
@@ -27,12 +34,10 @@ const menuLocale = () => {
   function onCheckboxChange(e) {
     const { checked } = e.currentTarget;
     const value = e.currentTarget.getAttribute('value');
-    const $input = e.currentTarget.closest('.menu-item-settings').querySelector(`label [name*="[${value}]"]`);
+    const $wrapper = e.currentTarget.closest('.menu-item-settings').querySelector(`.bogo-field[data-locale="${value}"]`);
 
-    // abort if no input
-    if (!$input) { return; }
-
-    const $wrapper = $input.closest('.bogo-menu-field');
+    // abort if no field
+    if (!$wrapper) { return; }
 
     if (checked) {
       $wrapper.style.display = '';
@@ -45,23 +50,47 @@ const menuLocale = () => {
    * Edit the main title in each menu item
    */
   function onMainTitleInput(e) {
-    const $input = e.currentTarget;
-    const $wrapper = $input.closest('.menu-item');
-    const $bogoInputs = $wrapper.querySelectorAll('.bogo-menu-titles label:not(.has-fixed-placeholder) input');
+    const $mainTitle = e.currentTarget;
+    const $outer = $mainTitle.closest('.menu-item');
+    const $inputs = $outer.querySelectorAll('.bogo-field:not(.has-fixed-placeholder) input');
 
-    $bogoInputs.forEach(($i) => {
-      $i.setAttribute('placeholder', $input.value);
+    $inputs.forEach(($i) => {
+      $i.setAttribute('placeholder', $mainTitle.value);
     });
   }
 
   /**
-   * When filling the field
+   * Listener for input fields as we type or paste
    */
-  function onChangeInput(e) {
+  function onInputField(e) {
     const { value } = e.currentTarget;
-    const $wrapper = e.currentTarget.closest('label');
 
-    $wrapper.classList.toggle('is-empty', !value);
+    // check if empty or not
+    const $field = e.currentTarget.closest('.bogo-field');
+    $field.classList.toggle('is-empty', !value);
+
+    // set the `name` attribute so it can be submitted
+    const $wrapper = $field.closest('.bogo-fields');
+    if (!$wrapper.classList.contains('is-dirty')) {
+      const $inputs = $wrapper.querySelectorAll('input, textarea');
+      $inputs.forEach(($i) => {
+        const name = $i.getAttribute('data-name');
+        $i.setAttribute('name', name);
+      });
+    }
+    $wrapper.classList.add('is-dirty');
+  }
+
+  /**
+   * Add class to hide or show the description field
+   */
+  function onChangeDescriptionSO(e) {
+    const $cb = e.currentTarget;
+    if ($cb.checked) {
+      document.body.classList.remove('bogo-show-description');
+    } else {
+      document.body.classList.add('bogo-show-description');
+    }
   }
 };
 

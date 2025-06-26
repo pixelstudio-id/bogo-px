@@ -72,8 +72,8 @@ function bogo_add_fields_to_taxonomies($term, $taxonomy) {
 		<th><label>Localized Names and Descriptions</label></th>
 		<td>
       <?php foreach ($locales as $locale => $att): ?>
-      <div class="bogo-field-wrapper">
-        <label class="bogo-field <?= esc_attr($att['classes']) ?>">
+      <div class="bogo-field <?= esc_attr($att['classes']) ?>">
+        <label>
           <i class="flag flag-<?= esc_attr($locale) ?>"></i>
           <span>
             <?= esc_html($att['label']) ?>

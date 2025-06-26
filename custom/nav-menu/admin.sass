@@ -1,9 +1,9 @@
 @import "@lib/helpers"
 
-.bogo-menu-fields
+.bogo-fields
   display: grid
   grid-template-columns: 1fr 1fr
-  row-gap: 1rem
+  row-gap: 0.4rem
   column-gap: 0.4rem
   margin-top: 1rem
   margin-bottom: 0.5rem
@@ -13,7 +13,7 @@
     grid-template-columns: 1fr
 
 // Also used in /taxonomy
-.bogo-field-wrapper
+.bogo-field
   display: flex
   flex-direction: column
   row-gap: 0
@@ -23,6 +23,11 @@
 
   @media ($below-xs)
     width: 100%
+  
+  label
+    display: flex
+    align-items: center
+    position: relative
 
   input:focus,
   textarea:focus
@@ -34,14 +39,12 @@
     border-color: transparent
     body.nav-menus-php &
       font-size: 0.75rem
+    body.bogo-show-description &
+      display: none
 
   textarea::placeholder
     color: #999
 
-label.bogo-field
-  display: flex
-  align-items: center
-  position: relative
 
   input
     flex: 1

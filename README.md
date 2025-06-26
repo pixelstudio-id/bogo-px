@@ -167,4 +167,3 @@ or manually add it: `home_url() . '/'`.
 
 - Sync category & author from original to locale post.
 - Add direct view link for locale post in table.
-- Add "dirty" detection when editing nav item so it only update the meta when it's changed - Possibly by emptying the `name` attribute when idle.
