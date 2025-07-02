@@ -1,7 +1,7 @@
 <?php
 
 add_filter('the_content', 'bogopx_localize_links_in_content', 20);
-add_filter('pre_get_posts', 'bogopx_prevent_base_post_overriden_with_locale_post', 15);
+// add_filter('pre_get_posts', 'bogopx_prevent_base_post_overriden_with_locale_post', 15);
 add_filter('pre_get_posts', 'bogopx_fix_posts_from_all_locale_displayed', 20);
 
 /**

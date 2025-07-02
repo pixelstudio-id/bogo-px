@@ -20,14 +20,15 @@ const addTranslationNotice = createHigherOrderComponent((BlockEdit) => {
     const { ref } = props.attributes;
     const { localizedBlocks, locale, localeName, indexURL, editURL } = window.bogoReusableBlocks;
     const block = localizedBlocks[ref] || null;
+    console.log(block);
 
-    const message = block
+    const message = block[locale]
       ? `This block has ${localeName} translation`
       : `No ${localeName} translation found`;
-    const buttonText = block
+    const buttonText = block[locale]
       ? 'EDIT »'
       : 'CREATE »';
-    const buttonLink = block
+    const buttonLink = block[locale]
       ? editURL.replace('$$$', block[locale])
       : indexURL;
 
