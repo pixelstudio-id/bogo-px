@@ -1,0 +1,62 @@
+name: Deploy via git-ftp
+on:
+  push:
+    branches:
+      - flexi
+jobs:
+  deploy-flexi:
+    name: Deploy Flexi
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: git-ftp push
+      uses: sebastianpopp/git-ftp-action@releases/v3
+      with:
+        url: "ftp.ltl-chines.com/public_html/flexiclasses.com/wp-content/plugins/bogo-px/"
+        user: ${{ secrets.LTL_US_USERNAME }}
+        password: ${{ secrets.LTL_US_PASSWORD }}
+  deploy-ltlschool:
+    name: Deploy LTL School
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: git-ftp push
+      uses: sebastianpopp/git-ftp-action@releases/v3
+      with:
+        url: "ftp.ltl-chines.com/public_html/ltl-school.com/wp-content/plugins/bogo-px/"
+        user: ${{ secrets.LTL_US_USERNAME }}
+        password: ${{ secrets.LTL_US_PASSWORD }}
+  deploy-camps:
+    name: Deploy LTL Camps
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: git-ftp push
+      uses: sebastianpopp/git-ftp-action@releases/v3
+      with:
+        url: "ftp.ltl-chines.com/public_html/ltl-camps/wp-content/plugins/bogo-px/"
+        user: ${{ secrets.LTL_US_USERNAME }}
+        password: ${{ secrets.LTL_US_PASSWORD }}
+  deploy-us:
+    name: Deploy US
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: git-ftp push
+      uses: sebastianpopp/git-ftp-action@releases/v3
+      with:
+        url: "ftp.ltl-chines.com/public_html/multisite/wp-content/plugins/bogo-px/"
+        user: ${{ secrets.LTL_US_USERNAME }}
+        password: ${{ secrets.LTL_US_PASSWORD }}
+  deploy-asia:
+    name: Deploy ASIA
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: git-ftp push
+      uses: sebastianpopp/git-ftp-action@fix-ssl-issue
+      with:
+        url: "sftp://opal2.opalstack.com/wp-content/plugins/bogo-px/"
+        user: ${{ secrets.LTL_ASIA_USERNAME }}
+        password: ${{ secrets.LTL_ASIA_PASSWORD }}
+        options: "--auto-init --insecure --remote-root /home/ltl/apps/ltl_sites2"
