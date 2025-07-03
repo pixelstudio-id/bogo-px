@@ -230,7 +230,11 @@ function bogo_language_switcher_links( $args = '' ) {
       }
     }
     else {
-      $link['href'] = bogo_url(null, $code);
+      $link['href'] = isset($translations[$code]) && !empty($translations[$code]['url'])
+      ? $translations[$code]['url']
+      : '';
+      // @changed - if using the method below, it will show all locales on 404, search, etc.
+      // $link['href'] = bogo_url(null, $code);
     }
 
     $links[] = $link;

@@ -1,6 +1,7 @@
 <?php
 
 add_shortcode('bogo-dropdown', 'bogopx_dropdown_shortcode');
+
 add_action('enqueue_block_editor_assets', 'bogopx_localize_dropdown_args', 110);
 
 
@@ -13,58 +14,45 @@ function bogopx_dropdown_shortcode($atts, $content) {
     'compact' => '0', // '0' or '1'
   ], $atts);
 
-  $links = bogo_language_switcher_links([ 'echo' => false ]);
-  $is_compact = $atts['compact'] === '1';
+  $atts['compact'] = $atts['compact'] === '1';
+  $links = Bogo::get_switcher_links($atts);
 
-  $wrapper_classes = '';
-  $current_lang_name = '';
-  $locale_count = 0;
+  // abort if no links
+  $links_count = count($links);
+  if ($links_count <= 0) { return ''; }
 
+  $current_label = '';
   foreach ($links as $i => $link) {
-    $link['label'] = $link['native_name'] ?: $link['title'];
-    $link['classes'] = '';
-    $link['title_attr'] = '';
- 
-    if ($link['locale'] === get_locale()) {
-      $current_lang_name = $is_compact ? strtoupper(substr(get_locale(), 0, 2)) : $link['label'];
-      $link['classes'] = 'is-current';
+    if ($link['is_current']) {
+      $current_label = $atts['compact'] ? $link['label_short'] : $link['label'];
     }
-    else if (!empty($link['href'])) {
-      $locale_count += 1;
-      $link['title_attr'] = "View {$link['title']} translation";
-    }
-
-    $links[$i] = $link;
   }
-
-  // if no translation, return nothing
-  if ($locale_count <= 0) {
-    return '';
-  }
-
-  // if has 6 or more items, split to 2 columns
-  if ($locale_count >= 5) {
+  
+  $wrapper_classes = '';
+  if ($links_count >= 5) {
     $wrapper_classes = 'has-columns-2';
+  } elseif ($links_count >= 9) {
+    $wrapper_classes = 'has-columns-3';
   }
 
   ob_start(); ?>
 
   <div class="bogo-dropdown is-style-<?= $atts['style'] ?>">
     <span class="bogo-dropdown__button" tabindex="0">
-      <?= esc_html($current_lang_name) ?>
+      <?= esc_html($current_label) ?>
     </span>
     <ul class="bogo-dropdown__links <?= $wrapper_classes ?>">
-    <?php foreach ($links as $link): if (!empty($link['href'])): ?>  
-      <li class="<?= esc_attr($link['classes']) ?>">
+    <?php foreach ($links as $link): ?>  
+      <li class="<?= $link['is_current'] ? 'is-current' : '' ?>">
         <a
           hreflang="<?= esc_attr($link['lang']) ?>"
           href="<?= esc_url($link['href']) ?>"
-          title="<?= esc_attr($link['title_attr']) ?>"
+          title="<?= esc_attr($link['title']) ?>"
         >
           <?= esc_html($link['label']) ?>
         </a>
       </li>
-    <?php endif; endforeach ?>
+    <?php endforeach ?>
     </ul>
   </div>
 

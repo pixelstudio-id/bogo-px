@@ -159,6 +159,9 @@ add_action( 'wp_head', 'bogo_m17n_headers', 10, 0 );
 function bogo_m17n_headers() {
 	$languages = array();
 
+	// @changed - abort if 404
+	if (is_404()) { return; }
+
 	if ( is_singular() ) {
 		$post_id = get_queried_object_id();
 

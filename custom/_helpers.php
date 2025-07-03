@@ -1,6 +1,38 @@
 <?php
 
 /**
+ * 
+ */
+function bogoHelper_get_switcher_links($atts = []) {
+  $atts = wp_parse_args($atts, [
+    'compact' => false,
+  ]);
+
+  $links = bogo_language_switcher_links([ 'echo' => false ]);
+
+  foreach ($links as $i => $link) {
+    if (empty($link['href'])) {
+      unset($links[$i]);
+      continue;
+    }
+
+    $link['name'] = $link['title'];
+    $link['label'] = $link['native_name'] ?: $link['name'];
+    $link['title'] = sprintf(__('View %s translation', 'bogo'), $link['name']);
+    $link['is_current'] = $link['locale'] === get_locale();
+  
+    if ($atts['compact']) {
+      $link['label_short'] = strtoupper(substr($link['locale'], 0, 2));
+    }
+
+    $links[$i] = $link;
+  }
+
+  $links = array_values($links); // reindex the array
+  return $links;
+}
+
+/**
  * Returns true if the specified locale is the default locale.
  *
  * @param string $locale Locale code.
