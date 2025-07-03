@@ -19,8 +19,7 @@ const addTranslationNotice = createHigherOrderComponent((BlockEdit) => {
 
     const { ref } = props.attributes;
     const { localizedBlocks, locale, localeName, indexURL, editURL } = window.bogoReusableBlocks;
-    const block = localizedBlocks[ref] || null;
-    console.log(block);
+    const block = localizedBlocks[ref] || {};
 
     const message = block[locale]
       ? `This block has ${localeName} translation`
