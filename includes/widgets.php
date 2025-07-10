@@ -2,7 +2,8 @@
 
 /* Language Switcher Widget */
 
-add_action( 'widgets_init', 'bogo_widgets_init', 10, 0 );
+// @changed - hide the switcher widget
+// add_action( 'widgets_init', 'bogo_widgets_init', 10, 0 );
 
 function bogo_widgets_init() {
 	register_widget( 'Bogo_Widget_Language_Switcher' );
@@ -70,7 +71,7 @@ add_filter( 'widget_display_callback', 'bogo_widget_display_callback', 10, 3 );
 
 function bogo_widget_display_callback( $instance, $widget, $args ) {
 	if ( isset( $instance['bogo_locales'] ) ) {
-		$locale = get_locale();
+		$locale = get_locale();	
 
 		if ( ! in_array( $locale, (array) $instance['bogo_locales'] ) ) {
 			$instance = false;
