@@ -27,14 +27,14 @@ function bogopx_localize_reusable_blocks() {
 
   if ($blocks_default_locale) {
     $block_ids = array_map(function($block) {
-      return $block->ID;
+      return $block['ID'];
     }, $blocks_default_locale);
   }
 
   global $BOGO_GROUPS_BY_ID;
   $localized_blocks = [];
   foreach ($block_ids as $block_id) {
-    $localized_blocks[$block_id] = array_column($BOGO_GROUPS_BY_ID[$block_id], 'id', 'locale');
+    $localized_blocks[$block_id] = array_column($BOGO_GROUPS_BY_ID[$block_id], 'ID', 'locale');
   }
 
   $locale_name = bogo_get_language($current_locale);
@@ -101,8 +101,7 @@ function bogopx_render_localized_reusable_block($block_content, $block) {
   // abort if default locale
   if (Bogo::is_default_locale()) { return $block_content; }
 
-  $locale_blocks = Bogo::get_post_translations($block['attrs']['ref']);
-  $locale_block = $locale_blocks[get_locale()] ?? null;
+  $locale_block = Bogo::get_locale_post($block['attrs']['ref']);
 
   if ($locale_block) {
     $new_content = apply_filters('the_content', $locale_block->post_content);

@@ -215,7 +215,7 @@ function bogo_l10n_meta_box( $post ) {
     $post_locale = bogo_get_post_locale( $post->ID );
   }
 
-  $translations = Bogo::get_post_translations($post->ID);
+  $links = Bogo::get_locale_links($post->ID);
   $available_languages = bogo_available_languages( array(
     'current_user_can_access' => true,
   ) );
@@ -246,20 +246,20 @@ function bogo_l10n_meta_box( $post ) {
 
   echo '<ul id="bogo-translations">';
 
-  foreach ( $translations as $locale => $translation ) {
-    $edit_link = get_edit_post_link( $translation->ID );
+  foreach ( $links as $locale => $link ) {
+    $edit_link = get_edit_post_link( $link['ID'] );
     echo '<li>';
 
     if ( $edit_link ) {
       echo sprintf(
         '<a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s <span class="screen-reader-text">%3$s</span></a>',
         esc_url( $edit_link ),
-        get_the_title( $translation->ID ),
+        get_the_title( $link['ID'] ),
         /* translators: accessibility text */
         esc_html( __( '(opens in a new window)', 'bogo' ) )
       );
     } else {
-      echo get_the_title( $translation->ID );
+      echo get_the_title( $link['ID'] );
     }
 
     if ( isset( $available_languages[$locale] ) ) {
@@ -289,7 +289,7 @@ function bogo_l10n_meta_box( $post ) {
   echo '<select id="bogo-translations-to-add">';
 
   foreach ( $available_languages as $locale => $lang ) {
-    if ( isset( $translations[$locale] ) ) {
+    if ( isset( $links[$locale] ) ) {
       continue;
     }
 

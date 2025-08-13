@@ -109,16 +109,36 @@ Similar to the above but using ID instead of URL.
 Same as above.
 
 ```php
-bogo_localize_post_by_id($id, $force_locale)
+Bogo::get_localize_links($id)
 ```
 
-Same as `bogo_localize_by_id()` but it immediately returns the WP_Post object instead of the full data. Just a quick shortcut.
+Get all translated links of a certain post.
 
-**RETURN**
+Returns: `array[]` - contains ID, locale, url, post_title, post_type, post_status, post_name
 
-`WP_Post` - If localized post exist
+```php
+Bogo::get_localize_link($id, $locale?)
+```
 
-`null` - If localized post doesn't exist
+Get a translated link of a post of a certain locale. Using current locale if 2nd parameter is empty.
+
+Returns: `array` - contains ID, locale, url, post_title, post_type, post_status, post_name
+
+```php
+Bogo::get_localize_posts($id)
+```
+
+Get all translated version of a certain post.
+
+Returns: `array[WP_Post]`
+
+```php
+Bogo::get_localize_post($id, $locale?)
+```
+
+Get a translated version of a post of a certain locale. Using current locale if 2nd parameter is empty.
+
+Returns: `WP_Post`
 
 ## Using it in API
 

@@ -92,6 +92,9 @@ function bogo_localizable_post_types() {
   return $localizable;
 }
 
+/**
+ * @deprecated - replaced by bogoHelper_is_localizable_post_types()
+ */
 function bogo_is_localizable_post_type( $post_type ) {
   return ! empty( $post_type ) && Bogo::is_localizable_post_type($post_type);
 }
@@ -118,7 +121,7 @@ function bogo_count_posts( $locale, $post_type = 'post' ) {
 }
 
 /**
- * @deprecated - replaced by bogoHelper_get_post_translations()
+ * @deprecated - replaced by Bogo::get_locale_posts()
  */
 function bogo_get_post_translations( $post_id = 0 ) {
   $post = get_post( $post_id );
@@ -192,13 +195,19 @@ function bogo_get_post_translations( $post_id = 0 ) {
 }
 
 function bogo_get_post_translation( $post_id, $locale ) {
-  $translations = Bogo::get_post_translations($post_id);
+  $locale_link = Bogo::get_locale_link($post_id, $locale);
 
-  if ( isset( $translations[$locale] ) ) {
-    return $translations[$locale];
+  if ($locale_link) {
+    return new WP_Post((object) $locale_link);
   }
 
   return false;
+ 
+  // $translations = Bogo::get_post_translations($post_id);
+  // if ( isset( $translations[$locale] ) ) {
+  //   return $translations[$locale];
+  // }
+  // return false;
 }
 
 function bogo_get_page_by_path( $page_path, $locale = null, $post_type = 'page' ) {
@@ -537,9 +546,9 @@ function bogo_unique_post_slug( $override_slug, $slug, $post_id, $post_status, $
       $suffix = 1;
       
       // @changed - if duplicate slug, check if it duplicate with its translation. If yes, allow it
-      $locale_posts = Bogo::get_post_translations($post_id);
-      foreach ($locale_posts as $locale => $p) {
-        if ($p->post_name === $slug) {
+      $links = Bogo::get_locale_links($post_id);
+      foreach ($links as $locale => $link) {
+        if ($link['post_name'] === $slug) {
           return $slug;
         }
       }

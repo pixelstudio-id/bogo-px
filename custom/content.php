@@ -34,10 +34,10 @@ function bogopx_localize_links_in_content($content) {
 
   $content = preg_replace_callback('/(<a.+href=")(.+)(".*>.+<\/a>)/Ui', function($matches) {
     $url = $matches[2];
-    $locale_obj = bogo_localize_by_url($url);
-
-    if ($locale_obj) {
-      $url = $locale_obj['url'];
+    $locale_link = bogo_localize_by_url($url);
+    
+    if ($locale_link) {
+      $url = $locale_link['url'];
     }
 
     return $matches[1] . $url . $matches[3];

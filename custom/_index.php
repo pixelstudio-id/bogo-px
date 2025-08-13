@@ -31,6 +31,23 @@ class Bogo {
   }
 }
 
+/**
+ * Any function with the prefix _bogoHelper can be called with _Bogo::function_name()
+ * 
+ * This is just for cosmetic purpose
+ */
+class _Bogo {
+  static function __callStatic($name, $args) {
+    $func_name = "_bogoHelper_$name";
+
+    if (is_callable($func_name)) {
+      return call_user_func_array($func_name, $args);
+    } else {
+      trigger_error("The function _bogoHelper_{$name} does not exist.", E_USER_ERROR);
+    }
+  }
+}
+
 add_filter('bogo_duplicate_post', 'bogopx_escape_copied_content', 10, 3);
 
 /**
