@@ -60,7 +60,7 @@ function bogo_acf_format_link_to_locale_link($value) {
   }
   
   $locale_link = bogo_localize_by_url($value['url']);
-  if ($locale_obj) {
+  if ($locale_link) {
     $value['title'] = $locale_link['title'];
     $value['url'] = $locale_link['url'];
   }
