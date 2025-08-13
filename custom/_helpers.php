@@ -81,11 +81,32 @@ function _bogoHelper_find_locale_group($post_id) {
   }
 
   global $BOGO_GROUPS_BY_ID;
+  if (!$BOGO_GROUPS_BY_ID) { return null; }
+
   $found_group = $BOGO_GROUPS_BY_ID[$post_id] ?? null;
+
+  // if default locale, but not admin, just return as is, no need to find group
+  if (!Bogo::is_default_locale() && !is_admin()) {
+    return $found_group;
+  }
+
+  // if group is not found, try finding the original post ID
+  if (!$found_group) {
+    foreach ($BOGO_GROUPS_BY_ID as $group) {
+      $ids_in_group = array_column($group, 'ID');
+      if (in_array($post_id, $ids_in_group)) {
+        $found_group = $group;
+        break;
+      }
+    }
+  }
+
+  return $found_group;
 
   // find all the ID in case the given ID is a translated one
   // @todo - disabled because it's quite heavy to loop all groups everytime this function is called
-  if (!Bogo::is_default_locale() && !$found_group && $BOGO_GROUPS_BY_ID) {
+  $is_admin_or_not_default_locale = is_admin() || !Bogo::is_default_locale();
+  if (!$found_group && $is_admin_or_not_default_locale) {
     foreach ($BOGO_GROUPS_BY_ID as $group) {
       $ids_in_group = array_column($group, 'ID');
       if (in_array($post_id, $ids_in_group)) {

@@ -3,7 +3,7 @@
 add_action('init', 'bogo_init_global_link_groups');
 
 add_action('save_post', 'bogopx_reset_global_link_groups_on_save', 100, 3);
-add_action('update_post', 'bogopx_reset_global_link_groups_on_update', 100, 3);
+add_action('post_updated', 'bogopx_reset_global_link_groups_on_update', 100, 3);
 
 /**
  * @action save_post
@@ -13,15 +13,16 @@ function bogopx_reset_global_link_groups_on_save($post_id, $post, $update) {
   if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) { return; }
   if ($update) { return; }
 
-  $current_locale = get_post_meta($post_id, '_locale', true) ?: BOGO_DEFAULT_LOCALE;
-  if (Bogo::is_default_locale($current_locale)) { return; }
+  // @todo - when copying a post, the _locale is still not set, so this will always fail
+  // $current_locale = get_post_meta($post_id, '_locale', true) ?: BOGO_DEFAULT_LOCALE;
+  // if (Bogo::is_default_locale($current_locale)) { return; }
 
   delete_transient('bogo_locale_groups');
 }
 
 
 /**
- * @action update_post
+ * @action post_updated
  */
 function bogopx_reset_global_link_groups_on_update($post_id, $post_after, $post_before) {
   $current_locale = get_post_meta($post_id, '_locale', true) ?: BOGO_DEFAULT_LOCALE;
