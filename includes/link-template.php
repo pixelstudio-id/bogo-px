@@ -170,6 +170,8 @@ function bogo_m17n_headers() {
 			$locale = get_locale();
 
 			foreach ( $links as $locale => $link ) {
+				if ($link['post_status'] !== 'publish') { continue; }
+
 				$languages[] = array(
 					'hreflang' => bogo_language_tag( $locale ),
 					'href' => $link['url'],

@@ -90,7 +90,7 @@ function _bogoHelper_find_locale_group($post_id) {
     return $found_group;
   }
 
-  // if group is not found, try finding the original post ID
+// if group is not found, try finding the original post ID
   if (!$found_group) {
     foreach ($BOGO_GROUPS_BY_ID as $group) {
       $ids_in_group = array_column($group, 'ID');

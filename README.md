@@ -96,19 +96,6 @@ $force_locale (string?) – Optional. Language code to force localization. Neede
 `null` - If localized post not found or if URL doesn't contain "http".
 
 ```php
-bogo_localize_by_id($id, $force_locale)
-```
-
-Similar to the above but using ID instead of URL.
-
-- `$id` (string) - The ID of the post you want to get locale version of. Only ID from base language can be used.
-- `$force_locale` (string?)
-
-**RETURN**
-
-Same as above.
-
-```php
 Bogo::get_localize_links($id)
 ```
 
