@@ -113,14 +113,15 @@ function bogo_get_user_locale( $user_id = 0 ) {
 	return $default_locale;
 }
 
-// @changed - add default value to $user_id and defaults to currently logged-in user
+// @changed
+// - add default value to $user_id and defaults to currently logged-in user
+// - add cache by using global array
 function bogo_get_user_accessible_locales( $user_id=0 ) {
-	global $bogo_accessible_locales;
+	global $bogopx_accessible_locales_by_user;
 	global $wpdb;
 
-	// check for cache
-	if ($bogo_accessible_locales) {
-		return $bogo_accessible_locales;
+	if (empty($bogopx_accessible_locales_by_user)) {
+		$bogopx_accessible_locales_by_user = [];
 	}
 
 	if (!$user_id) {
@@ -128,9 +129,14 @@ function bogo_get_user_accessible_locales( $user_id=0 ) {
 	}
 	$user_id = absint( $user_id );
 
+	// check for cache
+	if (isset($bogopx_accessible_locales_by_user[$user_id])) {
+		return $bogopx_accessible_locales_by_user[$user_id];
+	}
+
 	if ( user_can( $user_id, 'bogo_access_all_locales' ) ) {
 		$locales = bogo_available_locales();
-		$bogo_accessible_locales = $locales; // cache
+		$bogopx_accessible_locales_by_user[$user_id] = $locales;
 
 		return $locales;
 	}
@@ -149,7 +155,7 @@ function bogo_get_user_accessible_locales( $user_id=0 ) {
 		$locales = array( BOGO_DEFAULT_LOCALE );
 	}
 
-	$bogo_accessible_locales = $locales; // cache
+	$bogopx_accessible_locales_by_user[$user_id] = $locales;
 	return $locales;
 }
 

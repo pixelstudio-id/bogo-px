@@ -27,6 +27,7 @@ Doesn’t clutter your database with extra tables like others.
 - **ACF Integration** – PostObject and Link field are localized.
 - **User Restriction** – Limit users by language.
 - **Reusable Blocks Translation** – Automatically replaced by locale version on frontend.
+- **The SEO Framework Integration** - Make sure the SEO metatags are properly outputted.
 
 ## How to Use
 
