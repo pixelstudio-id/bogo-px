@@ -78,7 +78,7 @@ function bogo_admin_enqueue_scripts( $hook_suffix ) {
 		'defaultLocale' => BOGO_DEFAULT_LOCALE,
 		'pagenow' => trim( $_GET['page'] ?? '' ),
 		'currentPost' => array(),
-		'localizablePostTypes' => bogo_localizable_post_types(),
+		'localizablePostTypes' => Bogo::get_localizable_post_types(),
 		'showFlags' => apply_filters( 'bogo_use_flags', true ),
 	);
 
@@ -119,7 +119,7 @@ function bogo_admin_enqueue_scripts( $hook_suffix ) {
 						'postId' => $translation->ID,
 						'postTitle' => $translation->post_title,
 						'editLink' => current_user_can( $edit_post_cap, $translation->ID )
-							? get_edit_post_link( $translation, 'raw' )
+							? get_edit_post_link( $translation->ID, 'raw' )
 							: '',
 					);
 				}

@@ -40,12 +40,12 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
     }
     // if post_type, check if empty, use the native title
     elseif ($item->type === 'post_type') {
-      $locale_obj = bogo_localize_by_id($item->object_id);
+      $locale_link = Bogo::get_locale_link($item->object_id);
       $default_title = $item->title;
 
-      if ($locale_obj) {
-        $default_title = $locale_obj['post']->post_title;
-        $item->url = $locale_obj['url'];
+      if ($locale_link) {
+        $default_title = $locale_link['post_title'];
+        $item->url = $locale_link['url'];
       }
 
       $item->title = $custom_title ?: $default_title;
@@ -160,21 +160,21 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
     }
   }
 
-  $posts = [];
+  $links = [];
   if ($menu_item->type === 'post_type') {
-    $posts = Bogo::get_post_translations($menu_item->object_id);
+    $links = Bogo::get_locale_links($menu_item->object_id);
   }
 
   $html_fields = [];
   foreach ($all_locales as $locale => $label) {
     $menu_title = empty($menu_item->post_title) ? $menu_item->title : $menu_item->post_title;
-    $placeholder = isset($posts[$locale]) && !empty($posts[$locale]->post_title) ? $posts[$locale]->post_title : $menu_title;
+    $placeholder = isset($links[$locale]) && !empty($links[$locale]->post_title) ? $links[$locale]->post_title : $menu_title;
     $classes = [];
-    $classes[] = isset($posts[$locale]) ? 'has-fixed-placeholder' : '';
+    $classes[] = isset($links[$locale]) ? 'has-fixed-placeholder' : '';
 
     $custom_title = $fields[$locale]['t'] ?? '';
     $custom_desc = $fields[$locale]['d'] ?? '';
-    $classes[] = isset($posts[$locale]) || !empty($custom_title) ? '' : 'is-empty';
+    $classes[] = isset($links[$locale]) || !empty($custom_title) ? '' : 'is-empty';
   
     $styles = [];
     $styles[] = in_array($locale, $active_locales) ? '' : 'display: none';

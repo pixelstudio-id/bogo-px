@@ -4,6 +4,26 @@ add_filter('the_content', 'bogopx_localize_links_in_content', 20);
 // add_filter('pre_get_posts', 'bogopx_prevent_base_post_overriden_with_locale_post', 15);
 add_filter('pre_get_posts', 'bogopx_fix_posts_from_all_locale_displayed', 20);
 
+add_action('template_redirect', 'bogopx_set_404_to_empty_locale');
+
+/**
+ * @action template_redirect
+ * 
+ * @warn - might show 404 to search or blog if no post is found
+ */
+function bogopx_set_404_to_empty_locale() {
+  global $post;
+
+  if (!$post) {
+    global $wp_query;
+    $wp_query->set_404();
+    status_header(404);
+    nocache_headers();
+    include(get_404_template());
+    exit;
+  }
+}
+
 /**
  * Replace all links in content with localized version, if any
  * 
@@ -14,10 +34,10 @@ function bogopx_localize_links_in_content($content) {
 
   $content = preg_replace_callback('/(<a.+href=")(.+)(".*>.+<\/a>)/Ui', function($matches) {
     $url = $matches[2];
-    $locale_obj = bogo_localize_by_url($url);
-
-    if ($locale_obj) {
-      $url = $locale_obj['url'];
+    $locale_link = bogo_localize_by_url($url);
+    
+    if ($locale_link) {
+      $url = $locale_link['url'];
     }
 
     return $matches[1] . $url . $matches[3];

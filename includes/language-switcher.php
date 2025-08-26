@@ -183,13 +183,18 @@ function bogo_language_switcher_links( $args = '' ) {
   $is_singular = false;
 
   if (is_singular() || !empty($wp_query->is_posts_page)) {
-    $translations = Bogo::get_post_translations(get_queried_object_id(), false);
+    $translations = Bogo::get_locale_links(get_queried_object_id());
     $is_singular = true;
   }
 
-  $links = array();
+  $switcher_links = array();
 
   foreach ( $available_languages as $code => $name ) {
+    // @changed - skip if the locale is draft
+    if (isset($translations[$code]) && $translations[$code]['post_status'] === 'draft') {
+      continue;
+    }
+    
     $native_name = bogo_get_language_native_name( $code );
 
     if ( bogo_locale_is_alone( $code ) ) {
@@ -204,7 +209,6 @@ function bogo_language_switcher_links( $args = '' ) {
       'href' => '',
     );
 
-    // @todo - german blog posts is empty??
     if (is_home()) {
       $posts_page = get_option('page_for_posts');
       if ($posts_page) {
@@ -230,11 +234,15 @@ function bogo_language_switcher_links( $args = '' ) {
       }
     }
     else {
-      $link['href'] = bogo_url(null, $code);
+      $link['href'] = isset($translations[$code]) && !empty($translations[$code]['url'])
+      ? $translations[$code]['url']
+      : '';
+      // @changed - if using the method below, it will show all locales on 404, search, etc.
+      // $link['href'] = bogo_url(null, $code);
     }
 
-    $links[] = $link;
+    $switcher_links[] = $link;
   }
 
-  return apply_filters( 'bogo_language_switcher_links', $links, $args );
+  return apply_filters( 'bogo_language_switcher_links', $switcher_links, $args );
 }

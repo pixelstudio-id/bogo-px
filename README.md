@@ -27,6 +27,7 @@ Doesn’t clutter your database with extra tables like others.
 - **ACF Integration** – PostObject and Link field are localized.
 - **User Restriction** – Limit users by language.
 - **Reusable Blocks Translation** – Automatically replaced by locale version on frontend.
+- **The SEO Framework Integration** - Make sure the SEO metatags are properly outputted.
 
 ## How to Use
 
@@ -96,29 +97,36 @@ $force_locale (string?) – Optional. Language code to force localization. Neede
 `null` - If localized post not found or if URL doesn't contain "http".
 
 ```php
-bogo_localize_by_id($id, $force_locale)
+Bogo::get_localize_links($id)
 ```
 
-Similar to the above but using ID instead of URL.
+Get all translated links of a certain post.
 
-- `$id` (string) - The ID of the post you want to get locale version of. Only ID from base language can be used.
-- `$force_locale` (string?)
-
-**RETURN**
-
-Same as above.
+Returns: `array[]` - contains ID, locale, url, post_title, post_type, post_status, post_name
 
 ```php
-bogo_localize_post_by_id($id, $force_locale)
+Bogo::get_localize_link($id, $locale?)
 ```
 
-Same as `bogo_localize_by_id()` but it immediately returns the WP_Post object instead of the full data. Just a quick shortcut.
+Get a translated link of a post of a certain locale. Using current locale if 2nd parameter is empty.
 
-**RETURN**
+Returns: `array` - contains ID, locale, url, post_title, post_type, post_status, post_name
 
-`WP_Post` - If localized post exist
+```php
+Bogo::get_localize_posts($id)
+```
 
-`null` - If localized post doesn't exist
+Get all translated version of a certain post.
+
+Returns: `array[WP_Post]`
+
+```php
+Bogo::get_localize_post($id, $locale?)
+```
+
+Get a translated version of a post of a certain locale. Using current locale if 2nd parameter is empty.
+
+Returns: `WP_Post`
 
 ## Using it in API
 

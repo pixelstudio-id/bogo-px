@@ -13,6 +13,7 @@ require_once __DIR__ . '/acf.php';
 require_once __DIR__ . '/language-switcher/language-switcher.php';
 require_once __DIR__ . '/user.php';
 require_once __DIR__ . '/reusable-blocks/reusable-blocks.php';
+require_once __DIR__ . '/the-seo-framework.php';
 
 /**
  * Any function with the prefix bogoHelper can be called with Bogo::function_name()
@@ -27,6 +28,23 @@ class Bogo {
       return call_user_func_array($func_name, $args);
     } else {
       trigger_error("The function bogoHelper_{$name} does not exist.", E_USER_ERROR);
+    }
+  }
+}
+
+/**
+ * Any function with the prefix _bogoHelper can be called with _Bogo::function_name()
+ * 
+ * This is just for cosmetic purpose
+ */
+class _Bogo {
+  static function __callStatic($name, $args) {
+    $func_name = "_bogoHelper_$name";
+
+    if (is_callable($func_name)) {
+      return call_user_func_array($func_name, $args);
+    } else {
+      trigger_error("The function _bogoHelper_{$name} does not exist.", E_USER_ERROR);
     }
   }
 }

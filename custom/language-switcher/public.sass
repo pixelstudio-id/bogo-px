@@ -56,9 +56,16 @@
     display: flex
     flex-wrap: wrap
     width: 200%
-
     li
       width: 50%
+
+  @media ($above-s)
+    &.has-columns-3
+      display: flex
+      flex-wrap: wrap
+      width: 300%
+      li
+        width: 33.33%
 
   .is-style-popup &
     visibility: hidden

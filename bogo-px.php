@@ -9,12 +9,12 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: bogo
  * Domain Path: /languages/
- * Version: 4.9.3
+ * Version: 4.10.1
  * Requires at least: 6.4
  * Requires PHP: 7.4
  */
 
-define( 'BOGO_VERSION', '4.9.3' );
+define( 'BOGO_VERSION', '4.10.1' );
 
 define( 'BOGO_PLUGIN', __FILE__ );
 
@@ -34,7 +34,7 @@ require_once BOGO_PLUGIN_DIR . '/includes/rewrite.php';
 require_once BOGO_PLUGIN_DIR . '/includes/link-template.php';
 require_once BOGO_PLUGIN_DIR . '/includes/language-switcher.php';
 require_once BOGO_PLUGIN_DIR . '/includes/nav-menu.php';
-// require_once BOGO_PLUGIN_DIR . '/includes/widgets.php';
+require_once BOGO_PLUGIN_DIR . '/includes/widgets.php';
 require_once BOGO_PLUGIN_DIR . '/includes/post.php';
 require_once BOGO_PLUGIN_DIR . '/includes/user.php';
 require_once BOGO_PLUGIN_DIR . '/includes/capabilities.php';

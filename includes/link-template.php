@@ -159,18 +159,22 @@ add_action( 'wp_head', 'bogo_m17n_headers', 10, 0 );
 function bogo_m17n_headers() {
 	$languages = array();
 
+	// @changed - abort if 404
+	if (is_404()) { return; }
+
 	if ( is_singular() ) {
 		$post_id = get_queried_object_id();
 
 		if ( $post_id
-		and $translations = Bogo::get_post_translations( $post_id ) ) {
+		and $links = Bogo::get_locale_links( $post_id ) ) {
 			$locale = get_locale();
-			$translations[$locale] = get_post( $post_id );
 
-			foreach ( $translations as $lang => $translation ) {
+			foreach ( $links as $locale => $link ) {
+				if ($link['post_status'] !== 'publish') { continue; }
+
 				$languages[] = array(
-					'hreflang' => bogo_language_tag( $lang ),
-					'href' => get_permalink( $translation ),
+					'hreflang' => bogo_language_tag( $locale ),
+					'href' => $link['url'],
 				);
 			}
 		}

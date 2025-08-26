@@ -92,9 +92,9 @@ function bogo_rest_post_translations( WP_REST_Request $request ) {
   }
 
   $response = array();
-  $translations = Bogo::get_post_translations($post->ID);
+  $locale_posts = Bogo::get_locale_posts($post->ID);
 
-  foreach ( $translations as $locale => $translation ) {
+  foreach ( $locale_posts as $locale => $translation ) {
     if ( ! current_user_can( 'edit_post', $translation->ID )
     and 'publish' !== get_post_status( $translation ) ) {
       continue;
@@ -199,9 +199,10 @@ function bogo_rest_create_post_translation( WP_REST_Request $request ) {
   }
 
   // @changed - check if already have that locale
-  $existing_locales = Bogo::get_post_translations($post->ID, false);
-  if ( isset( $existing_locales[$locale] ) ) {
-    $edit_link = get_edit_post_link( $existing_locales[$locale]['id'] );
+  $existing_links = Bogo::get_locale_links($post->ID);
+
+  if ( isset( $existing_links[$locale] ) ) {
+    $edit_link = get_edit_post_link( $existing_links[$locale]['ID'] );
     return new WP_Error( 'bogo_translation_exists',
       __( 'Translation already exists.', 'bogo' ),
       [

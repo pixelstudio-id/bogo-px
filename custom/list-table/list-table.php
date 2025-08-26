@@ -66,21 +66,21 @@ function bogopx_create_admin_flag_buttons($post) {
   $accessible_locales = bogo_get_user_accessible_locales();
   $accessible_locales = array_diff($accessible_locales, [get_locale()]);
 
-  $accessible_posts = Bogo::get_post_translations($post_id);
+  $links = Bogo::get_locale_links($post_id);
 
   $flags = '';
   foreach ($accessible_locales as $locale) {
     $language = bogo_get_language($locale) ?: $locale;
 
-    $locale_post = isset($accessible_posts[$locale])
-      ? $accessible_posts[$locale]
+    $link = isset($links[$locale])
+      ? $links[$locale]
       : null;
 
     // if already has translation, create EDIT link
-    if ($locale_post) {
-      $href = get_edit_post_link($locale_post->ID);
+    if ($link) {
+      $href = get_edit_post_link($link['ID']);
+      $post_status = $link['post_status'];
 
-      $post_status = $locale_post->post_status;
       $classes = "flag flag-{$locale} is-status-{$post_status}";
       $title = "Edit {$language} Translation";
 
@@ -109,26 +109,26 @@ function bogopx_create_admin_flag_buttons($post) {
  * Create the origin post for the list table showing all locale post
  */
 function bogopx_fill_origin_post_column($post_id, $locale) {
-  $original_post = Bogo::get_original_post_by_locale_id($post_id);
+  $link = Bogo::get_locale_link($post_id, BOGO_DEFAULT_LOCALE);
 
-  $view_url = $original_post['url'];
-  $edit_url = get_edit_post_link($original_post['id']);
-  $title = $original_post['post']->post_title;
+  $view_url = $link['url'];
+  $edit_url = get_edit_post_link($link['ID']);
+  $title = $link['post_title'];
 
   ob_start(); ?>
 
   <strong>
-    <?= $title ?>
+    <?= esc_html($title) ?>
   </strong>
   <div class="row-actions">
     <span>
-      <a href="<?= $edit_url ?>" target="_blank">
+      <a href="<?= esc_url($edit_url) ?>" target="_blank">
         <?= __('Edit') ?>
       </a>
       | 
     </span>
     <span>
-      <a href="<?= $view_url ?>" target="_blank">
+      <a href="<?= esc_url($view_url) ?>" target="_blank">
         <?= __('View') ?>
       </a>
     </span>
