@@ -25,11 +25,7 @@ function bogopx_localize_reusable_blocks() {
   $blocks = $BOGO_GROUPS_BY_POST_TYPE['wp_block'] ?? [];
   $blocks_default_locale = $blocks[BOGO_DEFAULT_LOCALE] ?? [];
 
-  if ($blocks_default_locale) {
-    $block_ids = array_map(function($block) {
-      return $block['ID'];
-    }, $blocks_default_locale);
-  }
+  $block_ids = isset($blocks[BOGO_DEFAULT_LOCALE]) ? wp_list_pluck($blocks[BOGO_DEFAULT_LOCALE], 'ID') : [];
 
   global $BOGO_GROUPS_BY_ID;
   $localized_blocks = [];

@@ -35,7 +35,7 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
     $custom_desc = isset($fields[$locale]) && !empty($fields[$locale]['d']) ? $fields[$locale]['d'] : '';
 
     // if custom, it's always replaced by the Bogo Field
-    if ($item->type === '' || $item->type === 'post_type_archive') {
+    if ($item->type === '' || $item->type === 'custom' || $item->type === 'post_type_archive') {
       $item->title = $custom_title ?: $item->title;
     }
     // if post_type, check if empty, use the native title
