@@ -2,7 +2,7 @@ name: Deploy via git-ftp
 on:
   push:
     branches:
-      - ltl
+      - dev
 jobs:
   deploy-flexi:
     name: Deploy Flexi
