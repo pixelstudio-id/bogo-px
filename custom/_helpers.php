@@ -34,6 +34,13 @@ function bogoHelper_get_switcher_links($atts = []) {
 }
 
 /**
+ * Get list of installed locales in this site
+ */
+function bogoHelper_get_available_locales() {
+  return bogo_available_locales();
+}
+
+/**
  * Returns true if the specified locale is the default locale.
  *
  * @param string $locale Locale code.
@@ -127,7 +134,7 @@ function _bogoHelper_find_locale_group($post_id) {
  * @return array - Contains ID, url, post_title, locale, post_status, post_type.
  */
 function bogoHelper_get_locale_links($post_id, $return_post_object = false) {
-  $group = _Bogo::find_locale_group($post_id);
+  $group = _bogoHelper_find_locale_group($post_id);
   if (!$group) { return []; }
 
   if ($return_post_object) {
@@ -161,7 +168,7 @@ function bogoHelper_get_locale_posts($post_id) {
  * @return array|WP_Post - null if not found
  */
 function bogoHelper_get_locale_link($post_id, $locale = null, $return_post_object = false) {
-  $group = _Bogo::find_locale_group($post_id);
+  $group = _bogoHelper_find_locale_group($post_id);
   if (!$group) { return null; }
 
   $locale = $locale ?: get_locale();
