@@ -69,7 +69,7 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
 /**
  * Hide translated posts when choosing Menu Item to add
  * 
- * TODO: this might mess with other query that wants to find translated post in Nav Menu page
+ * @todo - this might mess with other query that wants to find translated post in Nav Menu page
  * 
  * @filter pre_get_posts
  */
@@ -168,7 +168,8 @@ function bogo_add_fields_in_menu_item($id, $menu_item) {
   $html_fields = [];
   foreach ($all_locales as $locale => $label) {
     $menu_title = empty($menu_item->post_title) ? $menu_item->title : $menu_item->post_title;
-    $placeholder = isset($links[$locale]) && !empty($links[$locale]->post_title) ? $links[$locale]->post_title : $menu_title;
+ 
+    $placeholder = isset($links[$locale]) && !empty($links[$locale]['post_title']) ? $links[$locale]['post_title'] : $menu_title;
     $classes = [];
     $classes[] = isset($links[$locale]) ? 'has-fixed-placeholder' : '';
 
