@@ -2,29 +2,15 @@
 
 add_action('init', 'bogo_init_global_link_groups');
 
-add_action('save_post', 'bogopx_reset_global_link_groups_on_save', 100, 3);
-add_action('post_updated', 'bogopx_reset_global_link_groups_on_update', 100, 3);
-
-/**
- * @action save_post
- */
-function bogopx_reset_global_link_groups_on_save($post_id, $post, $update) {
-  // Avoid running on autosave/revisions
-  if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) { return; }
-  if ($update) { return; }
-
-  // @todo - when copying a post, the _locale is still not set, so this will always fail
-  // $current_locale = get_post_meta($post_id, '_locale', true) ?: BOGO_DEFAULT_LOCALE;
-  // if (Bogo::is_default_locale($current_locale)) { return; }
-
-  delete_transient('bogo_locale_groups');
-}
-
+add_action('post_updated', 'bogopx_update_links_cache_if_changes', 100, 3);
+add_action('bogo_after_duplicate_post', 'bogopx_update_links_cache_after_duplicate_post', 10, 3);
+// @todo - add WP Super Cache clear hook here too
+add_action('wpsc_after_delete_cache_admin_bar', 'bogopx_delete_links_cache');
 
 /**
  * @action post_updated
  */
-function bogopx_reset_global_link_groups_on_update($post_id, $post_after, $post_before) {
+function bogopx_update_links_cache_if_changes($post_id, $post_after, $post_before) {
   $current_locale = get_post_meta($post_id, '_locale', true) ?: BOGO_DEFAULT_LOCALE;
   if (Bogo::is_default_locale($current_locale)) { return; }
 
@@ -34,8 +20,64 @@ function bogopx_reset_global_link_groups_on_update($post_id, $post_after, $post_
 
   // @todo - instead of deleting, get the transient, loop to find the index, and update the data
   if ($has_updated_link_data) {
-    delete_transient('bogo_locale_groups');
+    $parent_id = get_post_meta($post_id, '_original_post', true);
+    bogopx_update_links_cache($parent_id, $current_locale, [
+      'ID' => $post_id,
+      'url' => get_permalink($post_id),
+      'post_title' => $post_after->post_title,
+      'post_type' => $post_after->post_type,
+      'post_name' => $post_after->post_name,
+      'post_status' => $post_after->post_status,
+    ]);
   }
+}
+
+
+/**
+ * @action bogo_after_duplicate_post
+ */
+function bogopx_update_links_cache_after_duplicate_post($new_post_id, $original_post, $locale) {
+  bogopx_update_links_cache($original_post->ID, $locale, [
+    'ID' => $new_post_id,
+    'url' => get_permalink($new_post_id),
+    'post_title' => $original_post->post_title,
+    'post_type' => $original_post->post_type,
+    'post_name' => $original_post->post_name,
+    'post_status' => 'draft',
+  ]);
+}
+
+/**
+ * Delete the cache when clicking "Delete Cache" button from WP Super Cache plugin
+ * 
+ * @action wpsc_after_delete_cache_admin_bar
+ */
+function bogopx_delete_links_cache() {
+  delete_transient('bogo_locale_groups');
+}
+
+/**
+ * @param int $parent_id
+ * @param string $locale - the language code like xx_XX
+ * @param array $new_post_arr - the post data that's changed, accepted values: ID, url, post_title, post_name, post_type, post_status
+ */
+function bogopx_update_links_cache($parent_id, $locale, $new_post_arr) {
+  $transient_key = 'bogo_locale_groups';
+  $groups = get_transient($transient_key) ?: [];
+  if (!$groups) { return; }
+
+  // initiate the index if not exists
+  if (!isset($groups[$parent_id])) {
+    $groups[$parent_id] = [
+      $locale = [],
+    ];
+  }
+  elseif (isset($groups[$parent_id]) && !isset($groups[$parent_id][$locale])) {
+    $groups[$parent_id][$locale] = [];
+  }
+
+  $groups[$parent_id][$locale] = array_merge($groups[$parent_id][$locale], $new_post_arr);
+  set_transient($transient_key, $groups, 0);
 }
 
 
@@ -50,7 +92,7 @@ function bogo_init_global_link_groups() {
 
   if (!$groups) {
     $groups = _bogo_query_locale_groups();
-    set_transient($transient_key, $groups, 86400); // 24 hour cache
+    set_transient($transient_key, $groups, 0);
   }
 
   global $BOGO_GROUPS_BY_ID;
@@ -88,6 +130,8 @@ function bogo_init_global_link_groups() {
   global $BOGO_GROUPS_BY_POST_TYPE;
   $BOGO_GROUPS_BY_POST_TYPE = $groups_by_pt;
 }
+
+
 
 /**
  * Query all locale posts and group them by original post ID

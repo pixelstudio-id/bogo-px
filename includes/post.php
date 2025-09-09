@@ -388,6 +388,9 @@ function bogo_duplicate_post( $original_post, $locale ) {
     update_post_meta($new_post_id, '_original_post', $original_post_id);
     update_post_meta($new_post_id, '_locale', $locale);
 
+    // @changed - new action
+    do_action('bogo_after_duplicate_post', $new_post_id, $original_post, $locale);
+
     // $meta_original_post = get_post_meta( $original_post->ID, '_original_post', true );
     // if ( $meta_original_post ) {
     //   update_post_meta( $new_post_id,
