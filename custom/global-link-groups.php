@@ -69,7 +69,7 @@ function bogopx_update_links_cache($parent_id, $locale, $new_post_arr) {
   // initiate the index if not exists
   if (!isset($groups[$parent_id])) {
     $groups[$parent_id] = [
-      $locale = [],
+      $locale => [],
     ];
   }
   elseif (isset($groups[$parent_id]) && !isset($groups[$parent_id][$locale])) {
