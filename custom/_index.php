@@ -64,12 +64,3 @@ function bogopx_escape_copied_content($postarr, $original_post, $locale) {
   );
   return $postarr;
 }
-
-
-add_filter('request', function($query) {
-  if (!empty($query['name'])) {
-    // $query['lang'] = 'de';
-  }
-
-  return $query;
-});

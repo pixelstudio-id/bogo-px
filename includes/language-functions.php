@@ -197,7 +197,7 @@ function bogo_get_language_native_name( $locale ) {
 		'bs_BA' => 'Bosanski',
 		'ca' => 'Català',
 		'ceb' => 'Cebuano',
-		'ckb' => 'كوردی‎',
+		'ckb' => 'كوردی',
 		'cs_CZ' => 'Čeština',
 		'cy' => 'Cymraeg',
 		'da_DK' => 'Dansk',
@@ -732,7 +732,7 @@ function bogo_get_closest_locale( $locale_orig ) {
 		return array_shift( $matches );
 	}
 
-	return false;
+	return apply_filters('bogopx_get_closest_locale_no_match', false, $locale);
 }
 
 

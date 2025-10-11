@@ -24,7 +24,7 @@ function bogopx_dropdown_shortcode($atts, $content) {
   $current_label = '';
   foreach ($links as $i => $link) {
     if ($link['is_current']) {
-      $current_label = $atts['compact'] ? $link['label_short'] : $link['label'];
+      $current_label = $atts['compact'] ? $link['label_short'] : $link['name'];
     }
   }
 
@@ -49,7 +49,7 @@ function bogopx_dropdown_shortcode($atts, $content) {
           href="<?= esc_url($link['href']) ?>"
           title="<?= esc_attr($link['title']) ?>"
         >
-          <?= esc_html($link['label']) ?>
+          <?= esc_html($link['name']) ?>
         </a>
       </li>
     <?php endforeach ?>
@@ -82,28 +82,29 @@ function bogopx_localize_args_for_lang_dropdown() {
   $options_create = [];
 
   foreach ($accessible_locales as $locale) {
-    $locale_name = bogo_get_language_native_name($locale);
-    $locale_name = trim(preg_replace('/\(.+\)/', '', $locale_name));
+    $name = bogo_get_language($locale);
+    // $name = bogo_get_language_native_name($locale);
+    $name = trim(preg_replace('/\(.+\)/', '', $name));
 
     $link = $accessible_links[$locale] ?? null;
 
     if ($link && $locale === $current_locale) {
       $current_option = [
-        'label' => $locale_name,
+        'label' => $name,
         'locale' => $locale,
         'status' => $link['post_status'],
       ];
     } elseif ($link) {
       $options[] = [
         'url' => get_edit_post_link($link['ID']),
-        'label' => $locale_name,
+        'label' => $name,
         'locale' => $locale,
         'status' => $link['post_status'],
       ];
     } else {
       $options_create[] = [
         'url' => "/posts/{$post->ID}/translations/{$locale}",
-        'label' => $locale_name,
+        'label' => $name,
         'locale' => $locale,
       ];
     }

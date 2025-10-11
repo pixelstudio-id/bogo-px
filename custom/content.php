@@ -19,7 +19,12 @@ function bogopx_set_404_to_empty_locale() {
     $wp_query->set_404();
     status_header(404);
     nocache_headers();
-    include(get_404_template());
+    $template_404 = get_404_template();
+    if ($template_404) {
+      include($template_404);
+    } else {
+      echo '<h2>404 Not Found</h2>';
+    }
     exit;
   }
 }

@@ -224,10 +224,11 @@ function bogo_language_switcher_links( $args = '' ) {
       $link['href'] = $translations[$code]['url'] ?? '';
     }
     elseif (is_archive()) {
+      global $posts;
       if (Bogo::is_default_locale($code)) {
         $link['href'] = bogo_url(null, $code);
-      } else {
-        global $posts;
+      }
+      elseif ($posts) {
         $post_type = $posts[0]->post_type;
         $has_any_post = Bogo::is_post_type_has_locale_post($post_type, $code);
         $link['href'] = $has_any_post ? bogo_url(null, $code) : '';
