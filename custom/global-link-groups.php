@@ -4,8 +4,9 @@ add_action('init', 'bogo_init_global_link_groups');
 
 add_action('post_updated', 'bogopx_update_links_cache_if_changes', 100, 3);
 add_action('bogo_after_duplicate_post', 'bogopx_update_links_cache_after_duplicate_post', 10, 3);
-// @todo - add WP Super Cache clear hook here too
-add_action('wpsc_after_delete_cache_admin_bar', 'bogopx_delete_links_cache');
+
+// Clear the cache when clicking "Delete Cache" button from WP Super Cache plugin
+add_action('wp_ajax_ajax-delete-cache', 'bogopx_delete_links_cache', 20);
 
 /**
  * @action post_updated
