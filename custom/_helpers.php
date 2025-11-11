@@ -23,7 +23,9 @@ function bogoHelper_get_switcher_links($atts = []) {
     $link['is_current'] = $link['locale'] === get_locale();
   
     if ($atts['compact']) {
-      $link['label_short'] = strtoupper(substr($link['locale'], 0, 2));
+      $slug = strtoupper(substr($link['locale'], 0, 2));
+      $slug = apply_filters('bogo_lang_slug', strtolower($slug));
+      $link['label_short'] = strtoupper($slug);
     }
 
     $links[$i] = $link;
