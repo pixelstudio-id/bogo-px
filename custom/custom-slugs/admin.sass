@@ -1,0 +1,93 @@
+@import "@lib/helpers"
+
+.bogopx-slug-field
+
+  &:focus-within
+    .button
+      visibility: visible
+      opacity: 1
+
+  input
+    cursor: pointer
+    background-color: transparent
+    transition: all .2s ease-in-out
+    border-color: transparent
+    width: 3rem
+
+    +placeholder
+      color: rgba(black, .3)
+
+  input:hover
+    background-color: rgba(black, .075)
+  input:focus
+    background-color: transparent
+
+  .button
+    visibility: hidden
+    opacity: 0
+    transition: all .2s ease-in-out
+
+  small,
+  small p
+    display: block
+    color: #D32F2F
+    line-height: 1
+  small
+    margin-top: 0.5rem
+  small p
+    margin-top: 0
+    margin-bottom: 0.25rem
+  
+  &.is-loading
+    --_size: 0.75rem
+    --_color: #ffffff
+    --_colorDim: rgba(255,255,255, .2)
+    pointer-events: none
+    opacity: .75
+
+  &.is-loading .button,
+  &.is-success .button
+    position: relative
+    color: transparent
+    visibility: visible
+    opacity: 1
+    text-align: center
+
+    &::before
+      content: ""
+      display: inline-block
+      position: absolute
+      top: 50%
+      left: 50%
+  
+  &.is-loading .button::before
+    background-color: var(--_color)
+    animation: bogopxLoadingSlugs 0.5s ease-out infinite alternate
+    transform: translateX(-50%) translateY(-50%)
+    width: calc(var(--_size) / 2)
+    height: calc(var(--_size) / 2)
+    border-radius: 50%
+    box-shadow: var(--_size) 0 var(--_color), calc(var(--_size) * -1) 0 var(--_color)
+
+  &.is-success .button
+    background-color: transparent
+    pointer-events: none
+
+  &.is-success .button::before
+    background: url('./img/check.svg') no-repeat center center
+    background-size: contain
+    animation: bogopxSuccess 1000ms cubic-bezier(.34,1.56,.64,1) infinite
+    transform: translateX(-50%) translateY(-50%)
+    width: 1.5rem
+    height: 1.25rem
+  
+@keyframes bogopxLoadingSlugs
+  0%
+    background-color: var(--_colorDim)
+    box-shadow: var(--_size) 0 var(--_colorDim), calc(var(--_size) * -1) 0 var(--_color)
+  50%
+    background-color: var(--_color)
+    box-shadow: var(--_size) 0 var(--_colorDim), calc(var(--_size) * -1) 0 var(--_colorDim)
+  100%
+    background-color: var(--_colorDim)
+    box-shadow: var(--_size) 0 var(--_color), calc(var(--_size) * -1) 0 var(--_colorDim)

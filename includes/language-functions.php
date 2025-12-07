@@ -614,6 +614,12 @@ function bogo_lang_slug( $locale ) {
 		$slug = $tag;
 	}
 
+	// @changed - added custom slug support
+	$custom_slugs = get_option('bogopx_custom_slugs', []);
+	if (isset($custom_slugs[$locale])) {
+		$slug = $custom_slugs[$locale];
+	}
+
 	return apply_filters( 'bogo_lang_slug', $slug, $locale );
 }
 
@@ -732,7 +738,10 @@ function bogo_get_closest_locale( $locale_orig ) {
 		return array_shift( $matches );
 	}
 
-	return apply_filters('bogopx_get_closest_locale_no_match', false, $locale);
+	// @changed - applied the custom slugs here
+	$custom_slugs = get_option('bogopx_custom_slugs', []);
+	$locale = array_search($language_code, $custom_slugs);
+	return $locale;
 }
 
 

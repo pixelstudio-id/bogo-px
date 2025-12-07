@@ -12,6 +12,7 @@ class Bogo_Language_Packs_List_Table extends WP_List_Table {
 	public static function define_columns() {
 		$columns = array(
 			'name' => __( 'Language', 'bogo' ),
+			'slug' => __( 'Slug', 'bogo' ),
 			'status' => __( 'Status', 'bogo' ),
 		);
 
@@ -160,6 +161,11 @@ class Bogo_Language_Packs_List_Table extends WP_List_Table {
 			esc_html( $item->locale )
 		);
 	}
+	
+	// @changed - new column to change slug
+	public function column_slug($item) {
+		return bogopx_render_custom_slug_column($item);
+	}
 
 	public function column_status( $item ) {
 		$status = '';
@@ -268,15 +274,6 @@ class Bogo_Language_Packs_List_Table extends WP_List_Table {
 			}
 		}
 
-		if ( $item->active
-		and ! bogo_is_default_locale( $item->locale ) ) {
-			$actions['translate'] = $this->action_link( $item, 'translate' );
-		}
-
-		if ( 'en_US' != $item->locale ) {
-			$actions['meet'] = $this->meet_the_team_link( $item );
-		}
-
 		return $this->row_actions( $actions );
 	}
 
@@ -306,14 +303,6 @@ class Bogo_Language_Packs_List_Table extends WP_List_Table {
 					$item->language
 				),
 			),
-			'translate' => array(
-				__( 'Translate Terms', 'bogo' ),
-				sprintf(
-					/* translators: %s: language name */
-					__( 'Translate terms into %s', 'bogo' ),
-					$item->language
-				),
-			),
 		);
 
 		$link = menu_page_url( 'bogo', false );
@@ -331,40 +320,6 @@ class Bogo_Language_Packs_List_Table extends WP_List_Table {
 			esc_html( $labels[$action][0] ),
 			esc_attr( $labels[$action][1] ),
 			esc_attr( $action )
-		);
-
-		return $link;
-	}
-
-	private function meet_the_team_link( $item ) {
-		$link = 'https://make.wordpress.org/polyglots/teams/';
-
-		$locale = $item->locale;
-		$locale = explode( '_', $locale, 3 );
-		$locale = implode( '_', array_slice( $locale, 0, 2 ) );
-
-		$link = add_query_arg( array(
-			'locale' => $locale,
-		), $link );
-
-		$link .= '#main';
-
-		$labels = array(
-			__( 'Meet the Translation Team', 'bogo' ),
-			sprintf(
-				/* translators: %s: language name */
-				__( 'Meet the Translation Team for %s', 'bogo' ),
-				$item->language
-			)
-		);
-
-		$link = sprintf(
-			'<a href="%1$s" aria-label="%3$s" target="_blank" rel="noopener noreferrer">%2$s <span class="screen-reader-text">%4$s</span></a>',
-			esc_url( $link ),
-			esc_html( $labels[0] ),
-			esc_attr( $labels[1] ),
-			/* translators: accessibility text */
-			esc_html( __( '(opens in a new window)', 'bogo' ) )
 		);
 
 		return $link;
