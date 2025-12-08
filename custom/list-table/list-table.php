@@ -90,6 +90,15 @@ function bogopx_create_admin_flag_buttons($post) {
           break;
         case 'future':
           $title = "[SCHEDULED] {$title}";
+          break;
+        case 'trash':
+          $title = "Deleted. Click here to completely remove or restore it.";
+          $admin_url_args = 'edit.php?post_status=trash';
+          if (isset($_GET['post_type'])) {
+            $admin_url_args .= '&post_type=' . esc_attr($_GET['post_type']);
+          }
+          $href = admin_url($admin_url_args);
+          break;
       }
 
       $flags .= "<a href='{$href}' class='{$classes}' title='{$title}' target='_blank'></a>";
@@ -109,6 +118,8 @@ function bogopx_create_admin_flag_buttons($post) {
  * Create the origin post for the list table showing all locale post
  */
 function bogopx_fill_origin_post_column($post_id, $locale) {
+  if (Bogo::is_default_locale($locale)) { return '-'; }
+
   $link = Bogo::get_locale_link($post_id, BOGO_DEFAULT_LOCALE);
 
   $view_url = $link['url'];
@@ -135,4 +146,16 @@ function bogopx_fill_origin_post_column($post_id, $locale) {
   </div>
 
   <?php return ob_get_clean();
+}
+
+/**
+ * Show one flag with its locale name. Skip if default locale
+ */
+function bogopx_fill_current_locale($post, $locale) {
+  if (!$locale || Bogo::is_default_locale($locale)) {
+    return '';
+  }
+
+  $language = bogo_get_language($locale) ?: $locale;
+  return "<div class='bogo-current-locale'><i class='flag flag-{$locale}'></i> <span>{$language}</span></div>";
 }

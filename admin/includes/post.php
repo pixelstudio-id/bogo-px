@@ -15,15 +15,24 @@ function bogo_posts_columns( $posts_columns, $post_type ) {
     return $posts_columns;
   }
 
-  // @changed - different label for base and locale table
-  $col_label = isset($_GET['lang']) && !Bogo::is_default_locale($_GET['lang'])
-  ? __( 'Origin', 'bogo' )
-  : __( 'Locale', 'bogo' );
+  // @changed - different column depending on current view
+  $extra_columns = [];
 
-  if ( ! isset( $posts_columns['locale'] ) ) {
+  $is_lang_filtered = isset( $_GET['lang'] ) && ! Bogo::is_default_locale( $_GET['lang'] );
+  $is_trash_view = isset($_GET['post_status']) && $_GET['post_status'] === 'trash';
+
+  if (!$is_lang_filtered || $is_trash_view) {
+    $extra_columns['locale'] = __( 'Locale', 'bogo' );
+  }
+
+  if ($is_lang_filtered || $is_trash_view) {
+    $extra_columns['origin'] = __( 'Origin', 'bogo' );
+  }
+
+  if ( ! isset( $posts_columns['locale'] ) || !isset( $post_columns['origin' ]) ) {
     $posts_columns = array_merge(
       array_slice( $posts_columns, 0, 3 ),
-      array( 'locale' => $col_label ),
+      $extra_columns,
       array_slice( $posts_columns, 3 )
     );
   }
@@ -41,28 +50,26 @@ add_action( 'manage_posts_custom_column',
 
 // @changed - added flags and shortcut to create/edit in Locale column
 function bogo_manage_posts_custom_column( $column_name, $post_id ) {
-  if ( 'locale' != $column_name ) {
-    return;
-  }
+  if (!in_array($column_name, ['locale', 'origin'])) { return; }
 
   $post = get_post( $post_id );
   $post_type = $post->post_type;
 
-  if ( ! bogo_is_localizable_post_type( $post_type ) ) {
-    return;
-  }
+  if ( ! bogo_is_localizable_post_type( $post_type ) ) { return; }
 
   $locale = get_post_meta( $post_id, '_locale', true );
-  $is_parent_post = !$locale || $locale === get_locale();
-  
-  // Create list of flags with Edit/Create link
-  if ($is_parent_post && function_exists('bogopx_create_admin_flag_buttons')) {
-    echo bogopx_create_admin_flag_buttons( $post );
-  }
-  else {
+
+  if ($column_name === 'origin') {
     echo bogopx_fill_origin_post_column( $post_id, $locale );
   }
-
+  elseif ($column_name === 'locale') {
+    $is_trash_view = isset($_GET['post_status']) && $_GET['post_status'] === 'trash';
+    if ($is_trash_view) {
+      echo bogopx_fill_current_locale($post, $locale);
+    } else {
+      echo bogopx_create_admin_flag_buttons( $post );
+    }
+  }
 }
 
 add_action( 'restrict_manage_posts', 'bogo_restrict_manage_posts', 10, 2 );
@@ -120,8 +127,8 @@ function bogo_post_row_actions( $actions, $post ) {
       return $actions;
     }
 
-    $text = __( 'Edit %s translation', 'bogo' );
-    $edit_link = get_edit_post_link( $translation->ID );
+    // $text = __( 'Edit %s translation', 'bogo' );
+    // $edit_link = get_edit_post_link( $translation->ID );
   } else {
     // @changed - remove this because translation button is changed to the flag
     // $text = __( 'Translate into %s', 'bogo' );
@@ -133,17 +140,18 @@ function bogo_post_row_actions( $actions, $post ) {
     // $edit_link = wp_nonce_url( $edit_link, 'bogo-add-translation' );
   }
 
-  $language = bogo_get_language( $user_locale );
+  // @changed - remove this because the Locale column is replaced to "Origin" with link to original post
+  // $language = bogo_get_language( $user_locale );
 
-  if ( empty( $language ) ) {
-    $language = $user_locale;
-  }
+  // if ( empty( $language ) ) {
+  //   $language = $user_locale;
+  // }
 
-  $actions['translate'] = sprintf(
-    '<a href="%1$s">%2$s</a>',
-    $edit_link,
-    esc_html( sprintf( $text, $language ) )
-  );
+  // $actions['translate'] = sprintf(
+  //   '<a href="%1$s">%2$s</a>',
+  //   $edit_link,
+  //   esc_html( sprintf( $text, $language ) )
+  // );
 
   return $actions;
 }
