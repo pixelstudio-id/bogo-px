@@ -91,6 +91,8 @@ function bogopx_create_admin_flag_buttons($post) {
         case 'future':
           $title = "[SCHEDULED] {$title}";
           break;
+
+        // @todo - after permanently deleted, it's still in cache so the button still show that it's trashed
         case 'trash':
           $title = "Deleted. Click here to completely remove or restore it.";
           $admin_url_args = 'edit.php?post_status=trash';

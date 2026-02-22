@@ -18,6 +18,7 @@ function bogo_posts_columns( $posts_columns, $post_type ) {
   // @changed - different column depending on current view
   $extra_columns = [];
 
+  // @todo - using $_GET conditional is bugged because on QuickEdit, the $_GET is always empty. Column shouldn't be conditional.
   $is_lang_filtered = isset( $_GET['lang'] ) && ! Bogo::is_default_locale( $_GET['lang'] );
   $is_trash_view = isset($_GET['post_status']) && $_GET['post_status'] === 'trash';
 
