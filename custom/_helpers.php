@@ -9,17 +9,15 @@ function bogoHelper_get_switcher_links($atts = []) {
     'compact' => false,
   ]);
 
-  $links = bogo_language_switcher_links([ 'echo' => false ]);
+  $raw_links = bogo_language_switcher_links([ 'echo' => false ]);
+  $links = [];
 
-  foreach ($links as $i => $link) {
+  foreach ($raw_links as $link) {
     if (empty($link['href'])) {
-      unset($links[$i]);
       continue;
     }
 
-    $link['name'] = $link['native_name'];
-    $link['label'] = $link['name'];
-    $link['title'] = sprintf(__('View %s translation', 'bogo'), $link['name']);
+    $link['tooltip'] = sprintf(__('View %s translation', 'bogo'), $link['name']);
     $link['is_current'] = $link['locale'] === get_locale();
   
     if ($atts['compact']) {
@@ -31,13 +29,17 @@ function bogoHelper_get_switcher_links($atts = []) {
       }
 
       $slug = apply_filters('bogo_lang_slug', strtolower($slug));
-      $link['label_short'] = strtoupper($slug);
+      $link['lang_code'] = strtoupper($slug);
     }
 
-    $links[$i] = $link;
+    // if is_current, put the link at the beginning
+    if ($link['is_current']) {
+      array_unshift($links, $link);
+    } else {
+      $links[] = $link;
+    }
   }
 
-  $links = array_values($links); // reindex the array
   return $links;
 }
 

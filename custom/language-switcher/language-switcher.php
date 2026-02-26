@@ -24,7 +24,7 @@ function bogopx_dropdown_shortcode($atts, $content) {
   $current_label = '';
   foreach ($links as $i => $link) {
     if ($link['is_current']) {
-      $current_label = $atts['compact'] ? $link['label_short'] : $link['name'];
+      $current_label = $atts['compact'] ? $link['lang_code'] : $link['native_name'];
     }
   }
 
@@ -47,9 +47,9 @@ function bogopx_dropdown_shortcode($atts, $content) {
         <a
           hreflang="<?= esc_attr($link['lang']) ?>"
           href="<?= esc_url($link['href']) ?>"
-          title="<?= esc_attr($link['title']) ?>"
+          title="<?= esc_attr($link['tooltip']) ?>"
         >
-          <?= esc_html($link['name']) ?>
+          <?= esc_html($link['native_name']) ?>
         </a>
       </li>
     <?php endforeach ?>
