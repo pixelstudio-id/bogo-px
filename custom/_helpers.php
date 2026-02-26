@@ -17,7 +17,7 @@ function bogoHelper_get_switcher_links($atts = []) {
       continue;
     }
 
-    $link['tooltip'] = sprintf(__('View %s translation', 'bogo'), $link['name']);
+    $link['tooltip'] = sprintf(__('View %s translation', 'bogo'), $link['title']);
     $link['is_current'] = $link['locale'] === get_locale();
   
     if ($atts['compact']) {
