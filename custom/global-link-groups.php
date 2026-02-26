@@ -278,7 +278,6 @@ function bogo_localize_by_id($id, $force_locale = null) {
  */
 function bogo_localize_post_by_id($id, $force_locale = null) {
   $link = bogo_localize_by_id($id, $force_locale);
-
   if ($link && isset($link['ID'])) {
     $p = get_post($link['ID']);
     return $p;

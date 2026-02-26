@@ -109,7 +109,7 @@ function bogopx_create_admin_flag_buttons($post) {
     else {
       $classes = "flag flag-{$locale}";
       $title = "Add {$language} Translation";
-      $flags .= "<a class='{$classes}' title='{$title}' data-id='{$post_id}' data-locale='{$locale}'></a>";
+      $flags .= "<a class='{$classes}' tabindex='0' title='{$title}' data-id='{$post_id}' data-locale='{$locale}'></a>";
     }
   }
 

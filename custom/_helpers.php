@@ -17,8 +17,8 @@ function bogoHelper_get_switcher_links($atts = []) {
       continue;
     }
 
-    $link['name'] = $link['title'];
-    $link['label'] = $link['native_name'] ?: $link['name'];
+    $link['name'] = $link['native_name'];
+    $link['label'] = $link['name'];
     $link['title'] = sprintf(__('View %s translation', 'bogo'), $link['name']);
     $link['is_current'] = $link['locale'] === get_locale();
   

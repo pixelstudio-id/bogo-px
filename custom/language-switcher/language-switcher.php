@@ -29,10 +29,10 @@ function bogopx_dropdown_shortcode($atts, $content) {
   }
 
   $wrapper_classes = '';
-  if ($links_count >= 5) {
-    $wrapper_classes = 'has-columns-2';
-  } elseif ($links_count >= 9) {
+  if ($links_count >= 9) {
     $wrapper_classes = 'has-columns-3';
+  } elseif ($links_count >= 5) {
+    $wrapper_classes = 'has-columns-2';
   }
 
   ob_start(); ?>

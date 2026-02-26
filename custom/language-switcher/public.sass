@@ -49,23 +49,27 @@
       background-image: url('./img/chevron-up.svg')
 
 .bogo-dropdown__links
+  --_width: 12.5rem
   list-style-type: none
   color: var(--text, #222)
 
   &.has-columns-2
     display: flex
     flex-wrap: wrap
-    width: 200%
+    width: calc(var(--_width) * 1.25)
     li
       width: 50%
 
-  @media ($above-s)
-    &.has-columns-3
-      display: flex
-      flex-wrap: wrap
-      width: 300%
+  &.has-columns-3
+    display: flex
+    flex-wrap: wrap
+    width: calc(var(--_width) * 1.75)
+    li
+      width: 33.33%
+
+    @media ($below-s)
       li
-        width: 33.33%
+        width: 50%
 
   .is-style-popup &
     visibility: hidden
@@ -84,23 +88,36 @@
     &::before
       content: "WEBSITE LANGUAGE"
       opacity: .5
-      padding: 0.25rem 0.75rem
+      padding: 0.125rem 0.75rem
       margin-bottom: 0.25rem
+      width: 100%
       font-size: 75%
       font-weight: 700
       white-space: nowrap
       text-transform: uppercase
+
+    &.has-columns-3
+      right: 0
+      left: auto
+      transform: translateY(0.5rem)
 
   .is-style-popup:hover &
     visibility: visible
     opacity: 1
     transform: translateX(-50%)
     transition: all .2s ease-in-out
+
+    &.has-columns-3
+      transform: none
+
   .is-style-popup:focus-within &
     visibility: visible
     opacity: 1
     transform: translateX(-50%)
     transition: all .2s ease-in-out
+
+    &.has-columns-3
+      transform: none
 
   .is-style-toggle &
     margin-right: -0.5rem

@@ -10,6 +10,7 @@ const bogoDropdown = () => {
    *
    */
   function onClick(e) {
+    e.stopPropagation();
     const $wrapper = e.currentTarget.closest('.bogo-dropdown');
     $wrapper.classList.toggle('is-toggled');
   }

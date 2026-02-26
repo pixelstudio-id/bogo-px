@@ -153,6 +153,36 @@ function api_callback_get_page($params) {
 }
 ```
 
+### Using it in PHPUnit
+
+There are 2 problems with testing Bogo in PHPUnit:
+
+- Bogo is initiated during `init` and PHPUnit runs after that.
+- Bogo can't switch language in test site because the language packs aren't downloaded.
+
+If you try to download the language pack during test, there will be a long pause. So the solution is to create a fake `.mo` file to make WordPress think we downloaded it.
+
+Here's the helper function, use it in test AFTER you created your dummy posts/pages.
+
+```php
+function my_init_bogo($lang = '') {
+  bogo_init_global_link_groups();
+
+  if (!$lang) { return; }
+
+  $lang_dir = WP_CONTENT_DIR . '/languages';
+  if (!file_exists($lang_dir)) {
+    mkdir($lang_dir, 0777, true);
+  }
+
+  // Create a dummy file so WP thinks the lang is "installed"
+  touch($lang_dir . "/{$lang}.mo");
+
+  // Clear the cache so WP sees the new file
+  delete_site_transient('available_translations');
+}
+```
+
 ### Search
 
 For Search bar to work properly, the `<form>` action has to have trailing slash:

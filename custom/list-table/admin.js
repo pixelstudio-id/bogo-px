@@ -7,6 +7,12 @@ const localeColumn = () => {
 
   $buttons.forEach(($b) => {
     $b.addEventListener('click', onClick);
+    $b.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        onClick(e);
+      }
+    });
   });
 
   /**
