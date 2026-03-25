@@ -2,38 +2,37 @@
 
 /* Posts List Table */
 
-add_filter( 'manage_pages_columns', 'bogo_pages_columns', 10, 1 );
+add_filter('manage_pages_columns', 'bogo_pages_columns', 10, 1);
+add_filter('manage_posts_columns', 'bogo_posts_columns', 10, 2);
+add_action('manage_pages_custom_column', 'bogo_manage_posts_custom_column', 10, 2);
+add_action('restrict_manage_posts', 'bogo_restrict_manage_posts', 10, 2);
 
-function bogo_pages_columns( $posts_columns ) {
-  return bogo_posts_columns( $posts_columns, 'page' );
+/**
+ * @filter manage_pages_columns
+ */
+function bogo_pages_columns($posts_columns) {
+  return bogo_posts_columns($posts_columns, 'page');
 }
 
-add_filter( 'manage_posts_columns', 'bogo_posts_columns', 10, 2 );
-
-function bogo_posts_columns( $posts_columns, $post_type ) {
-  if ( ! bogo_is_localizable_post_type( $post_type ) ) {
+/**
+ * @filter manage_posts_columns
+ */
+function bogo_posts_columns($posts_columns, $post_type) {
+  if (!bogo_is_localizable_post_type($post_type)) {
     return $posts_columns;
   }
-
-  // @changed - different column depending on current view
-  $extra_columns = [];
 
   // @todo - using $_GET conditional is bugged because on QuickEdit, the $_GET is always empty. Column shouldn't be conditional.
   $is_lang_filtered = isset( $_GET['lang'] ) && ! Bogo::is_default_locale( $_GET['lang'] );
   $is_trash_view = isset($_GET['post_status']) && $_GET['post_status'] === 'trash';
 
-  if (!$is_lang_filtered || $is_trash_view) {
-    $extra_columns['locale'] = __( 'Locale', 'bogo' );
-  }
+  $locale_title = !$is_lang_filtered || $is_trash_view ? __('Locale', 'bogo') : __('Origin', 'bogo');
 
-  if ($is_lang_filtered || $is_trash_view) {
-    $extra_columns['origin'] = __( 'Origin', 'bogo' );
-  }
-
-  if ( ! isset( $posts_columns['locale'] ) || !isset( $post_columns['origin' ]) ) {
+  // place it on 4th column
+  if (!isset($posts_columns['locale'])) {
     $posts_columns = array_merge(
       array_slice( $posts_columns, 0, 3 ),
-      $extra_columns,
+      ['locale' => $locale_title],
       array_slice( $posts_columns, 3 )
     );
   }
@@ -41,40 +40,28 @@ function bogo_posts_columns( $posts_columns, $post_type ) {
   return $posts_columns;
 }
 
-add_action( 'manage_pages_custom_column',
-  'bogo_manage_posts_custom_column', 10, 2
-);
-
-add_action( 'manage_posts_custom_column',
-  'bogo_manage_posts_custom_column', 10, 2
-);
-
-// @changed - added flags and shortcut to create/edit in Locale column
+/**
+ * @action manage_posts_custom_column
+ */
 function bogo_manage_posts_custom_column( $column_name, $post_id ) {
-  if (!in_array($column_name, ['locale', 'origin'])) { return; }
+  if ($column_name !== 'locale') { return; }
 
-  $post = get_post( $post_id );
-  $post_type = $post->post_type;
+  $post = get_post($post_id);
+  $is_trash_view = isset($_GET['post_status']) && $_GET['post_status'] === 'trash';
+  $locale = Bogo::get_locale($post_id);
 
-  if ( ! bogo_is_localizable_post_type( $post_type ) ) { return; }
-
-  $locale = get_post_meta( $post_id, '_locale', true );
-
-  if ($column_name === 'origin') {
-    echo bogopx_fill_origin_post_column( $post_id, $locale );
-  }
-  elseif ($column_name === 'locale') {
-    $is_trash_view = isset($_GET['post_status']) && $_GET['post_status'] === 'trash';
-    if ($is_trash_view) {
-      echo bogopx_fill_current_locale($post, $locale);
-    } else {
-      echo bogopx_create_admin_flag_buttons( $post );
-    }
+  if ($is_trash_view) {
+    echo bogopx_fill_current_locale($post, $locale);
+  } elseif (Bogo::is_default_locale($locale)) {
+    echo bogopx_create_admin_flag_buttons($post);
+  } else {
+    echo bogopx_fill_origin_post_column($post_id, $locale);
   }
 }
 
-add_action( 'restrict_manage_posts', 'bogo_restrict_manage_posts', 10, 2 );
-
+/**
+ * @action restrict_manage_posts
+ */
 function bogo_restrict_manage_posts( $post_type, $which ) {
   if ( ! bogo_is_localizable_post_type( $post_type ) ) {
     return;
@@ -100,9 +87,9 @@ function bogo_restrict_manage_posts( $post_type, $which ) {
   echo '</select>' . "\n";
 }
 
+/*
 add_filter( 'post_row_actions', 'bogo_post_row_actions', 10, 2 );
 add_filter( 'page_row_actions', 'bogo_post_row_actions', 10, 2 );
-
 function bogo_post_row_actions( $actions, $post ) {
   if ( ! bogo_is_localizable_post_type( $post->post_type )
   or 'trash' === $post->post_status ) {
@@ -157,8 +144,7 @@ function bogo_post_row_actions( $actions, $post ) {
   return $actions;
 }
 
-add_action( 'admin_init', 'bogo_add_translation', 10, 0 );
-
+// add_action( 'admin_init', 'bogo_add_translation', 10, 0 );
 function bogo_add_translation() {
   if ( empty( $_REQUEST['action'] )
   or 'bogo-add-translation' != $_REQUEST['action'] ) {
@@ -193,11 +179,8 @@ function bogo_add_translation() {
   }
 }
 
-/* Single Post */
-
 // @changed - metabox replaced by the dropdown at the top bar
 // add_action( 'add_meta_boxes', 'bogo_add_l10n_meta_boxes', 10, 2 );
-
 function bogo_add_l10n_meta_boxes( $post_type, $post ) {
   if ( ! bogo_is_localizable_post_type( $post_type ) ) {
     return;
@@ -264,7 +247,6 @@ function bogo_l10n_meta_box( $post ) {
         '<a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s <span class="screen-reader-text">%3$s</span></a>',
         esc_url( $edit_link ),
         get_the_title( $link['ID'] ),
-        /* translators: accessibility text */
         esc_html( __( '(opens in a new window)', 'bogo' ) )
       );
     } else {
@@ -319,3 +301,4 @@ function bogo_l10n_meta_box( $post ) {
   echo '<div class="clear"></div>';
   echo '</div>';
 }
+*/

@@ -44,6 +44,22 @@ function bogoHelper_get_switcher_links($atts = []) {
 }
 
 /**
+ * Get the locale of a post
+ */
+function bogoHelper_get_locale($post_id) {
+  $group = _bogoHelper_find_locale_group($post_id);
+  if (!$group) { return null; }
+
+  foreach ($group as $locale => $link) {
+    if ($link['ID'] == $post_id) {
+      return $locale;
+    }
+  }
+
+  return null;
+}
+
+/**
  * Get list of installed locales in this site
  */
 function bogoHelper_get_available_locales() {
