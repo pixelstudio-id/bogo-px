@@ -5,6 +5,7 @@
 add_filter('manage_pages_columns', 'bogo_pages_columns', 10, 1);
 add_filter('manage_posts_columns', 'bogo_posts_columns', 10, 2);
 add_action('manage_pages_custom_column', 'bogo_manage_posts_custom_column', 10, 2);
+add_action('manage_posts_custom_column', 'bogo_manage_posts_custom_column', 10, 2);
 add_action('restrict_manage_posts', 'bogo_restrict_manage_posts', 10, 2);
 
 /**
@@ -23,7 +24,7 @@ function bogo_posts_columns($posts_columns, $post_type) {
   }
 
   // @todo - using $_GET conditional is bugged because on QuickEdit, the $_GET is always empty. Column shouldn't be conditional.
-  $is_lang_filtered = isset( $_GET['lang'] ) && ! Bogo::is_default_locale( $_GET['lang'] );
+  $is_lang_filtered = isset($_GET['lang']) && ! Bogo::is_default_locale($_GET['lang']);
   $is_trash_view = isset($_GET['post_status']) && $_GET['post_status'] === 'trash';
 
   $locale_title = !$is_lang_filtered || $is_trash_view ? __('Locale', 'bogo') : __('Origin', 'bogo');
@@ -43,7 +44,7 @@ function bogo_posts_columns($posts_columns, $post_type) {
 /**
  * @action manage_posts_custom_column
  */
-function bogo_manage_posts_custom_column( $column_name, $post_id ) {
+function bogo_manage_posts_custom_column($column_name, $post_id) {
   if ($column_name !== 'locale') { return; }
 
   $post = get_post($post_id);
@@ -62,8 +63,8 @@ function bogo_manage_posts_custom_column( $column_name, $post_id ) {
 /**
  * @action restrict_manage_posts
  */
-function bogo_restrict_manage_posts( $post_type, $which ) {
-  if ( ! bogo_is_localizable_post_type( $post_type ) ) {
+function bogo_restrict_manage_posts($post_type, $which) {
+  if (!bogo_is_localizable_post_type($post_type)) {
     return;
   }
 

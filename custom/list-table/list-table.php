@@ -1,4 +1,5 @@
-<?php
+<?php if (!defined('ABSPATH')) { exit; }
+
 add_filter('pre_get_posts', 'bogopx_hide_translated_post_in_list_table');
 add_action('admin_init', 'bogopx_add_column_to_custom_post_type');
 
@@ -52,7 +53,8 @@ function bogopx_add_column_to_custom_post_type() {
 
     add_filter("manage_{$pt}_posts_columns", function($columns) use ($pt) {
       return bogo_posts_columns($columns, $pt);
-    }, 9999);
+    });
+    add_action("manage_{$pt}_posts_custom_column", 'bogo_manage_posts_custom_column', 10, 2);
   }
 }
 
