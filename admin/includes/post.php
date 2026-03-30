@@ -5,7 +5,7 @@
 add_filter('manage_pages_columns', 'bogo_pages_columns', 10, 1);
 add_filter('manage_posts_columns', 'bogo_posts_columns', 10, 2);
 add_action('manage_pages_custom_column', 'bogo_manage_posts_custom_column', 10, 2);
-add_action('manage_posts_custom_column', 'bogo_manage_posts_custom_column', 10, 2);
+add_action('manage_post_posts_custom_column', 'bogo_manage_posts_custom_column', 10, 2);
 add_action('restrict_manage_posts', 'bogo_restrict_manage_posts', 10, 2);
 
 /**
