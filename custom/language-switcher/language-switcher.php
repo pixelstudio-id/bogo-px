@@ -96,7 +96,7 @@ function bogopx_localize_args_for_lang_dropdown() {
       ];
     } elseif ($link) {
       $options[] = [
-        'url' => get_edit_post_link($link['ID']),
+        'url' => admin_url("post.php?post={$link['ID']}&action=edit"),
         'label' => $name,
         'locale' => $locale,
         'status' => $link['post_status'],

@@ -39,7 +39,7 @@ function bogo_admin_enqueue_scripts( $hook_suffix ) {
 		plugins_url( 'admin/includes/js/admin.js', BOGO_PLUGIN_BASENAME ),
 		array( 'jquery' ), BOGO_VERSION, true
 	);
-
+	
 	$available_languages = array();
 
 	foreach ( bogo_available_languages() as $locale => $language ) {
@@ -64,7 +64,6 @@ function bogo_admin_enqueue_scripts( $hook_suffix ) {
 
 	$local_args = array(
 		'l10n' => array(
-			/* translators: accessibility text */
 			'targetBlank' => __( '(opens in a new window)', 'bogo' ),
 			'saveAlert' => __( "The changes you made will be lost if you navigate away from this page.", 'bogo' ),
 		),
@@ -118,9 +117,11 @@ function bogo_admin_enqueue_scripts( $hook_suffix ) {
 					$current_post['translations'][$locale] = array(
 						'postId' => $translation->ID,
 						'postTitle' => $translation->post_title,
-						'editLink' => current_user_can( $edit_post_cap, $translation->ID )
-							? get_edit_post_link( $translation->ID, 'raw' )
-							: '',
+						// @changed - to reduce query
+						'editLink' => admin_url("post.php?post={$translation->ID}&action=edit"),
+						// 'editLink' => current_user_can( $edit_post_cap, $translation->ID )
+						// 	? admin_url("post.php?post={$translation->ID}&action=edit")
+						// 	: '',
 					);
 				}
 			}

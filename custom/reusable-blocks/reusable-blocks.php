@@ -30,7 +30,8 @@ function bogopx_localize_reusable_blocks() {
   global $BOGO_GROUPS_BY_ID;
   $localized_blocks = [];
   foreach ($block_ids as $block_id) {
-    $localized_blocks[$block_id] = array_column($BOGO_GROUPS_BY_ID[$block_id], 'ID', 'locale');
+    $group = $BOGO_GROUPS_BY_ID[$block_id] ?? [];
+    $localized_blocks[$block_id] = array_column($group, 'ID', 'locale');
   }
 
   $locale_name = bogo_get_language($current_locale);
@@ -53,6 +54,10 @@ function bogopx_localize_reusable_blocks() {
  * @action admin_head
  */
 function bogopx_add_style_localized_blocks() {
+  // only enable in gutenberg editor
+  $screen = get_current_screen();
+  if ($screen->base !== 'post' || $screen->post_type !== 'wp_block') { return; }
+
   $localized_ids = get_posts([
     'post_type' => 'wp_block',
     'posts_per_page' => -1,

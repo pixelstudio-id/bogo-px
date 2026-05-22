@@ -80,7 +80,7 @@ function bogopx_create_admin_flag_buttons($post) {
 
     // if already has translation, create EDIT link
     if ($link) {
-      $href = get_edit_post_link($link['ID']);
+      $href = admin_url("post.php?post={$link['ID']}&action=edit");
       $post_status = $link['post_status'];
 
       $classes = "flag flag-{$locale} is-status-{$post_status}";
