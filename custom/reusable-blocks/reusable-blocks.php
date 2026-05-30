@@ -5,6 +5,7 @@ add_action('enqueue_block_editor_assets', 'bogopx_localize_reusable_blocks', 110
 add_action('admin_head', 'bogopx_add_style_localized_blocks', 110);
 
 add_filter('render_block_core/block', 'bogopx_render_localized_reusable_block', 10, 2);
+add_action('save_post_wp_block', 'bogo_clear_localized_block_ids_cache', 10);
 
 
 /**
@@ -58,24 +59,31 @@ function bogopx_add_style_localized_blocks() {
   $screen = get_current_screen();
   if ($screen->base !== 'post' || $screen->post_type !== 'wp_block') { return; }
 
-  $localized_ids = get_posts([
-    'post_type' => 'wp_block',
-    'posts_per_page' => -1,
-    'fields' => 'ids',
-    'meta_query' => [
-      'relation' => 'OR',
-      [
-        'key' => '_locale',
-        'value' => get_locale(),
-        'compare' => '!=',
+  $cache_key = 'bogo_localized_reusable_block_ids';
+  $localized_ids = get_transient($cache_key, []);
+
+  if (empty($localized_ids)) {
+    $localized_ids = get_posts([
+      'post_type' => 'wp_block',
+      'posts_per_page' => -1,
+      'fields' => 'ids',
+      'meta_query' => [
+        'relation' => 'OR',
+        [
+          'key' => '_locale',
+          'value' => BOGO_DEFAULT_LOCALE,
+          'compare' => '!=',
+        ],
+        [
+          'key' => '_locale',
+          'value' => '',
+          'compare' => '=',
+        ],
       ],
-      [
-        'key' => '_locale',
-        'value' => '',
-        'compare' => '=',
-      ],
-    ],
-  ]);
+    ]);
+
+    set_transient($cache_key, $localized_ids, DAY_IN_SECONDS);
+  }
 
   $classes = [];
   foreach ($localized_ids as $id) {
@@ -92,6 +100,13 @@ function bogopx_add_style_localized_blocks() {
   </style>
 
   <?php //
+}
+
+/**
+ * Delete the ids transient when updating or creating a `wp_block` post type
+ */
+function bogo_clear_localized_block_ids_cache($post_id) {
+  delete_transient('bogo_localized_reusable_block_ids');
 }
 
 

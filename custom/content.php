@@ -38,21 +38,25 @@ function bogopx_localize_links_in_content($content) {
   if (Bogo::is_default_locale() || is_admin() || is_feed()) { return $content; }
   if (stripos($content, '<a') === false || stripos($content, 'href=') === false) { return $content; }
 
+  $processor = new WP_HTML_Tag_Processor($content);
   $localized_url_cache = [];
-  $content = preg_replace_callback(
-    '/(<a[^>]*\bhref=")([^"]+)(")/i',
-    function($matches) use (&$localized_url_cache) {
-      $url = $matches[2];
 
-      if (!isset($localized_url_cache[$url])) {
-        $locale_link = bogo_localize_by_url($url);
-        $localized_url_cache[$url] = $locale_link ? $locale_link['url'] : $url;
-      }
+  while ($processor->next_tag('a')) {
+    $url = $processor->get_attribute('href');
+    if (!$url) { continue; }
 
-      return $matches[1] . $localized_url_cache[$url] . $matches[3];
-    }, $content);
+    if (!isset($localized_url_cache[$url])) {
+      $locale_link = bogo_localize_by_url($url);
+      $localized_url_cache[$url] = $locale_link ? $locale_link['url'] : $url;
+    }
 
-  return $content;
+    $new_url = $localized_url_cache[$url];
+    if ($new_url !== $url) {
+      $processor->set_attribute('href', $new_url);
+    }
+  }
+
+  return $processor->get_updated_html();
 }
 
 /**

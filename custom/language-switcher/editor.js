@@ -64,20 +64,31 @@ function onReady() {
       </ul>
   </div>`;
 
-  setTimeout(addLanguageDropdown, 500);
+  function waitForElement(selector, timeoutMs = 5000) {
+    return new Promise((resolve) => {
+      const $el = document.querySelector(selector);
+      if ($el) {
+        resolve($el);
+        return;
+      }
 
-  /**
-   * Output the HTML at the top bar of Gutenberg
-   */
-  function addLanguageDropdown() {
-    const $header = document.querySelector('.edit-post-header__toolbar');
-    if ($header) {
-      $header.insertAdjacentHTML('beforeend', selectHTML);
-    }
+      const observer = new MutationObserver(() => {
+        const $found = document.querySelector(selector);
+        if ($found) {
+          observer.disconnect();
+          resolve($found);
+        }
+      });
 
-    const $createLinks = $header.querySelectorAll('.bogo-options__new a');
-    $createLinks.forEach(($link) => {
-      $link.addEventListener('click', _onCreateNew);
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+
+      setTimeout(() => {
+        observer.disconnect();
+        resolve(null);
+      }, timeoutMs);
     });
   }
 
@@ -119,6 +130,27 @@ function onReady() {
       window.open(editLink, '_blank');
     }
   }
+
+  /**
+   * Output the HTML at the top bar of Gutenberg
+   */
+  function addLanguageDropdown($header) {
+    $header.insertAdjacentHTML('beforeend', selectHTML);
+
+    const $createLinks = $header.querySelectorAll('.bogo-options__new a');
+    $createLinks.forEach(($link) => {
+      $link.addEventListener('click', _onCreateNew);
+    });
+  }
+
+  function addLanguageDropdownWhenReady() {
+    waitForElement('.edit-post-header__toolbar').then(($header) => {
+      if (!$header) { return; }
+      addLanguageDropdown($header);
+    });
+  }
+
+  addLanguageDropdownWhenReady();
 }
 
 wp.domReady(onReady);

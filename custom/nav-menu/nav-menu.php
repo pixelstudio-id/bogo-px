@@ -106,7 +106,6 @@ function _bogo_get_menu_items_fields($menu_id, $items) {
     }
   }
 
-  var_dump($all_fields);
   set_transient($cache_key, $all_fields, DAY_IN_SECONDS);
   return $all_fields;
 }
@@ -301,4 +300,8 @@ function bogo_save_translated_menu_item($menu_id, $menu_data = []) {
       update_post_meta($id, 'bogo_fields', $field);
     }
   }
+
+  // delete the cache after saving menu
+  $cache_key = "bogo_menu_items_fields_{$menu_id}";
+  delete_transient($cache_key);
 }

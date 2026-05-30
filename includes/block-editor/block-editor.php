@@ -1,10 +1,7 @@
 <?php
 
-add_action(
-	'init',
-	'bogo_register_language_switcher_block',
-	10, 0
-);
+// @changed - disabled this
+// add_action('init', 'bogo_register_language_switcher_block', 10, 0);
 
 function bogo_register_language_switcher_block() {
 	register_block_type(
