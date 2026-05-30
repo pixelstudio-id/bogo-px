@@ -54,7 +54,16 @@ function bogopx_update_links_cache_after_duplicate_post($new_post_id, $original_
  * @action wpsc_after_delete_cache_admin_bar
  */
 function bogopx_delete_links_cache() {
-  delete_transient('bogo_locale_groups');
+  global $wpdb;
+  $transients = $wpdb->get_col("
+    SELECT option_name FROM {$wpdb->options}
+    WHERE option_name REGEXP '^_transient_bogo_[a-f0-9]{32}$'
+  ");
+
+  foreach ($transients as $t) {
+    $key = str_replace('_transient_', '', $t);
+    delete_transient($key);
+  }
 }
 
 /**
@@ -165,12 +174,11 @@ function _bogo_query_locale_groups() {
 
   foreach ($posts as $p) {
     $original_post_id = get_post_meta($p->ID, '_original_post', true);
+    $locale = get_post_meta($p->ID, '_locale', true) ?: BOGO_DEFAULT_LOCALE;
 
     if (!isset($groups[$original_post_id])) {
       $groups[$original_post_id] = [];
     }
-
-    $locale = get_post_meta($p->ID, '_locale', true) ?: BOGO_DEFAULT_LOCALE;
     $url = '';
 
     if ($home_id === $p->ID) {

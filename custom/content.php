@@ -32,21 +32,25 @@ function bogopx_set_404_to_empty_locale() {
 /**
  * Replace all links in content with localized version, if any
  * 
- * @filter the_content
+ * @filter the_content 20
  */
 function bogopx_localize_links_in_content($content) {
-  if (Bogo::is_default_locale()) { return $content; }
+  if (Bogo::is_default_locale() || is_admin() || is_feed()) { return $content; }
+  if (stripos($content, '<a') === false || stripos($content, 'href=') === false) { return $content; }
 
-  $content = preg_replace_callback('/(<a.+href=")(.+)(".*>.+<\/a>)/Ui', function($matches) {
-    $url = $matches[2];
-    $locale_link = bogo_localize_by_url($url);
-    
-    if ($locale_link) {
-      $url = $locale_link['url'];
-    }
+  $localized_url_cache = [];
+  $content = preg_replace_callback(
+    '/(<a[^>]*\bhref=")([^"]+)(")/i',
+    function($matches) use (&$localized_url_cache) {
+      $url = $matches[2];
 
-    return $matches[1] . $url . $matches[3];
-  }, $content);
+      if (!isset($localized_url_cache[$url])) {
+        $locale_link = bogo_localize_by_url($url);
+        $localized_url_cache[$url] = $locale_link ? $locale_link['url'] : $url;
+      }
+
+      return $matches[1] . $localized_url_cache[$url] . $matches[3];
+    }, $content);
 
   return $content;
 }
@@ -96,10 +100,8 @@ function bogopx_fix_posts_from_all_locale_displayed($query) {
   if (is_admin()) { return $query; }
 
   $post_type = $query->get('post_type') ?: 'post';
-  if ($post_type === 'page' || !Bogo::is_localizable_post_type($post_type)) {
-    return $query;
-  }
-  
+  if ($post_type === 'page' || !Bogo::is_localizable_post_type($post_type)) { return $query; }
+
   $locale = get_locale();
   $meta_query = [
     [
