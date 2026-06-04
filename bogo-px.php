@@ -9,12 +9,12 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: bogo
  * Domain Path: /languages/
- * Version: 4.11.7
+ * Version: 4.12.0
  * Requires at least: 6.4
  * Requires PHP: 7.4
  */
 
-define( 'BOGO_VERSION', '4.11.7' );
+define( 'BOGO_VERSION', '4.12.0' );
 
 define( 'BOGO_PLUGIN', __FILE__ );
 
@@ -137,14 +137,14 @@ function bogo_query_vars( $query_vars ) {
 	return $query_vars;
 }
 
-add_action( 'wp_enqueue_scripts', 'bogo_enqueue_scripts', 10, 0 );
+// @changed - removing the default styles
+// add_action( 'wp_enqueue_scripts', 'bogo_enqueue_scripts', 10, 0 );
 
 function bogo_enqueue_scripts() {
-	// @changed - removing the default styles
-	// wp_enqueue_style( 'bogo',
-	// 	plugins_url( 'includes/css/style.css', BOGO_PLUGIN_BASENAME ),
-	// 	array(), BOGO_VERSION, 'all'
-	// );
+	wp_enqueue_style( 'bogo',
+		plugins_url( 'includes/css/style.css', BOGO_PLUGIN_BASENAME ),
+		array(), BOGO_VERSION, 'all'
+	);
 
 	if ( is_rtl() ) {
 		wp_enqueue_style( 'bogo-rtl',

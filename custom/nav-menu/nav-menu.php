@@ -60,7 +60,7 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
  */
 function _bogo_get_menu_items_fields($menu_id, $items) {
   $cache_key = "bogo_menu_items_fields_{$menu_id}";
-  $all_fields = get_transient($cache_key, []);
+  $all_fields = get_transient($cache_key) ?: [];
   if (!empty($all_fields)) {
     return $all_fields;
   }
