@@ -87,7 +87,7 @@ function bogopx_update_links_cache($parent_id, $locale, $new_post_arr) {
   }
 
   $groups[$parent_id][$locale] = array_merge($groups[$parent_id][$locale], $new_post_arr);
-  set_transient($transient_key, $groups, 86400 * 30); // 1 month cache
+  set_transient($transient_key, $groups, DAY_IN_SECONDS * 30); // 1 month cache
 }
 
 
@@ -103,7 +103,7 @@ function bogo_init_global_link_groups() {
   if (!$groups) {
     $groups = _bogo_query_locale_groups();
     if (!empty($groups)) {
-      set_transient($transient_key, $groups, 86400 * 30); // 1 month cache
+      set_transient($transient_key, $groups, DAY_IN_SECONDS * 30); // 1 month cache
     }
   }
 

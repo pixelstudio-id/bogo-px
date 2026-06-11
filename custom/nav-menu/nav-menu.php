@@ -61,9 +61,7 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
 function _bogo_get_menu_items_fields($menu_id, $items) {
   $cache_key = "bogo_menu_items_fields_{$menu_id}";
   $all_fields = get_transient($cache_key) ?: [];
-  if (!empty($all_fields)) {
-    return $all_fields;
-  }
+  if (!empty($all_fields)) { return $all_fields; }
 
   // Prepare the taxonomy meta cache for more efficient query later
   $taxonomy_ids = [];
@@ -106,7 +104,7 @@ function _bogo_get_menu_items_fields($menu_id, $items) {
     }
   }
 
-  set_transient($cache_key, $all_fields, DAY_IN_SECONDS);
+  set_transient($cache_key, $all_fields, DAY_IN_SECONDS * 30);
   return $all_fields;
 }
 
