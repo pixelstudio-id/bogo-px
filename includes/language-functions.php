@@ -927,8 +927,8 @@ function bogo_get_url_with_lang( $url = '', $locale = '', $args = '' ) {
 function bogo_get_lang_from_url( $url = '' ) {
 	if ( ! $url ) {
 		$url = is_ssl() ? 'https://' : 'http://';
-		$url .= $_SERVER['HTTP_HOST'];
-		$url .= $_SERVER['REQUEST_URI'];
+		$url .= $_SERVER['HTTP_HOST'] ?? '';
+		$url .= $_SERVER['REQUEST_URI'] ?? '';
 	}
 
 	if ( $frag = strstr( $url, '#' ) ) {
