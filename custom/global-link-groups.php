@@ -5,8 +5,8 @@ add_action('init', 'bogo_init_global_link_groups');
 add_action('post_updated', 'bogopx_update_links_cache_if_changes', 100, 3);
 add_action('bogo_after_duplicate_post', 'bogopx_update_links_cache_after_duplicate_post', 10, 3);
 
-// Clear the cache when clicking "Delete Cache" button from WP Super Cache plugin
-add_action('wp_ajax_ajax-delete-cache', 'bogopx_delete_links_cache', 20);
+add_action('wp_ajax_ajax-delete-cache', 'bogopx_delete_links_cache', 20); // for wp super cache
+add_action('easyopt_cache_cleared_all', 'bogopx_delete_links_cache', 20); // for easy optimizer
 
 /**
  * @action post_updated
@@ -55,9 +55,10 @@ function bogopx_update_links_cache_after_duplicate_post($new_post_id, $original_
  */
 function bogopx_delete_links_cache() {
   global $wpdb;
+  // check regexp for _transient_bogo_.+
   $transients = $wpdb->get_col("
     SELECT option_name FROM {$wpdb->options}
-    WHERE option_name REGEXP '^_transient_bogo_[a-f0-9]{32}$'
+    WHERE option_name REGEXP '^_transient_bogo_.+'
   ");
 
   foreach ($transients as $t) {
