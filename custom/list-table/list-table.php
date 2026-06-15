@@ -1,6 +1,9 @@
 <?php if (!defined('ABSPATH')) { exit; }
 
 add_filter('pre_get_posts', 'bogopx_hide_translated_post_in_list_table');
+add_filter('posts_join', 'bogopx_posts_join_for_default_locale_list', 20, 2);
+add_filter('posts_where', 'bogopx_posts_where_for_default_locale_list', 20, 2);
+// add_filter('the_posts', 'bogopx_prime_users_cache_for_list_table', 20, 2);
 add_action('admin_init', 'bogopx_add_column_to_custom_post_type');
 
 /////
@@ -15,29 +18,102 @@ function bogopx_hide_translated_post_in_list_table($query) {
   $is_trash_view = isset($_GET['post_status']) && $_GET['post_status'] === 'trash';
   if ($is_trash_view) { return $query; }
 
-  // if has no 'lang' query, show only parent post
+  $post_type = $query->get('post_type') ?: 'post';
+  if (is_array($post_type)) {
+    $post_type = reset($post_type);
+  }
+  if (!bogo_is_localizable_post_type($post_type)) { return $query; }
+
+  // If no explicit lang filter is selected, default to current locale.
+  // For default locale we use a custom lightweight SQL condition to avoid
+  // expensive WP_Meta_Query OR + NOT EXISTS join expansion.
   $lang = get_query_var('lang');
   if (!$lang) {
-    $query->set('meta_query', [
-      'relation' => 'OR',
-      [
-        'key' => '_locale',
-        'compare' => 'NOT EXISTS',
-      ],
-      [
-        'key' => '_locale',
-        'value' => '',
-        'compare' => '=',
-      ],
-      [
-        'key' => '_locale',
-        'value' => get_locale(),
-        'compare' => '=',
-      ],
-    ]);
+    $current_locale = get_locale();
+
+    if (Bogo::is_default_locale($current_locale)) {
+      $query->set('bogopx_default_locale_list_filter', true);
+      $query->set('bogo_suppress_locale_query', true);
+    } else {
+      $query->set('lang', $current_locale);
+    }
   }
 
   return $query;
+}
+
+/**
+ * For the default locale list, we want to show only posts that have no locale or have the default locale.
+ * 
+ * @filter posts_join
+ */
+function bogopx_posts_join_for_default_locale_list($join, $query) {
+  global $wpdb;
+
+  if (!$query->get('bogopx_default_locale_list_filter')) {
+    return $join;
+  }
+
+  if (false === strpos($join, 'postmeta_bogopx_locale_filter')) {
+    $join .= " LEFT JOIN {$wpdb->postmeta} AS postmeta_bogopx_locale_filter"
+      . " ON ({$wpdb->posts}.ID = postmeta_bogopx_locale_filter.post_id"
+      . " AND postmeta_bogopx_locale_filter.meta_key = '_locale')";
+  }
+
+  return $join;
+}
+
+/**
+ * For the default locale list, we want to show only posts that have no locale or have the default locale.
+ * 
+ * @filter posts_where
+ */
+function bogopx_posts_where_for_default_locale_list($where, $query) {
+  global $wpdb;
+
+  if (!$query->get('bogopx_default_locale_list_filter')) {
+    return $where;
+  }
+
+  $locale = get_locale();
+  $where .= $wpdb->prepare(
+    " AND (postmeta_bogopx_locale_filter.meta_id IS NULL OR postmeta_bogopx_locale_filter.meta_value = '' OR postmeta_bogopx_locale_filter.meta_value = %s)",
+    $locale
+  );
+
+  return $where;
+}
+
+/**
+ * Prime user objects for list-table rendering to avoid repeated wp_users lookups.
+ *
+ * @filter the_posts
+ */
+function bogopx_prime_users_cache_for_list_table($posts, $query) {
+  global $pagenow;
+
+  if (!is_admin() || $pagenow !== 'edit.php' || !$query->is_main_query()) {
+    return $posts;
+  }
+
+  $user_ids = [];
+  $current_user_id = get_current_user_id();
+  if ($current_user_id) {
+    $user_ids[] = (int) $current_user_id;
+  }
+
+  foreach ((array) $posts as $post) {
+    if (!empty($post->post_author)) {
+      $user_ids[] = (int) $post->post_author;
+    }
+  }
+
+  $user_ids = array_values(array_unique(array_filter($user_ids)));
+  if (!empty($user_ids) && function_exists('cache_users')) {
+    cache_users($user_ids);
+  }
+
+  return $posts;
 }
 
 /**
@@ -65,7 +141,10 @@ function bogopx_add_column_to_custom_post_type() {
  */
 function bogopx_create_admin_flag_buttons($post) {
   $post_id = $post->ID;
-  $accessible_locales = bogo_get_user_accessible_locales();
+  static $accessible_locales = null;
+  if ($accessible_locales === null) {
+    $accessible_locales = bogo_get_user_accessible_locales();
+  }
   $accessible_locales = array_diff($accessible_locales, [get_locale()]);
 
   $links = Bogo::get_locale_links($post_id);

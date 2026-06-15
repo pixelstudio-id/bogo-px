@@ -360,8 +360,7 @@ function bogo_delete_language_pack( $locale ) {
 	);
 
 	foreach ( $files as $file ) {
-		if ( '.' === $file[0]
-		or is_dir( $file ) ) {
+		if ( '.' === $file[0] || is_dir( $file ) ) {
 			continue;
 		}
 
