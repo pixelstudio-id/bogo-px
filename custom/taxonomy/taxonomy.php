@@ -4,6 +4,21 @@ add_action('admin_init', 'bogo_init_add_fields_to_taxonomies');
 remove_filter('get_term', 'bogo_get_term_filter', 10, 2);
 add_filter('get_term', 'bogo_get_term_translate', 10, 2);
 
+add_filter('the_seo_framework_title_from_custom_field', 'bogopx_prevent_tsf_to_override_localized_term', 10);
+add_filter('the_seo_framework_custom_field_description', 'bogopx_prevent_tsf_to_override_localized_term', 10);
+
+/**
+ * @filter the_seo_framework_title_from_custom_field
+ * @filter the_seo_framework_custom_field_description
+ */
+function bogopx_prevent_tsf_to_override_localized_term($text) {
+  if (class_exists('Bogo') && !Bogo::is_default_locale() && is_tax()) {
+    return ''; // return empty string means go back to the default title/desc 
+  }
+  return $title;
+}
+
+
 /**
  * Get taxonomies that can be localized
  */
