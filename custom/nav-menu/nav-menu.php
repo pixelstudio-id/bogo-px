@@ -41,7 +41,7 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
       $item->title = $custom_title ?: $default_title;
     }
 
-    if (!empty($custom_desc)) {
+    if (!empty($custom_desc) && !empty($item->description)) {
       $item->post_content = $custom_desc;
       $item->description = $custom_desc;
     }

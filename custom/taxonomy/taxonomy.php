@@ -146,7 +146,7 @@ function bogo_get_term_translate($term, $taxonomy) {
       ];
     }
   }
-
+  
   $term->name = isset($fields[$locale]) && !empty($fields[$locale]['n']) ? $fields[$locale]['n'] : $term->name;
   $term->description = isset($fields[$locale]) && !empty($fields[$locale]['d']) ? $fields[$locale]['d'] : $term->description;
 
