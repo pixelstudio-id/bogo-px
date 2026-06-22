@@ -15,7 +15,7 @@ function bogopx_prevent_tsf_to_override_localized_term($text) {
   if (class_exists('Bogo') && !Bogo::is_default_locale() && is_tax()) {
     return ''; // return empty string means go back to the default title/desc 
   }
-  return $title;
+  return $text;
 }
 
 
