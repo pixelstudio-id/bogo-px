@@ -130,7 +130,7 @@ function bogopx_fix_posts_from_all_locale_displayed($query) {
 
   // If has old meta query, combine them
   $old_meta_query = $query->get('meta_query');
-  if ($old_meta_query) {
+  if ($old_meta_query && $old_meta_query !== $meta_query) {
     $old_meta_query['relation'] = 'AND';
     $old_meta_query[] = count($meta_query) === 1 ? $meta_query[0] : $meta_query;
     $query->set('meta_query', $old_meta_query);

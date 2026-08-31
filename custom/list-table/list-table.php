@@ -205,6 +205,10 @@ function bogopx_fill_origin_post_column($post_id, $locale) {
 
   $link = Bogo::get_locale_link($post_id, BOGO_DEFAULT_LOCALE);
 
+  if (!$link) {
+    return '-';
+  }
+
   $view_url = $link['url'];
   $edit_url = get_edit_post_link($link['ID']);
   $title = $link['post_title'];
