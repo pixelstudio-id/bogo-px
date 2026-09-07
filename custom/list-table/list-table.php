@@ -194,7 +194,12 @@ function bogopx_create_admin_flag_buttons($post) {
     }
   }
 
-  return "<div class='column-locale__inner'> {$flags} </div>";
+  // calculate flag per row (max 2 rows)
+  $flags_per_row = count($accessible_locales) > 10
+    ? round(count($accessible_locales) / 2)
+    : count($accessible_locales);
+
+  return "<div class='column-locale__inner' style='--flagsPerRow: {$flags_per_row}'> {$flags} </div>";
 }
 
 /**

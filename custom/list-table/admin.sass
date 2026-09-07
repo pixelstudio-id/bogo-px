@@ -2,14 +2,14 @@
 
 .wp-list-table th.column-locale
   width: auto
-  max-width: 10rem
+  max-width: calc(2.125em * 10 + 0.25em)
 
 .column-locale__inner
   display: flex
   flex-wrap: wrap
-  column-gap: 0.375rem
-  row-gap: 0.25rem
-  max-width: 10rem
+  column-gap: 0.25em
+  row-gap: 0.25em
+  max-width: calc(2.125em * var(--flagsPerRow, 5) + 0.25em)
 
   .flag
     opacity: 0.2
