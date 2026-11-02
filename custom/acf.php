@@ -40,7 +40,7 @@ function bogo_acf_format_post_to_locale_post($value, $post_id, $field) {
 
   $locale_post = Bogo::get_locale_post($value);
 
-  if ($locale_post) {
+  if ($locale_post && $locale_post->post_status !== 'trash') {
     $value = $locale_post;
   }
 
