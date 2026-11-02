@@ -160,7 +160,7 @@ function _bogo_query_locale_groups() {
       'key' => '_original_post',
       'compare' => 'EXISTS',
     ]],
-    'post_status' => ['publish', 'draft'],
+    'post_status' => ['publish', 'draft', 'trash'],
     'posts_per_page' => -1
   ]);
 

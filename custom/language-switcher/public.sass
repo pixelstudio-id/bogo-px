@@ -3,8 +3,43 @@
 .bogo-dropdown
   position: relative
 
+  html[lang="cs-CZ"] &
+    --_label: "JAZYK WEBU"
+  html[lang="da-DK"] &
+    --_label: "SPROG PÅ HJEMMESIDEN"
+  html[lang="de-DE"] &
+    --_label: "WEBSITE-SPRACHE"
+  html[lang="es-ES"] &
+    --_label: "IDIOMA DEL SITIO WEB"
+  html[lang="fr-FR"] &
+    --_label: "LANGUE DU SITE WEB"
+  html[lang="it-IT"] &
+    --_label: "LINGUA DEL SITO WEB"
+  html[lang="ja"] &
+    --_label: "ウェブサイトの言語"
+  html[lang="ko-KR"] &
+    --_label: "웹사이트 언어"
+  html[lang="nb-NO"] &
+    --_label: "NETTSTEDSPRÅK"
+  html[lang="nl-NL"] &
+    --_label: "WEBSITE TAAL"
+  html[lang="pt-PT"] &
+    --_label: "IDIOMA DO SITE"
+  html[lang="ru-RU"] &
+    --_label: "ЯЗЫК САЙТА"
+  html[lang="sv-SE"] &
+    --_label: "WEBBPLATSSPRÅK"
+  html[lang="tr-TR"] &
+    --_label: "WEB SİTESİ DİLİ"
+  html[lang="vi"] &
+    --_label: "NGÔN NGỮ TRANG WEB"
+  html[lang="zh-CN"] &
+    --_label: "网站语言"
+  html[lang="id-ID"] &
+    --_label: "BAHASA SITUS"
+
   &.is-style-toggle::before
-    content: "WEBSITE LANGUAGE"
+    content: var(--_label, "WEBSITE LANGUAGE")
     display: block
     margin-bottom: -0.25rem
     opacity: .5
@@ -86,7 +121,7 @@
     min-width: 12.5rem
 
     &::before
-      content: "WEBSITE LANGUAGE"
+      content: var(--_label, "WEBSITE LANGUAGE")
       opacity: .5
       padding: 0.125rem 0.75rem
       margin-bottom: 0.25rem
