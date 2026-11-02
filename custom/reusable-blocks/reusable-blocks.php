@@ -119,7 +119,7 @@ function bogopx_render_localized_reusable_block($block_content, $block) {
 
   $locale_block = Bogo::get_locale_post($block['attrs']['ref']);
 
-  if ($locale_block) {
+  if ($locale_block && $locale_block->post_status !== 'trash') {
     $new_content = apply_filters('the_content', $locale_block->post_content);
     return $new_content;
   }
