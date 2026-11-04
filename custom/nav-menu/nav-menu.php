@@ -59,7 +59,8 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
  * @return array - An array of menu item ID as key and its fields as value
  */
 function _bogo_get_menu_items_fields($menu_id, $items) {
-  $cache_key = "bogo_menu_items_fields_{$menu_id}";
+  $locale = get_locale();
+  $cache_key = "bogo_menu_items_fields_{$menu_id}_{$locale}";
   $all_fields = get_transient($cache_key) ?: [];
   if (!empty($all_fields)) { return $all_fields; }
 
@@ -299,7 +300,12 @@ function bogo_save_translated_menu_item($menu_id, $menu_data = []) {
     }
   }
 
-  // delete the cache after saving menu
-  $cache_key = "bogo_menu_items_fields_{$menu_id}";
-  delete_transient($cache_key);
+  // delete all locale cache variants after saving menu
+  foreach ((array) bogo_available_locales() as $locale) {
+    $cache_key = "bogo_menu_items_fields_{$menu_id}_{$locale}";
+    delete_transient($cache_key);
+  }
+
+  // cleanup old cache key format for backward compatibility
+  delete_transient("bogo_menu_items_fields_{$menu_id}");
 }
