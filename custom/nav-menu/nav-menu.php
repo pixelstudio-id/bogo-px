@@ -18,11 +18,10 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
 
   // Loop through each menu item and replace the title, url, and description
   foreach ($items as &$item) {
-    $locale = get_locale();
     $item_id = $item->type === 'taxonomy' ? "term_{$item->object_id}" : $item->db_id;
     $fields = $all_fields[$item_id] ?? [];
-    $custom_title = isset($fields[$locale]) && !empty($fields[$locale]['t']) ? $fields[$locale]['t'] : '';
-    $custom_desc = isset($fields[$locale]) && !empty($fields[$locale]['d']) ? $fields[$locale]['d'] : '';
+    $custom_title = !empty($fields['t']) ? $fields['t'] : '';
+    $custom_desc = !empty($fields['d']) ? $fields['d'] : '';
 
     // if custom, it's always replaced by the Bogo Field
     if ($item->type === '' || $item->type === 'custom' || $item->type === 'post_type_archive' || $item->type === 'taxonomy') {
@@ -56,7 +55,7 @@ function bogo_localize_nav_menu_items($items, $menu, $args) {
  * @param int $menu_id - The menu term ID
  * @param array $items - The menu items to get the fields for
  * 
- * @return array - An array of menu item ID as key and its fields as value
+ * @return array - An array of menu item ID as key and current locale field as value
  */
 function _bogo_get_menu_items_fields($menu_id, $items) {
   $locale = get_locale();
@@ -79,28 +78,27 @@ function _bogo_get_menu_items_fields($menu_id, $items) {
     // if taxonomy, use different syntax and normalize "n" to "t"
     if ($item->type === 'taxonomy') {
       $fields = get_term_meta($item->object_id, 'bogo_fields', true) ?: [];
-      $all_fields["term_{$item->object_id}"] = array_map(function($f) {
-        return [
-          't' => $f['n'] ?? '',
-          'd' => $f['d'] ?? '',
-        ];
-      }, $fields);
+      $locale_field = isset($fields[$locale]) ? (array) $fields[$locale] : [];
+      $all_fields["term_{$item->object_id}"] = [
+        't' => $locale_field['n'] ?? '',
+        'd' => $locale_field['d'] ?? '',
+      ];
     } else {
-      $all_fields[$item->db_id] = get_post_meta($item->db_id, 'bogo_fields', true) ?: [];
+      $fields = get_post_meta($item->db_id, 'bogo_fields', true) ?: [];
+      $locale_field = isset($fields[$locale]) ? (array) $fields[$locale] : [];
+      $all_fields[$item->db_id] = [
+        't' => $locale_field['t'] ?? '',
+        'd' => $locale_field['d'] ?? '',
+      ];
       
       // fallback if still using the old data format
-      if (empty($all_fields[$item->db_id])) {
+      if (empty($all_fields[$item->db_id]['t']) && empty($all_fields[$item->db_id]['d'])) {
         $titles = json_decode(get_post_meta($item->db_id, 'bogo_titles', true), true) ?: [];
         $descs = json_decode(get_post_meta($item->db_id, 'bogo_descriptions', true), true) ?: [];
-
-        $fields = [];
-        foreach ($titles as $locale => $title) {
-          $fields[$locale] = [
-            't' => $title,
-            'd' => $descs[$locale] ?? '',
-          ];
-        }
-        $all_fields[$item->db_id] = $fields;
+        $all_fields[$item->db_id] = [
+          't' => $titles[$locale] ?? '',
+          'd' => $descs[$locale] ?? '',
+        ];
       }
     }
   }
