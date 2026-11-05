@@ -58,6 +58,9 @@ function bogopx_posts_join_for_default_locale_list($join, $query) {
     $join .= " LEFT JOIN {$wpdb->postmeta} AS postmeta_bogopx_locale_filter"
       . " ON ({$wpdb->posts}.ID = postmeta_bogopx_locale_filter.post_id"
       . " AND postmeta_bogopx_locale_filter.meta_key = '_locale')";
+    
+    // Ensure necessary index exists for performance
+    bogo_ensure_postmeta_index_for_locale_filter();
   }
 
   return $join;
@@ -65,6 +68,7 @@ function bogopx_posts_join_for_default_locale_list($join, $query) {
 
 /**
  * For the default locale list, we want to show only posts that have no locale or have the default locale.
+ * Optimized: Use post_id IS NULL instead of meta_id IS NULL, and use IN() for better index usage
  * 
  * @filter posts_where
  */
@@ -77,7 +81,7 @@ function bogopx_posts_where_for_default_locale_list($where, $query) {
 
   $locale = get_locale();
   $where .= $wpdb->prepare(
-    " AND (postmeta_bogopx_locale_filter.meta_id IS NULL OR postmeta_bogopx_locale_filter.meta_value = '' OR postmeta_bogopx_locale_filter.meta_value = %s)",
+    " AND (postmeta_bogopx_locale_filter.post_id IS NULL OR postmeta_bogopx_locale_filter.meta_value IN ('', %s))",
     $locale
   );
 
@@ -250,4 +254,35 @@ function bogopx_fill_current_locale($post, $locale) {
 
   $language = bogo_get_language($locale) ?: $locale;
   return "<div class='bogo-current-locale'><i class='flag flag-{$locale}'></i> <span>{$language}</span></div>";
+}
+
+/**
+ * Ensure postmeta table has the necessary index for locale filtering queries
+ * This prevents slow queries by allowing MySQL to efficiently filter on post_id and meta_key
+ * 
+ * @internal
+ */
+function bogo_ensure_postmeta_index_for_locale_filter() {
+  global $wpdb;
+  static $index_checked = false;
+
+  if ($index_checked) {
+    return;
+  }
+
+  $index_checked = true;
+
+  // Check if index already exists
+  $indexes = $wpdb->get_results(
+    "SHOW INDEXES FROM {$wpdb->postmeta} WHERE Key_name = 'idx_post_id_meta_key_bogo'"
+  );
+
+  if (!empty($indexes)) {
+    return;
+  }
+
+  // Create the index if it doesn't exist (limit meta_key to 100 chars to stay within index size limits)
+  $wpdb->query(
+    "ALTER TABLE {$wpdb->postmeta} ADD INDEX idx_post_id_meta_key_bogo (post_id, meta_key(100))"
+  );
 }

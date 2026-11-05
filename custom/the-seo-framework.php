@@ -4,6 +4,10 @@ add_filter('the_seo_framework_title_from_custom_field', 'bogopx_override_seo_fra
 add_filter('the_seo_framework_meta_render_data', 'bogopx_override_seo_framework_home_description', 10);
 // add_filter('the_seo_framework_descr iption_output', 'bogopx_override_seo_framework_home_description', 10);
 
+add_filter('the_seo_framework_meta_render_data', 'bogopx_fix_canonical_for_translated_homepage', 10);
+
+
+
 /**
  * In homepage of localized post, the Title and Description uses the global Homepage setting. This will override it.
  * 
@@ -40,4 +44,20 @@ function bogopx_override_seo_framework_home_description ($tags) {
   }
 
   return $tags;
+}
+
+/**
+ * Fix canonical URL being always the English URL in homepage
+ * 
+ * @filter the_seo_framework_meta_render_data
+ */
+function bogopx_fix_canonical_for_translated_homepage($data) {
+  // abort if default locale
+  if (Bogo::is_default_locale()) { return $data; }
+
+  // abort if not homepage
+  if (!is_front_page()) { return $data; }
+
+  $data['canonical']['attributes']['href'] = home_url();
+  return $data;
 }
