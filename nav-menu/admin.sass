@@ -1,5 +1,40 @@
 @import "@lib/helpers"
 
+// Locale checkboxes for visibility. Also used in Profile and Widgets
+fieldset.bogo-locale-options
+  margin: 0px 12px 10px 0
+  padding: 4px 4px 8px 8px
+  border: 1px solid #dfdfdf
+
+  #your-profile &
+    margin: 0
+    padding: 4px 0 0
+    border: none
+
+  .widget-content &
+    margin-right: 0
+
+  legend
+    font-style: italic
+    color: #666666
+
+  label.bogo-locale-option
+    display: inline-block
+    white-space: nowrap
+    margin: 6px 0.4em 0 0
+    border: 1px solid #a7a7a7
+    border-radius: 4px
+    padding: 1px 4px 1px 2px
+    background: #f1f1f1
+
+  label.bogo-locale-option.checked
+    border: 1px solid #0074a2
+    background: #d4eefe
+
+  label.bogo-locale-option input[type="checkbox"]
+    width: 16px
+
+// Name and Description field. Also used in taxonomy page.
 .bogo-fields
   display: grid
   grid-template-columns: 1fr 1fr
@@ -12,7 +47,6 @@
   @media ($below-xs)
     grid-template-columns: 1fr
 
-// Also used in /taxonomy
 .bogo-field
   display: flex
   flex-direction: column

@@ -8,7 +8,6 @@ require_once __DIR__ . '/enqueue.php';
 require_once __DIR__ . '/content.php';
 require_once __DIR__ . '/list-table/list-table.php';
 require_once __DIR__ . '/taxonomy/taxonomy.php';
-require_once __DIR__ . '/nav-menu/nav-menu.php';
 require_once __DIR__ . '/acf.php';
 require_once __DIR__ . '/language-switcher/language-switcher.php';
 require_once __DIR__ . '/user.php';

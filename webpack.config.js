@@ -7,9 +7,9 @@ const outputPath = '_dist';
 
 const localDomain = 'http://flexiclasses.test/';
 const entryPoints = {
-  'bogopx-public': './custom/bogopx-public.js',
-  'bogopx-admin': './custom/bogopx-admin.js',
-  'bogopx-editor': './custom/bogopx-editor.js',
+  'bogopx-public': './bogopx-public.js',
+  'bogopx-admin': './bogopx-admin.js',
+  'bogopx-editor': './bogopx-editor.js',
 };
 
 module.exports = {
