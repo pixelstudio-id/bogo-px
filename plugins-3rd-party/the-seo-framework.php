@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('ABSPATH')) exit;
 
 add_filter('the_seo_framework_title_from_custom_field', 'bogopx_override_seo_framework_home_title', 10, 2);
 add_filter('the_seo_framework_meta_render_data', 'bogopx_override_seo_framework_home_description', 10);

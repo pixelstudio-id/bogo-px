@@ -1,47 +1,6 @@
 <?php
 // @note - All `bogoHelper_do_something()` method can be shortened into `Bogo::do_something()`
 
-/**
- * 
- */
-function bogoHelper_get_switcher_links($atts = []) {
-  $atts = wp_parse_args($atts, [
-    'compact' => false,
-  ]);
-
-  $raw_links = bogo_language_switcher_links([ 'echo' => false ]);
-  $links = [];
-
-  foreach ($raw_links as $link) {
-    if (empty($link['href'])) {
-      continue;
-    }
-
-    $link['tooltip'] = sprintf(__('View %s translation', 'bogo'), $link['title']);
-    $link['is_current'] = $link['locale'] === get_locale();
-  
-    if ($atts['compact']) {
-      $slug = substr($link['locale'], 0, 2);
-
-      $custom_slugs = get_option('bogopx_custom_slugs', []);
-      if (isset($custom_slugs[$link['locale']])) {
-        $slug = $custom_slugs[$link['locale']];
-      }
-
-      $slug = apply_filters('bogo_lang_slug', strtolower($slug));
-      $link['lang_code'] = strtoupper($slug);
-    }
-
-    // if is_current, put the link at the beginning
-    if ($link['is_current']) {
-      array_unshift($links, $link);
-    } else {
-      $links[] = $link;
-    }
-  }
-
-  return $links;
-}
 
 /**
  * Get the locale of a post

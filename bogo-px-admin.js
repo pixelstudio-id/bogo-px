@@ -1,4 +1,4 @@
-import './custom/list-table/admin';
+import './post-list-table/admin';
 import './nav-menu/admin';
 import './custom/taxonomy/admin';
 import './custom/flags/admin.sass';

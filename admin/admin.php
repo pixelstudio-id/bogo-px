@@ -1,8 +1,6 @@
 <?php
 
 require_once BOGO_PLUGIN_DIR . '/admin/includes/user.php';
-require_once BOGO_PLUGIN_DIR . '/admin/includes/post.php';
-require_once BOGO_PLUGIN_DIR . '/admin/includes/widgets.php';
 require_once BOGO_PLUGIN_DIR . '/admin/includes/language-packs.php';
 // require_once BOGO_PLUGIN_DIR . '/admin/includes/terms-translation.php'; // @changed - disable terms translation
 

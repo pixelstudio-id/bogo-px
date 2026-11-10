@@ -1,2 +1,2 @@
-import './custom/language-switcher/editor';
+import './language-switcher/editor';
 import './custom/reusable-blocks/editor.jsx';

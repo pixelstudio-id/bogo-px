@@ -6,13 +6,10 @@ require_once __DIR__ . '/_helpers.php';
 require_once __DIR__ . '/global-link-groups.php';
 require_once __DIR__ . '/enqueue.php';
 require_once __DIR__ . '/content.php';
-require_once __DIR__ . '/list-table/list-table.php';
 require_once __DIR__ . '/taxonomy/taxonomy.php';
 require_once __DIR__ . '/acf.php';
-require_once __DIR__ . '/language-switcher/language-switcher.php';
 require_once __DIR__ . '/user.php';
 require_once __DIR__ . '/reusable-blocks/reusable-blocks.php';
-require_once __DIR__ . '/the-seo-framework.php';
 require_once __DIR__ . '/custom-slugs/custom-slugs.php';
 
 /**
