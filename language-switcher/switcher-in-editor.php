@@ -53,7 +53,7 @@ function bogopx_localize_args_for_lang_dropdown() {
     }
   }
 
-  wp_localize_script('bogopx-editor', 'bogoLanguageDropdown', [
+  wp_localize_script('bogo-px-editor', 'bogoLanguageDropdown', [
     'currentOption' => $current_option,
     'options' => $options,
     'optionsCreate' => $options_create,

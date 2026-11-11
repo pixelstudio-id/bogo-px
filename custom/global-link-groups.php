@@ -284,6 +284,8 @@ function bogo_localize_by_id($id, $force_locale = null) {
  * @return WP_Post|null
  * 
  * @deprecated - use Bogo::get_locale_post($id) instead
+ * 
+ * @todo - this also return trashed post, should it not do that instead?
  */
 function bogo_localize_post_by_id($id, $force_locale = null) {
   $link = bogo_localize_by_id($id, $force_locale);
